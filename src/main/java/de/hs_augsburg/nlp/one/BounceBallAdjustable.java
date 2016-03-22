@@ -4,13 +4,14 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class BounceBallAdjustable {
     // Atomic reference of a Immutable Persistent HashMap of Balls
-    private final Set<Ball> allBalls = new HashSet<Ball>();
+    private final ConcurrentHashMap<Integer,Ball> allBalls = new ConcurrentHashMap<>();
     private final Box box;
+    private int currentBallIndex = 1;
 
     public BounceBallAdjustable() {
         JFrame frame = new JFrame("Bounce threaded");
@@ -34,8 +35,10 @@ public class BounceBallAdjustable {
 
     protected void makeAndStartBall() {
         Ball b = new Ball(Color.black);
-        allBalls.add(b);
-        new Thread(b).start();
+        allBalls.put(currentBallIndex,b);
+        BallMover mover = new BallMover(currentBallIndex, allBalls);
+        new Thread(mover).start();
+        currentBallIndex += 1;
     }
 
     class Box extends JPanel {
@@ -46,7 +49,7 @@ public class BounceBallAdjustable {
         }
 
         private void paintBalls(Graphics g) {
-            for (Ball ball : allBalls) {
+            for (Ball ball : allBalls.values()) {
                 ball.draw(g);
             }
         }
@@ -74,17 +77,19 @@ public class BounceBallAdjustable {
 
     class BallMover implements Runnable {
 
-        private int BallIdentity;
+        private int ballIdentity;
+        private Map<Integer, Ball> ballAtom;
 
-        public BallMover(int ballIdentity) {
-            BallIdentity = ballIdentity;
+        public BallMover(int ballIdentity, Map<Integer, Ball> ballAtom) {
+            this.ballIdentity = ballIdentity;
+            this.ballAtom = ballAtom;
         }
 
         @Override
         public void run() {
             try {
                 for (int i = 1; i <= 1000; i++) {
-                    // move();
+                    work();
                     Thread.sleep(5); // cpu-schonendes Warten
                     box.repaint();
                 }
@@ -96,7 +101,7 @@ public class BounceBallAdjustable {
         }
 
         private void work(){
-
+            ballAtom.compute(ballIdentity,(k,v)-> v.move());
         }
     }
 
