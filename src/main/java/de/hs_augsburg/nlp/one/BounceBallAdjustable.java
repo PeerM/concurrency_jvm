@@ -1,11 +1,15 @@
 package de.hs_augsburg.nlp.one;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.swing.*;
 import javax.vecmath.Vector2d;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.*;
+import java.util.LinkedList;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static java.lang.Math.round;
@@ -13,9 +17,10 @@ import static java.lang.Math.round;
 public class BounceBallAdjustable {
     // Atomic reference of a Immutable Persistent HashMap of Balls
     private final ConcurrentHashMap<Integer, Ball> allBalls = new ConcurrentHashMap<>();
-    private java.util.List<BallMover> movers = new LinkedList<>();
     private final Box box;
+    private java.util.List<Thread> moversThreads = new LinkedList<>();
     private int currentBallIndex = 1;
+    private Logger logger;
 
     public BounceBallAdjustable() {
         JFrame frame = new JFrame("Bounce threaded");
@@ -37,6 +42,7 @@ public class BounceBallAdjustable {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(300, 200);
         frame.setVisible(true);
+        logger = LoggerFactory.getLogger(this.getClass());
     }
 
     public static void main(String[] args) {
@@ -47,13 +53,16 @@ public class BounceBallAdjustable {
         Ball b = new Ball(Color.black);
         allBalls.put(currentBallIndex, b);
         BallMover mover = new BallMover(currentBallIndex, allBalls);
-        movers.add(mover);
-        new Thread(mover).start();
+        Thread thread = new Thread(mover);
+        thread.start();
+        moversThreads.add(thread);
         currentBallIndex += 1;
     }
 
-    void stopAllMovementAndProcessing(){
-
+    void stopAllMovementAndProcessing() {
+        for (Thread moverThread : moversThreads) {
+            moverThread.interrupt();
+        }
     }
 
     class Box extends JPanel {
@@ -94,7 +103,7 @@ public class BounceBallAdjustable {
                     allBalls.replaceAll((k, v) -> v.adjustSpeed(-1));
                     break;
                 case STOP:
-                    allBalls.clear();
+                    stopAllMovementAndProcessing();
                     box.repaint();
                     break;
                 case NEWBALL:
@@ -118,16 +127,18 @@ public class BounceBallAdjustable {
         public void run() {
             try {
                 for (int i = 1; i <= 1000; i++) {
-                    Ball r = ballAtom.computeIfPresent(ballIdentity, (k, v) -> v.move());
-                    if (r == null){
+                    if (Thread.currentThread().isInterrupted()){
                         return;
                     }
+                    Ball r = ballAtom.compute(ballIdentity, (k, v) -> v.move());
                     Thread.sleep(5); // cpu-schonendes Warten
                     box.repaint();
                 }
                 Thread.sleep(100);
             } catch (InterruptedException e) {
-                e.printStackTrace();
+                logger.debug("Runable Interupted", e);
+                logger.info("Runable Interupted");
+                Thread.currentThread().interrupt();
             }
             // allBalls.remove(this); // ball leaves animation quietly
         }
