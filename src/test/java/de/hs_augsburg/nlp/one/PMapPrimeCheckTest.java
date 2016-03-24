@@ -49,6 +49,7 @@ public class PMapPrimeCheckTest {
 
     @Test
     public void parallelFasterForNonePrime() throws Exception {
+        float factor = 0.8f;
         Logger logger = LoggerFactory.getLogger(this.getClass());
         PrimeCheck pmap = new PMapPrimeCheck();
         PrimeCheck map = new MapPrimeCheck();
@@ -65,11 +66,12 @@ public class PMapPrimeCheckTest {
         Clock.reset();
 
         logger.info("map: " + mapTime + " pmap: " + pMapTime);
-        assertTrue("pmap should be faster for nonPrimes,map: " + mapTime + " pmap: " + pMapTime, mapTime > pMapTime);
+        assertTrue("pmap should be faster for nonPrimes,map: " + mapTime + " pmap: " + pMapTime, mapTime * factor > pMapTime);
     }
 
     @Test
     public void parallelFasterThanSimple() throws Exception {
+        float factor = 0.8f;
         Logger logger = LoggerFactory.getLogger(this.getClass());
         PrimeCheck pmap = new PMapPrimeCheck();
         PrimeCheck simple = new SimplePrimeCheck();
@@ -86,7 +88,7 @@ public class PMapPrimeCheckTest {
         Clock.reset();
 
         logger.info("simple: " + simpleTime + " pmap: " + pMapTime);
-        assertTrue("pmap should be faster for nonPrimes,map: " + simpleTime + " pmap: " + pMapTime, simpleTime > pMapTime);
+        assertTrue("pmap should be faster for nonPrimes,map: " + simpleTime + " pmap: " + pMapTime, simpleTime * factor > pMapTime);
     }
 
     @Test

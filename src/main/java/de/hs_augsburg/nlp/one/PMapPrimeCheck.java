@@ -1,11 +1,10 @@
 package de.hs_augsburg.nlp.one;
 
 import de.hs_augsburg.meixner.primes.PrimeCheck;
+import one.util.streamex.LongStreamEx;
 
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
-import java.util.function.LongSupplier;
-import java.util.stream.LongStream;
 
 import static java.lang.Math.sqrt;
 
@@ -14,7 +13,7 @@ public class PMapPrimeCheck implements PrimeCheck {
     private ForkJoinPool pool;
 
     public PMapPrimeCheck() {
-        this.pool = new ForkJoinPool(4);
+        this.pool = new ForkJoinPool(5);
     }
 
     @Override
@@ -26,11 +25,12 @@ public class PMapPrimeCheck implements PrimeCheck {
         if (number % 2 == 0)
             return false;
         ForkJoinTask<Boolean> task = pool.submit(() ->
-                !LongStream
-                        .iterate(3, i -> i + 2)
-                        .limit(((long) sqrt(number) + 1) / 2)
+                !LongStreamEx
+                        .range(3, ((long) sqrt(number) + 1) / 2, 2)
                         .parallel()
-                        .anyMatch(i -> number % i == 0));
+                        .anyMatch(i ->
+                                number % i == 0)
+        );
         return task.join();
     }
 
