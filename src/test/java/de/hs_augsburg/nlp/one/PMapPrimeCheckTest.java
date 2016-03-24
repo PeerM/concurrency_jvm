@@ -12,6 +12,7 @@ import static org.junit.Assert.*;
 
 @SuppressWarnings("Duplicates")
 public class PMapPrimeCheckTest {
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Test
     public void isPrimePMap() throws Exception {
@@ -47,48 +48,53 @@ public class PMapPrimeCheckTest {
 //        assertFalse("1000000000000000004", primer.isPrime(1000000000000000004L));
 //    }
 
+    public void doRuntimeComparison(long number, String aName, PrimeCheck a, String bName, PrimeCheck b) {
+        float factor = 0.8f;
+        Clock.startRec();
+        a.isPrime(number);
+        Clock.stopRec();
+        long aTime = Clock.elapsed();
+        Clock.reset();
+        Clock.startRec();
+        b.isPrime(number);
+        Clock.stopRec();
+        long bTime = Clock.elapsed();
+        Clock.reset();
+
+        logger.info(aName + ": " + aTime + " " + bName + ": " + bTime);
+        assertTrue(bName + " should be faster," + aName + ": " + aTime + " " + bName + ": " + bTime, aTime * factor > bTime);
+    }
+
     @Test
     public void parallelFasterForPrime() throws Exception {
-        float factor = 0.8f;
-        Logger logger = LoggerFactory.getLogger(this.getClass());
         PrimeCheck pmap = new PMapPrimeCheck();
         PrimeCheck map = new MapPrimeCheck();
         long number = 1000000000000000003L;
-        Clock.startRec();
-        map.isPrime(number);
-        Clock.stopRec();
-        long mapTime = Clock.elapsed();
-        Clock.reset();
-        Clock.startRec();
-        pmap.isPrime(number);
-        Clock.stopRec();
-        long pMapTime = Clock.elapsed();
-        Clock.reset();
+        doRuntimeComparison(number, "map", map, "pmap", pmap);
+    }
 
-        logger.info("map: " + mapTime + " pmap: " + pMapTime);
-        assertTrue("pmap should be faster for nonPrimes,map: " + mapTime + " pmap: " + pMapTime, mapTime * factor > pMapTime);
+    @Test
+    public void parallelFasterForNonPrime() throws Exception {
+        PrimeCheck pmap = new PMapPrimeCheck();
+        PrimeCheck map = new MapPrimeCheck();
+        long number = 1000000000000000001L;
+        doRuntimeComparison(number, "map", map, "pmap", pmap);
     }
 
     @Test
     public void parallelFasterThanSimple() throws Exception {
-        float factor = 0.8f;
-        Logger logger = LoggerFactory.getLogger(this.getClass());
         PrimeCheck pmap = new PMapPrimeCheck();
         PrimeCheck simple = new SimplePrimeCheck();
         long number = 1000000000000000003L;
-        Clock.startRec();
-        simple.isPrime(number);
-        Clock.stopRec();
-        long simpleTime = Clock.elapsed();
-        Clock.reset();
-        Clock.startRec();
-        pmap.isPrime(number);
-        Clock.stopRec();
-        long pMapTime = Clock.elapsed();
-        Clock.reset();
+        doRuntimeComparison(number, "simple", simple, "pmap", pmap);
+    }
 
-        logger.info("simple: " + simpleTime + " pmap: " + pMapTime);
-        assertTrue("pmap should be faster for nonPrimes,map: " + simpleTime + " pmap: " + pMapTime, simpleTime * factor > pMapTime);
+    @Test
+    public void parallelFasterThanSimpleWithNonPrime() throws Exception {
+        PrimeCheck pmap = new PMapPrimeCheck();
+        PrimeCheck simple = new SimplePrimeCheck();
+        long number = 1000000000000000001L;
+        doRuntimeComparison(number, "simple", simple, "pmap", pmap);
     }
 
     @Test
