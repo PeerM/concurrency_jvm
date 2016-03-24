@@ -4,7 +4,9 @@ import de.hs_augsburg.meixner.primes.MillerRabinPrimalityTest;
 import de.hs_augsburg.meixner.primes.PrimeCheck;
 import de.hs_augsburg.meixner.primes.SimplePrimeCheck;
 import de.hs_augsburg.meixner.utils.profiling.Clock;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ErrorCollector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -12,6 +14,8 @@ import static org.junit.Assert.*;
 
 @SuppressWarnings("Duplicates")
 public class PMapPrimeCheckTest {
+    @Rule
+    public ErrorCollector collector = new ErrorCollector();
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     @Test
@@ -32,21 +36,6 @@ public class PMapPrimeCheckTest {
         assertFalse("1000000000000000004", primer.isPrime(1000000000000000004L));
     }
 
-//    @Test
-//    public void parallelFaster() throws Exception {
-//        PrimeCheck pmap = new PMapPrimeCheck();
-//        PrimeCheck map = new MapPrimeCheck();
-//        long start = 1000000000000000000L;
-//        long range = 100;
-//        long i;
-//        for (i = start; i < start + range; i++) {
-//
-//        }
-//        assertFalse("1000000000000000001", primer.isPrime(1000000000000000001L));
-//        assertFalse("1000000000000000002", primer.isPrime(1000000000000000002L));
-//        assertTrue("1000000000000000003", primer.isPrime(1000000000000000003L));
-//        assertFalse("1000000000000000004", primer.isPrime(1000000000000000004L));
-//    }
 
     public void doRuntimeComparison(long number, String aName, PrimeCheck a, String bName, PrimeCheck b) {
         float factor = 0.8f;
@@ -79,6 +68,44 @@ public class PMapPrimeCheckTest {
         PrimeCheck map = new MapPrimeCheck();
         long number = 1000000000000000001L;
         doRuntimeComparison(number, "map", map, "pmap", pmap);
+    }
+
+    @Test
+    public void parallelFasterForMost() throws Exception {
+        PrimeCheck pmap = new PMapPrimeCheck();
+        PrimeCheck map = new MapPrimeCheck();
+        final long start = 1000000000000000000L;
+        final long rangeSize = 50;
+        for (long i = start; i <= start + rangeSize; i++) {
+            doRuntimeComparison(i, "map", map, "pmap", pmap);
+        }
+    }
+
+    @Test
+    public void parallelFasterOverall() throws Exception {
+        float factor = 0.8f;
+        PrimeCheck a = new MapPrimeCheck();
+        PrimeCheck b = new PMapPrimeCheck();
+        final long start = 1000000000000000000L;
+        final long rangeSize = 50;
+        Clock.startRec();
+        for (long i = start; i <= start + rangeSize; i++) {
+            a.isPrime(i);
+        }
+        Clock.stopRec();
+        long aTime = Clock.elapsed();
+
+        Clock.startRec();
+        for (long i = start; i <= start + rangeSize; i++) {
+            b.isPrime(i);
+        }
+        Clock.stopRec();
+        long bTime = Clock.elapsed();
+
+        String aName = "map";
+        String bName = "pmap";
+        logger.info(aName + ": " + aTime + " " + bName + ": " + bTime);
+        assertTrue(bName + " should be faster," + aName + ": " + aTime + " " + bName + ": " + bTime, aTime * factor > bTime);
     }
 
     @Test
