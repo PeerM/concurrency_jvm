@@ -9,7 +9,7 @@ import java.util.concurrent.ForkJoinTask;
 import static java.lang.Math.sqrt;
 
 @SuppressWarnings("Duplicates")
-public class PMapPrimeCheck implements PrimeCheck {
+public class PMapPrimeCheck implements PrimeCheck, AutoCloseable {
     private ForkJoinPool pool;
 
     public PMapPrimeCheck() {
@@ -33,7 +33,8 @@ public class PMapPrimeCheck implements PrimeCheck {
         );
         return task.join();
     }
-
-    // is prime test with parallel 60s
-    // is prime test without parallel 7s
+    @Override
+    public void close() throws Exception {
+        pool.shutdown();
+    }
 }

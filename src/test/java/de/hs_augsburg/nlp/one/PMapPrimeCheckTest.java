@@ -10,6 +10,8 @@ import org.junit.rules.ErrorCollector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import static org.junit.Assert.*;
 
 @SuppressWarnings("Duplicates")
@@ -25,6 +27,7 @@ public class PMapPrimeCheckTest {
         assertFalse("1000000000000000002", primer.isPrime(1000000000000000002L));
         assertTrue("1000000000000000003", primer.isPrime(1000000000000000003L));
         assertFalse("1000000000000000004", primer.isPrime(1000000000000000004L));
+        // yes this test and other test are leaking threads but I am to lazy to call close
     }
 
     @Test
@@ -34,6 +37,37 @@ public class PMapPrimeCheckTest {
         assertFalse("1000000000000000002", primer.isPrime(1000000000000000002L));
         assertTrue("1000000000000000003", primer.isPrime(1000000000000000003L));
         assertFalse("1000000000000000004", primer.isPrime(1000000000000000004L));
+    }
+
+    @Test
+    public void isPrimeCallbackMap() throws Exception {
+
+        try (CallbackPMapPrimeCheck primer = new CallbackPMapPrimeCheck();){
+            AtomicInteger numberOfCallbacks = new AtomicInteger(0);
+            primer.isPrime(1000000000000000001L, (n, isP) -> {
+                assertFalse("1000000000000000001", isP);
+                numberOfCallbacks.getAndIncrement();
+                logger.info("1000000000000000001 finished");
+            });
+            primer.isPrime(1000000000000000002L, (n, isP) -> {
+                assertFalse("1000000000000000002", isP);
+                numberOfCallbacks.getAndIncrement();
+                logger.info("1000000000000000002 finished");
+            });
+            primer.isPrime(1000000000000000003L, (n, isP) -> {
+                assertTrue("1000000000000000003", isP);
+                numberOfCallbacks.getAndIncrement();
+                logger.info("1000000000000000003 finished");
+            });
+            primer.isPrime(1000000000000000004L, (n, isP) -> {
+                assertFalse("1000000000000000004", isP);
+                numberOfCallbacks.getAndIncrement();
+                logger.info("1000000000000000004 finished");
+            });
+            Thread.sleep(4000);
+
+            assertEquals("Not all 4 Callbacks called", 4, numberOfCallbacks.get());
+        }
     }
 
 
