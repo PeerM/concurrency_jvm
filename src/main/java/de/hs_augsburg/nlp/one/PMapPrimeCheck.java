@@ -25,7 +25,11 @@ public class PMapPrimeCheck implements PrimeCheck {
             return true;
         if (number % 2 == 0)
             return false;
-        ForkJoinTask<Boolean> task = pool.submit(() -> !LongStream.generate(new CandidateSupplier()).limit(((long) sqrt(number) + 1) / 2).parallel().anyMatch(i -> number % i == 0));
+        ForkJoinTask<Boolean> task = pool.submit(() ->
+                !LongStream.generate(new CandidateSupplier())
+                        .limit(((long) sqrt(number) + 1) / 2)
+                        .parallel()
+                        .anyMatch(i -> number % i == 0));
         return task.join();
     }
 
