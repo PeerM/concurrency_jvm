@@ -2,21 +2,13 @@ package de.hs_augsburg.nlp.one;
 
 import de.hs_augsburg.meixner.primes.PrimeCheck;
 
-import java.util.concurrent.ForkJoinPool;
-import java.util.concurrent.ForkJoinTask;
 import java.util.function.LongSupplier;
 import java.util.stream.LongStream;
 
 import static java.lang.Math.sqrt;
 
 @SuppressWarnings("Duplicates")
-public class PMapPrimeCheck implements PrimeCheck {
-    private ForkJoinPool pool;
-
-    public PMapPrimeCheck() {
-        this.pool = new ForkJoinPool(4);
-    }
-
+public class MapPrimeCheck implements PrimeCheck {
     @Override
     public boolean isPrime(long number) {
         if (number < 2)
@@ -25,8 +17,7 @@ public class PMapPrimeCheck implements PrimeCheck {
             return true;
         if (number % 2 == 0)
             return false;
-        ForkJoinTask<Boolean> task = pool.submit(() -> !LongStream.generate(new CandidateSupplier()).limit(((long) sqrt(number) + 1) / 2).parallel().anyMatch(i -> number % i == 0));
-        return task.join();
+        return !LongStream.generate(new CandidateSupplier()).limit(((long) sqrt(number) + 1) / 2).anyMatch(i -> number % i == 0);
     }
 
     private class CandidateSupplier implements LongSupplier {
