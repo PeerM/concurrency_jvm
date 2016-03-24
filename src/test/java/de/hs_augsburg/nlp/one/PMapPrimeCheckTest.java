@@ -10,11 +10,21 @@ import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.*;
 
+@SuppressWarnings("Duplicates")
 public class PMapPrimeCheckTest {
 
     @Test
-    public void isPrime() throws Exception {
+    public void isPrimePMap() throws Exception {
         PrimeCheck primer = new PMapPrimeCheck();
+        assertFalse("1000000000000000001", primer.isPrime(1000000000000000001L));
+        assertFalse("1000000000000000002", primer.isPrime(1000000000000000002L));
+        assertTrue("1000000000000000003", primer.isPrime(1000000000000000003L));
+        assertFalse("1000000000000000004", primer.isPrime(1000000000000000004L));
+    }
+
+    @Test
+    public void isPrimeMap() throws Exception {
+        PrimeCheck primer = new MapPrimeCheck();
         assertFalse("1000000000000000001", primer.isPrime(1000000000000000001L));
         assertFalse("1000000000000000002", primer.isPrime(1000000000000000002L));
         assertTrue("1000000000000000003", primer.isPrime(1000000000000000003L));

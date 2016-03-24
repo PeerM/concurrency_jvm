@@ -17,19 +17,9 @@ public class MapPrimeCheck implements PrimeCheck {
             return true;
         if (number % 2 == 0)
             return false;
-        return !LongStream.generate(new CandidateSupplier()).limit(((long) sqrt(number) + 1) / 2).anyMatch(i -> number % i == 0);
+        return !LongStream
+                .iterate(3, i -> i + 2)
+                .limit(((long) sqrt(number) + 1) / 2)
+                .anyMatch(i -> number % i == 0);
     }
-
-    private class CandidateSupplier implements LongSupplier {
-        long i = 1;
-
-        @Override
-        public long getAsLong() {
-            i += 2;
-            return i;
-        }
-    }
-
-    // is prime test with parallel 60s
-    // is prime test without parallel 7s
 }

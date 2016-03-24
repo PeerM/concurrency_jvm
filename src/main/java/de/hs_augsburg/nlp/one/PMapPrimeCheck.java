@@ -26,21 +26,12 @@ public class PMapPrimeCheck implements PrimeCheck {
         if (number % 2 == 0)
             return false;
         ForkJoinTask<Boolean> task = pool.submit(() ->
-                !LongStream.generate(new CandidateSupplier())
+                !LongStream
+                        .iterate(3, i -> i + 2)
                         .limit(((long) sqrt(number) + 1) / 2)
                         .parallel()
                         .anyMatch(i -> number % i == 0));
         return task.join();
-    }
-
-    private class CandidateSupplier implements LongSupplier {
-        long i = 1;
-
-        @Override
-        public long getAsLong() {
-            i += 2;
-            return i;
-        }
     }
 
     // is prime test with parallel 60s
