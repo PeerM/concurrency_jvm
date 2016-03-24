@@ -48,7 +48,7 @@ public class PMapPrimeCheckTest {
 //    }
 
     @Test
-    public void parallelFasterForNonePrime() throws Exception {
+    public void parallelFasterForPrime() throws Exception {
         float factor = 0.8f;
         Logger logger = LoggerFactory.getLogger(this.getClass());
         PrimeCheck pmap = new PMapPrimeCheck();
