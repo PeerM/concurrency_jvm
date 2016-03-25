@@ -24,8 +24,12 @@
   (testing "16, is not a prime."
     (is (= false (isPrime 16)))))
 
+(deftest isPrime-1117
+  (testing "1117, is a prime."
+    (is (= true (isPrime 1117)))))
+
 (deftest isNoPrime-1119
-  (testing "89, is not a prime."
+  (testing "1119, is not a prime."
     (is (= false (isPrime 1119)))))
 
 (deftest isNoPrime-002
