@@ -64,7 +64,7 @@ public class PMapPrimeCheckTest {
                 numberOfCallbacks.getAndIncrement();
                 logger.info("1000000000000000004 finished");
             });
-            Thread.sleep(4000);
+            Thread.sleep(6000);
 
             assertEquals("Not all 4 Callbacks called", 4, numberOfCallbacks.get());
         }
