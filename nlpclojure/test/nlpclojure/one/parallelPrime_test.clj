@@ -28,6 +28,10 @@
   (testing "89, is not a prime."
     (is (= false (isPrime 1119)))))
 
+(deftest isNoPrime-002
+  (testing "1000000000000000002, is a prime."
+    (is (= false (isPrime 1000000000000000002)))))
+
 (deftest isPrime-003
   (testing "1000000000000000003, is a prime."
     (is (= true (isPrime 1000000000000000003)))))
