@@ -11,7 +11,5 @@
                          (let [checkRange (range 3 (/ (+ (Math/sqrt number) 1) 2) 2)]
                            (not
                              (some
-                               true?
-                               (map
-                                 (fn [divider] (= 0 (mod number divider)))
-                                 checkRange))))))
+                               (fn [divider] (mod number divider))
+                               checkRange)))))
