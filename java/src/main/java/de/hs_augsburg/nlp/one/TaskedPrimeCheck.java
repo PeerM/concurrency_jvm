@@ -20,8 +20,11 @@ public class TaskedPrimeCheck implements PrimeCheck, AutoCloseable {
 
     private static long interval(long number) {
         //return 10000;
-        long q = (Math.round(Math.sqrt(number) + 1) / 100000L);
-        return Math.max(q, 100);
+        // this effectively controls the number of tasks created
+        // a number less than 50000L makes the tasks run synchronous
+        long q = (Math.round(Math.sqrt(number) + 1) / 1000000L);
+        // tasks for less than 500 potential dividers make no sense
+        return Math.max(q, 500);
 
     }
 
