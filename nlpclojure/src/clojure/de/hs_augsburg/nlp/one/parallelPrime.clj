@@ -1,17 +1,12 @@
 (ns de.hs_augsburg.nlp.one.parallelPrime
   (:import (de.hs_augsburg.nlp.one PrimeChecker)))
 
-;;(def interval (Math/pow 10 8))
-;; long q = (Math.round(Math.sqrt(number) + 1) / 1000000L);
-;; return Math.max(q, 500);
 (defn longMax [^long a ^long b] (Math/max a b))
 (defn calcInterval [^long number]
   (longMax
     10
     (/
-      (+ 1
-        (Math/round
-          (Math/sqrt number)))
+      (+ 1 (Math/round (Math/sqrt number)))
       1000)))
 
 (defn nextSeqment [number, inter, [_ prevEnd]]
