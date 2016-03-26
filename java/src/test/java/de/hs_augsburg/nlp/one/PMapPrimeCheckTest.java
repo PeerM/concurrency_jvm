@@ -4,6 +4,7 @@ import de.hs_augsburg.meixner.primes.MillerRabinPrimalityTest;
 import de.hs_augsburg.meixner.primes.PrimeCheck;
 import de.hs_augsburg.meixner.primes.SimplePrimeCheck;
 import de.hs_augsburg.meixner.utils.profiling.Clock;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
@@ -104,6 +105,7 @@ public class PMapPrimeCheckTest {
         doRuntimeComparison(number, "map", map, "pmap", pmap);
     }
 
+    @Ignore
     @Test
     public void parallelFasterForMost() throws Exception {
         PrimeCheck pmap = new PMapPrimeCheck();
@@ -151,6 +153,7 @@ public class PMapPrimeCheckTest {
         doRuntimeComparison(number, "simple", simple, "pmap", pmap);
     }
 
+    @Ignore
     @Test
     public void parallelFasterThanSimpleWithNonPrime() throws Exception {
         PrimeCheck pmap = new PMapPrimeCheck();
