@@ -25,9 +25,13 @@ public class TaskedPrimeCheckTest {
     public void isPrime() throws Exception {
         PrimeCheck primer = new TaskedPrimeCheck();
         assertFalse("1000000000000000001", primer.isPrime(1000000000000000001L));
+        logger.info("finished 1");
         assertFalse("1000000000000000002", primer.isPrime(1000000000000000002L));
+        logger.info("finished 2");
         assertTrue("1000000000000000003", primer.isPrime(1000000000000000003L));
+        logger.info("finished 3");
         assertFalse("1000000000000000004", primer.isPrime(1000000000000000004L));
+        logger.info("finished 4");
     }
 
     public void doRuntimeComparison(long number, String aName, PrimeCheck a, String bName, PrimeCheck b) {

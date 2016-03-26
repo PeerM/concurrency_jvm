@@ -1,25 +1,31 @@
 package de.hs_augsburg.nlp.one;
 
 import de.hs_augsburg.meixner.primes.PrimeCheck;
-
-import java.util.stream.LongStream;
-import java.util.stream.Stream;
+import one.util.streamex.StreamEx;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("Duplicates")
 public class TaskedPrimeCheck implements PrimeCheck {
-    private static final long INTERVAL = 1000;
+    private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private static Task nextTask(Task prev) {
-        long nextEnd = prev.end + INTERVAL;
+    private static long interval(long number) {
+        return 500000;
+        //return number / 2000;
+    }
+
+    private static Task nextTask(Task prev, Long interval) {
+        long nextEnd = prev.end + interval;
         long endSquared = prev.end * prev.end;
-        if (endSquared > prev.number) {
-            nextEnd = endSquared;
-        }
         return new Task(prev.end, nextEnd, prev.number);
     }
 
-    private static boolean SolveTask(Task t) {
-        return LongStream.iterate(t.start, i -> i + 2).limit((t.end - t.start) / 2).anyMatch(i -> t.number % i == 0);
+    private static boolean dividerInTask(Task t) {
+        for (long i = t.start; i < t.end; i += 2) {
+            if (t.number % i == 0)
+                return true;
+        }
+        return false;
     }
 
     @Override
@@ -30,10 +36,15 @@ public class TaskedPrimeCheck implements PrimeCheck {
             return true;
         if (number % 2 == 0)
             return false;
-        Stream<Boolean> booleanStream = Stream
-                .iterate(new Task(3, 3 + INTERVAL, number), TaskedPrimeCheck::nextTask)
-                .map(TaskedPrimeCheck::SolveTask);
-        return !booleanStream
+        long interval = interval(number);
+        StreamEx<Task> tasks = StreamEx
+                .iterate(new Task(3, 3 + interval, number), t -> nextTask(t, interval))
+                .takeWhile(t -> (t.start * t.start <= t.number));
+        StreamEx<Boolean> solutions = tasks
+                .map(TaskedPrimeCheck::dividerInTask)
+                //.peek(b -> logger.info("stream got " + b))
+                ;
+        return !solutions
                 .anyMatch(b -> b);
     }
 
