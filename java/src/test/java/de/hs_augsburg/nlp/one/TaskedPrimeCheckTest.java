@@ -53,26 +53,25 @@ public class TaskedPrimeCheckTest {
 
     @Test
     public void taskedFasterThanSimple() throws Exception {
-        PrimeCheck pmap = new PMapPrimeCheck();
-        PrimeCheck map = new MapPrimeCheck();
         long number = 1000000000000000003L;
-        doRuntimeComparison(number, "map", map, "pmap", pmap);
+        PrimeCheck tasked = new TaskedPrimeCheck();
+        PrimeCheck simple = new SimplePrimeCheck();
+        doRuntimeComparison(number, "simple", simple, "tasked", tasked);
     }
 
     @Test
     public void parallelFasterForNonPrime() throws Exception {
-        PrimeCheck pmap = new PMapPrimeCheck();
-        PrimeCheck map = new MapPrimeCheck();
         long number = 1000000000000000001L;
-        doRuntimeComparison(number, "map", map, "pmap", pmap);
+        PrimeCheck tasked = new TaskedPrimeCheck();
+        PrimeCheck simple = new SimplePrimeCheck();
+        doRuntimeComparison(number, "simple", simple, "tasked", tasked);
     }
 
-    @Ignore
     @Test
     public void parallelFasterOverall() throws Exception {
         float factor = 0.8f;
-        PrimeCheck a = new MapPrimeCheck();
-        PrimeCheck b = new PMapPrimeCheck();
+        PrimeCheck a = new SimplePrimeCheck();
+        PrimeCheck b = new TaskedPrimeCheck();
         final long start = 1000000000000000000L;
         final long rangeSize = 50;
         Clock.startRec();
@@ -82,6 +81,7 @@ public class TaskedPrimeCheckTest {
         Clock.stopRec();
         long aTime = Clock.elapsed();
 
+        Clock.reset();
         Clock.startRec();
         for (long i = start; i <= start + rangeSize; i++) {
             b.isPrime(i);
@@ -89,8 +89,8 @@ public class TaskedPrimeCheckTest {
         Clock.stopRec();
         long bTime = Clock.elapsed();
 
-        String aName = "map";
-        String bName = "pmap";
+        String aName = "simple";
+        String bName = "Tasked";
         logger.info(aName + ": " + aTime + " " + bName + ": " + bTime);
         assertTrue(bName + " should be faster," + aName + ": " + aTime + " " + bName + ": " + bTime, aTime * factor > bTime);
     }

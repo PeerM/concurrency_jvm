@@ -129,6 +129,7 @@ public class PMapPrimeCheckTest {
         Clock.stopRec();
         long aTime = Clock.elapsed();
 
+        Clock.reset();
         Clock.startRec();
         for (long i = start; i <= start + rangeSize; i++) {
             b.isPrime(i);

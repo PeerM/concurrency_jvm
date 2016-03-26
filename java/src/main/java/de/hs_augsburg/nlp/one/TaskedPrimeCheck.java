@@ -5,12 +5,21 @@ import one.util.streamex.StreamEx;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ForkJoinTask;
+
 @SuppressWarnings("Duplicates")
-public class TaskedPrimeCheck implements PrimeCheck {
+public class TaskedPrimeCheck implements PrimeCheck, AutoCloseable {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
+    private ForkJoinPool pool;
+
+    public TaskedPrimeCheck() {
+        this.pool = new ForkJoinPool(5);
+    }
+
     private static long interval(long number) {
-        return 500000;
+        return 10000;
         //return number / 2000;
     }
 
@@ -40,12 +49,16 @@ public class TaskedPrimeCheck implements PrimeCheck {
         StreamEx<Task> tasks = StreamEx
                 .iterate(new Task(3, 3 + interval, number), t -> nextTask(t, interval))
                 .takeWhile(t -> (t.start * t.start <= t.number));
-        StreamEx<Boolean> solutions = tasks
-                .map(TaskedPrimeCheck::dividerInTask)
-                //.peek(b -> logger.info("stream got " + b))
-                ;
-        return !solutions
-                .anyMatch(b -> b);
+        ForkJoinTask<Boolean> forkJoinTask = pool.submit(() ->
+                !tasks.parallel().map(TaskedPrimeCheck::dividerInTask)
+                        //.peek(b -> logger.info("stream got " + b))
+                        .anyMatch(b -> b));
+        return forkJoinTask.join();
+    }
+
+    @Override
+    public void close() throws Exception {
+        pool.shutdown();
     }
 
     private static class Task {
