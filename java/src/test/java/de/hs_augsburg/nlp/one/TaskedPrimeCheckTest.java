@@ -4,14 +4,11 @@ import de.hs_augsburg.meixner.primes.MillerRabinPrimalityTest;
 import de.hs_augsburg.meixner.primes.PrimeCheck;
 import de.hs_augsburg.meixner.primes.SimplePrimeCheck;
 import de.hs_augsburg.meixner.utils.profiling.Clock;
-import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.junit.Assert.*;
 
@@ -28,7 +25,7 @@ public class TaskedPrimeCheckTest {
         logger.info("finished 1");
         assertFalse("1000000000000000002", primer.isPrime(1000000000000000002L));
         logger.info("finished 2");
-        assertTrue("1000000000000000003", primer.isPrime(1000000000000000003L));
+        assertTrue("1000000000000000003", primer.isPrime(1_000_000_000_000_000_003L));
         logger.info("finished 3");
         assertFalse("1000000000000000004", primer.isPrime(1000000000000000004L));
         logger.info("finished 4");
@@ -93,6 +90,24 @@ public class TaskedPrimeCheckTest {
         String bName = "Tasked";
         logger.info(aName + ": " + aTime + " " + bName + ": " + bTime);
         assertTrue(bName + " should be faster," + aName + ": " + aTime + " " + bName + ": " + bTime, aTime * factor > bTime);
+    }
+
+    @Test
+    public void profile() throws Exception {
+        float factor = 0.8f;
+        PrimeCheck b = new TaskedPrimeCheck();
+        final long start = 1000000000000000000L;
+        final long rangeSize = 50;
+        Clock.reset();
+        Clock.startRec();
+        for (long i = start; i <= start + rangeSize; i++) {
+            b.isPrime(i);
+        }
+        Clock.stopRec();
+        long bTime = Clock.elapsed();
+
+        String bName = "Tasked";
+        logger.info(bName + ": " + bTime);
     }
 
     @Test

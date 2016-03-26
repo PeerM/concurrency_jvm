@@ -9,7 +9,8 @@ public class SimplePrimeCheck implements PrimeCheck {
             return true;
         if (number % 2 == 0)
             return false;
-        for (long i=3; i*i <= number; i+=2) {
+        long i;
+        for (i=3; i*i <= number; i+=2) {
             if (number%i == 0) 
                 return false;
         }

@@ -15,17 +15,22 @@ public class TaskedPrimeCheck implements PrimeCheck, AutoCloseable {
     private ForkJoinPool pool;
 
     public TaskedPrimeCheck() {
-        this.pool = new ForkJoinPool(5);
+        this.pool = new ForkJoinPool();
     }
 
     private static long interval(long number) {
-        return 10000;
-        //return number / 2000;
+        //return 10000;
+        long q =(long) ((double)number / 1000000000000L);
+        return Math.min(q, 1000);
+
     }
 
     private static Task nextTask(Task prev, Long interval) {
         long nextEnd = prev.end + interval;
-        long endSquared = prev.end * prev.end;
+        long endSquared = nextEnd * nextEnd;
+        if (endSquared > prev.number) {
+            nextEnd = Math.round(Math.sqrt(prev.number)+1);
+        }
         return new Task(prev.end, nextEnd, prev.number);
     }
 
@@ -50,7 +55,9 @@ public class TaskedPrimeCheck implements PrimeCheck, AutoCloseable {
                 .iterate(new Task(3, 3 + interval, number), t -> nextTask(t, interval))
                 .takeWhile(t -> (t.start * t.start <= t.number));
         ForkJoinTask<Boolean> forkJoinTask = pool.submit(() ->
-                !tasks.parallel().map(TaskedPrimeCheck::dividerInTask)
+                !tasks
+                        .parallel()
+                        .map(TaskedPrimeCheck::dividerInTask)
                         //.peek(b -> logger.info("stream got " + b))
                         .anyMatch(b -> b));
         return forkJoinTask.join();
