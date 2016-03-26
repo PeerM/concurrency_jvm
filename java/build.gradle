@@ -9,6 +9,7 @@
 
 // Apply the java plugin to add support for Java
 apply plugin: 'java'
+apply plugin: 'maven'
 
 // In this section you declare where to find the dependencies of your project
 repositories {
@@ -31,3 +32,11 @@ dependencies {
     // 'test.useTestNG()' to your build script.
     testCompile 'junit:junit:4.12'
 }
+//tasks.withType(Test).each { task ->
+//    task.enabled = false
+//}
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+group = "nlp_mathia_reichinger"
+version = 1.1
