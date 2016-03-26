@@ -1,6 +1,7 @@
 package de.hs_augsburg.nlp.one;
 
 import de.hs_augsburg.meixner.primes.PrimeCheck;
+import de.hs_augsburg.nlp.one.Task;
 import one.util.streamex.StreamEx;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,7 +19,7 @@ public class TaskedPrimeCheck implements PrimeCheck, AutoCloseable {
         this.pool = new ForkJoinPool();
     }
 
-    private static long interval(long number) {
+    public static long interval(long number) {
         //return 10000;
         // this effectively controls the number of tasks created
         // a number less than 50000L makes the tasks run synchronous
@@ -28,7 +29,7 @@ public class TaskedPrimeCheck implements PrimeCheck, AutoCloseable {
 
     }
 
-    private static Task nextTask(Task prev, Long interval) {
+    public static Task nextTask(Task prev, Long interval) {
         long nextEnd = prev.end + interval;
         long endSquared = nextEnd * nextEnd;
         if (endSquared > prev.number) {
@@ -37,7 +38,7 @@ public class TaskedPrimeCheck implements PrimeCheck, AutoCloseable {
         return new Task(prev.end, nextEnd, prev.number);
     }
 
-    private static boolean dividerInTask(Task t) {
+    public static boolean dividerInTask(Task t) {
         for (long i = t.start; i < t.end; i += 2) {
             if (t.number % i == 0)
                 return true;
@@ -73,20 +74,4 @@ public class TaskedPrimeCheck implements PrimeCheck, AutoCloseable {
         pool.shutdown();
     }
 
-    private static class Task {
-        final long start;
-        final long end;
-        final long number;
-
-        Task(long start, long end, long number) {
-            this.start = start;
-            this.end = end;
-            this.number = number;
-        }
-
-        @Override
-        public String toString() {
-            return "start: " + start + ", end: " + end;
-        }
-    }
 }
