@@ -97,8 +97,7 @@ public class TaskedPrimeCheckTest {
         float factor = 0.8f;
         PrimeCheck b = new TaskedPrimeCheck();
         final long start = 1000000000000000000L;
-        final long rangeSize = 50;
-        Clock.reset();
+        final long rangeSize = 5;
         Clock.startRec();
         for (long i = start; i <= start + rangeSize; i++) {
             b.isPrime(i);
@@ -106,8 +105,11 @@ public class TaskedPrimeCheckTest {
         Clock.stopRec();
         long bTime = Clock.elapsed();
 
+        long aTime = 7071;
+        String aName = "simple";
         String bName = "Tasked";
-        logger.info(bName + ": " + bTime);
+        logger.info(aName + ": " + aTime + " " + bName + ": " + bTime);
+        assertTrue(bName + " should be faster," + aName + ": " + aTime + " " + bName + ": " + bTime, aTime * factor > bTime);
     }
 
     @Test

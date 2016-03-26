@@ -20,8 +20,8 @@ public class TaskedPrimeCheck implements PrimeCheck, AutoCloseable {
 
     private static long interval(long number) {
         //return 10000;
-        long q =(long) ((double)number / 1000000000000L);
-        return Math.min(q, 1000);
+        long q = (Math.round(Math.sqrt(number) + 1) / 100000L);
+        return Math.max(q, 100);
 
     }
 
@@ -29,7 +29,7 @@ public class TaskedPrimeCheck implements PrimeCheck, AutoCloseable {
         long nextEnd = prev.end + interval;
         long endSquared = nextEnd * nextEnd;
         if (endSquared > prev.number) {
-            nextEnd = Math.round(Math.sqrt(prev.number)+1);
+            nextEnd = Math.round(Math.sqrt(prev.number) + 1);
         }
         return new Task(prev.end, nextEnd, prev.number);
     }
@@ -53,7 +53,9 @@ public class TaskedPrimeCheck implements PrimeCheck, AutoCloseable {
         long interval = interval(number);
         StreamEx<Task> tasks = StreamEx
                 .iterate(new Task(3, 3 + interval, number), t -> nextTask(t, interval))
-                .takeWhile(t -> (t.start * t.start <= t.number));
+                .takeWhile(t -> (t.start * t.start <= t.number))
+                //.peek((task -> logger.info(task.toString())))
+                ;
         ForkJoinTask<Boolean> forkJoinTask = pool.submit(() ->
                 !tasks
                         .parallel()
@@ -71,21 +73,17 @@ public class TaskedPrimeCheck implements PrimeCheck, AutoCloseable {
     private static class Task {
         final long start;
         final long end;
-        final boolean shutdown;
         final long number;
-
-        Task() {
-            this.start = 0;
-            this.end = 0;
-            this.number = 0;
-            this.shutdown = true;
-        }
 
         Task(long start, long end, long number) {
             this.start = start;
             this.end = end;
-            shutdown = false;
             this.number = number;
+        }
+
+        @Override
+        public String toString() {
+            return "start: " + start + ", end: " + end;
         }
     }
 }
