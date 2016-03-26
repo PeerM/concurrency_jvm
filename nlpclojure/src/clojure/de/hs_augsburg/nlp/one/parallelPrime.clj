@@ -1,6 +1,5 @@
 (ns de.hs_augsburg.nlp.one.parallelPrime
-  (:import (de.hs_augsburg.nlp.one Task TaskedPrimeCheck)
-           (de.hs_augsburg.nlp.one PrimeChecker)))
+  (:import (de.hs_augsburg.nlp.one PrimeChecker)))
 
 (def interval (Math/pow 10 8))
 
@@ -12,8 +11,6 @@
       [prevEnd, (+ 1 (Math/round (Math/sqrt number)))]
       [prevEnd nextEnd])))
 
-(defn newTask [start end number] (Task/construct start end number))
-
 (defn isPrime [number] (cond
                          (< number 2) false
                          (= number 2) true
@@ -23,7 +20,7 @@
                            (->>
                              (iterate
                                (fn [task] (nextSeqment number interval task))
-                               [3 (+ 3 interval)])
+                               (nextSeqment number interval [0 3]))
                              (take-while (fn [[start _]] (<= (* start start) number)))
                              (pmap
                                (fn [[start end]] (PrimeChecker/doesRangeContainDivider start end number)))

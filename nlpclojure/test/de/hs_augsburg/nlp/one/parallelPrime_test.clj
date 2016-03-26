@@ -1,7 +1,6 @@
-(ns nlpclojure.one.parallelPrime_test
+(ns de.hs_augsburg.nlp.one.parallelPrime_test
   (:require [clojure.test :refer :all]
-            [nlpclojure.core :refer :all]
-            [nlpclojure.one.parallelPrime :refer :all]))
+            [de.hs_augsburg.nlp.one.parallelPrime :refer :all]))
 
 
 (deftest isPrime-2
