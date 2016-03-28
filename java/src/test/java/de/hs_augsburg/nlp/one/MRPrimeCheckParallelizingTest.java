@@ -3,7 +3,6 @@ package de.hs_augsburg.nlp.one;
 import de.hs_augsburg.meixner.primes.MillerRabinPrimalityTest;
 import de.hs_augsburg.meixner.primes.PrimeCheck;
 import de.hs_augsburg.meixner.primes.SimplePrimeCheck;
-import de.hs_augsburg.meixner.utils.profiling.Clock;
 import de.hs_augsburg.nlp.util.TimeIt;
 import org.junit.Rule;
 import org.junit.Test;
@@ -15,11 +14,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
 @SuppressWarnings("Duplicates")
-public class MRPrimeCheckProfilingTest {
+public class MRPrimeCheckParallelizingTest {
     @Rule
     public ErrorCollector collector = new ErrorCollector();
     private Logger logger = LoggerFactory.getLogger(this.getClass());
@@ -42,20 +38,8 @@ public class MRPrimeCheckProfilingTest {
         profile(checker,"MilerRabin");
     }
 
-    @Test
-    public void profileSimple() throws Exception {
-        PrimeCheck checker = new SimplePrimeCheck();
-        profile(checker,"Simple");
-    }
-
-    @Test
-    public void profileParallelNaive() throws Exception {
-        PrimeCheck checker = new PMapPrimeCheck();
-        profile(checker,"ParallelJavaMap");
-    }
-
     private void profile(PrimeCheck checker, String name) {
-        TimeIt.TimeData<List<Boolean>> timeData = TimeIt.timeIt(() -> LongStream.range(1000000000000000000L, 1000000000000000006L).boxed().map(checker::isPrime).collect(Collectors.toList()));
+        TimeIt.TimeData<List<Boolean>> timeData = TimeIt.timeIt(() -> LongStream.range(100000000000000L, 100000000500000L).boxed().map(checker::isPrime).collect(Collectors.toList()));
         logger.info(String.format("%s: e:%d, ecpu:%d", name, timeData.elapsed, timeData.elapsedCpu));
     }
 }

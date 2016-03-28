@@ -5,7 +5,7 @@ import de.hs_augsburg.meixner.primes.PrimeCheck;
 import java.math.BigInteger;
 
 @SuppressWarnings("Duplicates")
-public class MillerRabinPrimalityTestRosetta implements PrimeCheck {
+public class MillerRabinPrimalityTestParallel implements PrimeCheck {
 
     // copied from https://rosettacode.org/wiki/Miller%E2%80%93Rabin_primality_test#Java on 28.03.16
     // the original source was licensed under the GNU Free Documentation License
