@@ -3,7 +3,7 @@ package de.hs_augsburg.nlp.one;
 
 import de.hs_augsburg.meixner.primes.PrimeCheck;
 
-public class ParallelMRP {
+public class LongRunningStarterForMRP {
     public static void main(String[] args) {
         longRunning();
     }
