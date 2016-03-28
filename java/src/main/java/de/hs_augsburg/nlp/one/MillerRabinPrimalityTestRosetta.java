@@ -6,6 +6,7 @@ import java.math.BigInteger;
 
 public class MillerRabinPrimalityTestRosetta implements PrimeCheck {
 
+    // copied from https://rosettacode.org/wiki/Miller%E2%80%93Rabin_primality_test#Java on 28.03.16
     @Override
     public boolean isPrime(long number) {
         return isProbablePrime(BigInteger.valueOf(number), 100);
