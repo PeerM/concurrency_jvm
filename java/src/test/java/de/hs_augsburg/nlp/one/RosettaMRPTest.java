@@ -33,7 +33,7 @@ public class RosettaMRPTest {
     @Test
     public void regressionTest() throws Exception {
         final long start = 100000000000000L;
-        final long rangeSize = 4000;
+        final long rangeSize = 40000;
         checkAllNumbersInRange(start, start + rangeSize, new MillerRabinPrimalityTest(), new MillerRabinPrimalityTestRosetta());
     }
 

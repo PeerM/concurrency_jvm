@@ -3,40 +3,34 @@ package de.hs_augsburg.nlp.one;
 import de.hs_augsburg.meixner.primes.PrimeCheck;
 
 import java.math.BigInteger;
+import java.util.Random;
+import java.util.stream.IntStream;
+
+import static java.math.BigInteger.ONE;
 
 @SuppressWarnings("Duplicates")
 public class MillerRabinPrimalityTestRosetta implements PrimeCheck {
 
-    //this code does not work for the numbers of the size we are working with
-
-    // copied from https://rosettacode.org/wiki/Miller%E2%80%93Rabin_primality_test#Java on 28.03.16
+    // this code is an adaption of https://rosettacode.org/wiki/Miller%E2%80%93Rabin_primality_test#Python on 28.03.16
     // the original source was licensed under the GNU Free Documentation License
-    @Override
-    public boolean isPrime(long number) {
-        return isProbablePrime(BigInteger.valueOf(number), 100);
-    }
+    private boolean isProbablePrime(BigInteger n, int certainty) {
 
-    private static boolean isProbablePrime(BigInteger n, int precision) {
-
-        if (n.compareTo(new BigInteger("341550071728321")) >= 0) {
-            return n.isProbablePrime(precision);
-        }
-
-        int intN = n.intValue();
-        if (intN == 1 || intN == 4 || intN == 6 || intN == 8) return false;
-        if (intN == 2 || intN == 3 || intN == 5 || intN == 7) return true;
-
-        int[] primesToTest = getPrimesToTest(n);
-        if (n.equals(new BigInteger("3215031751"))) {
+        BigInteger w = n.abs();
+        if (w.equals(BigInteger.valueOf(2)))
+            return true;
+        if (!w.testBit(0) || w.equals(ONE))
             return false;
-        }
-        BigInteger d = n.subtract(BigInteger.ONE);
+
         BigInteger s = BigInteger.ZERO;
+        BigInteger d = n.subtract(ONE);
         while (d.mod(BigInteger.valueOf(2)).equals(BigInteger.ZERO)) {
             d = d.shiftRight(1);
-            s = s.add(BigInteger.ONE);
+            s = s.add(ONE);
         }
-        for (int a : primesToTest) {
+        Random r = new Random();
+        int iterations = numberOfRounds(certainty, n);
+        IntStream randomSet = r.ints(iterations);
+        for (int a : randomSet.toArray()) {
             if (try_composite(a, d, n, s)) {
                 return false;
             }
@@ -44,38 +38,55 @@ public class MillerRabinPrimalityTestRosetta implements PrimeCheck {
         return true;
     }
 
-    private static int[] getPrimesToTest(BigInteger n) {
-        if (n.compareTo(new BigInteger("3474749660383")) >= 0) {
-            return new int[]{2, 3, 5, 7, 11, 13, 17};
-        }
-        if (n.compareTo(new BigInteger("2152302898747")) >= 0) {
-            return new int[]{2, 3, 5, 7, 11, 13};
-        }
-        if (n.compareTo(new BigInteger("118670087467")) >= 0) {
-            return new int[]{2, 3, 5, 7, 11};
-        }
-        if (n.compareTo(new BigInteger("25326001")) >= 0) {
-            return new int[]{2, 3, 5, 7};
-        }
-        if (n.compareTo(new BigInteger("1373653")) >= 0) {
-            return new int[]{2, 3, 5};
-        }
-        return new int[]{2, 3};
-    }
-
     // 90% of time is spend in here
-    private static boolean try_composite(int a, BigInteger d, BigInteger n, BigInteger s) {
+    private boolean try_composite(int a, BigInteger d, BigInteger n, BigInteger s) {
         BigInteger aB = BigInteger.valueOf(a);
-        if (aB.modPow(d, n).equals(BigInteger.ONE)) {
+        if (aB.modPow(d, n).equals(ONE)) {
             return false;
         }
         for (int i = 0; BigInteger.valueOf(i).compareTo(s) < 0; i++) {
             // if pow(a, 2**i * d, n) == n-1
-            if (aB.modPow(BigInteger.valueOf(2).pow(i).multiply(d), n).equals(n.subtract(BigInteger.ONE))) {
+            if (aB.modPow(BigInteger.valueOf(2).pow(i).multiply(d), n).equals(n.subtract(ONE))) {
                 return false;
             }
         }
         return true;
+    }
+
+
+    // This method is an adaption of the primeToCertainty in The BigInteger class
+    private int numberOfRounds(int certainty, BigInteger number){
+        int rounds = 0;
+        int n = (Math.min(certainty, Integer.MAX_VALUE-1)+1)/2;
+
+        // The relationship between the certainty and the number of rounds
+        // we perform is given in the draft standard ANSI X9.80, "PRIME
+        // NUMBER GENERATION, PRIMALITY TESTING, AND PRIMALITY CERTIFICATES".
+        int sizeInBits = number.bitLength();
+        if (sizeInBits < 100) {
+            rounds = 50;
+            rounds = n < rounds ? n : rounds;
+            return rounds;
+        }
+
+        if (sizeInBits < 256) {
+            rounds = 27;
+        } else if (sizeInBits < 512) {
+            rounds = 15;
+        } else if (sizeInBits < 768) {
+            rounds = 8;
+        } else if (sizeInBits < 1024) {
+            rounds = 4;
+        } else {
+            rounds = 2;
+        }
+        rounds = n < rounds ? n : rounds;
+        return rounds;
+    }
+
+    @Override
+    public boolean isPrime(long number) {
+        return isProbablePrime(BigInteger.valueOf(number), 10);
     }
 
 }

@@ -32,14 +32,14 @@ public class MRPrimeCheckParallelizingTest {
         profile(checker,"MilerRabin");
     }
 
-    @Test
-    public void profileMRParallel() throws Exception {
-        PrimeCheck checker = new MillerRabinPrimalityTestRosetta();
-        profile(checker,"MilerRabin");
-    }
+//    @Test
+//    public void profileMRParallel() throws Exception {
+//        PrimeCheck checker = new MillerRabinPrimalityTestRosetta();
+//        profile(checker,"MilerRabin");
+//    }
 
     private void profile(PrimeCheck checker, String name) {
-        TimeIt.TimeData<List<Boolean>> timeData = TimeIt.timeIt(() -> LongStream.range(100000000000000L, 100000000500000L).boxed().map(checker::isPrime).collect(Collectors.toList()));
+        TimeIt.TimeData<List<Boolean>> timeData = TimeIt.timeIt(() -> LongStream.range(100000000000000L, 100000000010000L).boxed().map(checker::isPrime).collect(Collectors.toList()));
         logger.info(String.format("%s: e:%d, ecpu:%d", name, timeData.elapsed, timeData.elapsedCpu));
     }
 }
