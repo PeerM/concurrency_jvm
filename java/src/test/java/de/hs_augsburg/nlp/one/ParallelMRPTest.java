@@ -30,11 +30,16 @@ public class ParallelMRPTest {
         logger.info("finished 4");
     }
 
+    @Test
+    public void testOneNumber() throws Exception {
+        PrimeCheck primer = new MillerRabinPrimalityTestParallel();
+        assertTrue("one number", primer.isPrime(1_000_000_000_000_000_003L));
+    }
 
     @Test
     public void regressionTest() throws Exception {
         final long start = 100000000000000L;
-        final long rangeSize = 4000;
+        final long rangeSize = 40000;
         checkAllNumbersInRange(start, start + rangeSize, new MillerRabinPrimalityTest(), new MillerRabinPrimalityTestParallel());
     }
 

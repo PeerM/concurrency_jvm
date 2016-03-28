@@ -34,6 +34,7 @@ public class MillerRabinPrimalityTestParallel implements PrimeCheck {
             d = d.shiftRight(1);
             s = s.add(BigInteger.ONE);
         }
+        // this for runs between 2 and 7 times
         for (int a : primesToTest) {
             if (try_composite(a, d, n, s)) {
                 return false;
@@ -67,6 +68,7 @@ public class MillerRabinPrimalityTestParallel implements PrimeCheck {
         if (aB.modPow(d, n).equals(BigInteger.ONE)) {
             return false;
         }
+        // this for runs between
         for (int i = 0; BigInteger.valueOf(i).compareTo(s) < 0; i++) {
             // if pow(a, 2**i * d, n) == n-1
             if (aB.modPow(BigInteger.valueOf(2).pow(i).multiply(d), n).equals(n.subtract(BigInteger.ONE))) {

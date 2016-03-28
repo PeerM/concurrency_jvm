@@ -7,6 +7,8 @@ import java.math.BigInteger;
 @SuppressWarnings("Duplicates")
 public class MillerRabinPrimalityTestRosetta implements PrimeCheck {
 
+    //this code does not work for the numbers of the size we are working with
+
     // copied from https://rosettacode.org/wiki/Miller%E2%80%93Rabin_primality_test#Java on 28.03.16
     // the original source was licensed under the GNU Free Documentation License
     @Override
