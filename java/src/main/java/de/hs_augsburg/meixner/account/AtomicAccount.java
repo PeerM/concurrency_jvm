@@ -2,7 +2,7 @@ package de.hs_augsburg.meixner.account;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-class AtomicAccount implements Account{
+public class AtomicAccount implements Account{
 
     private AtomicInteger balance = new AtomicInteger();
 
