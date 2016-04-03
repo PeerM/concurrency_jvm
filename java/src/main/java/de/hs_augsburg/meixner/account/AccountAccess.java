@@ -1,7 +1,9 @@
 package de.hs_augsburg.meixner.account;
 
-import utils.profiling.Clock;
-import utils.profiling.ProfiledThread;
+
+
+import de.hs_augsburg.meixner.utils.profiling.Clock;
+import de.hs_augsburg.meixner.utils.profiling.ProfiledThread;
 
 import java.io.IOException;
 import java.util.List;
