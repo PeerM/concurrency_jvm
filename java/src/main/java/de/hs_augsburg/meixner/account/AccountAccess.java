@@ -10,7 +10,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 @SuppressWarnings("Duplicates")
 public class AccountAccess {
-    private static final int NO_RUNS = 5;
+    private static final int NO_RUNS = 16;
     private static final int NO_CUSTOMERS = 4;
     private static final int NO_VISITS = 100_000_000;
     private static final boolean PAYIN_ONLY = true;
@@ -123,8 +123,9 @@ public class AccountAccess {
             for (AccountImpl impl: accountImpls) {
                 System.out.println();
                 System.out.println("Account Type:" + impl);
-                int noRuns = (int) Math.pow(10, i+5);
+                int noRuns = (int) Math.pow(2, i+15);
                 runOn(impl.account, noRuns);
+                impl.account.withdraw(noRuns);
 //                Clock.fs("Account Type:" + impl);
                 System.out.println("noruns: " + noRuns);
                 System.out.println("Vergangene Zeit: " + Clock.elapsed());
