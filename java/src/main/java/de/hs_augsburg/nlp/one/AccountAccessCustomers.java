@@ -9,9 +9,10 @@ import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.locks.ReentrantLock;
 
+@SuppressWarnings("Duplicates")
 public class AccountAccessCustomers {
-    private static final int NO_RUNS = 1;
-    private static final int NO_CUSTOMERS = 4;
+    private static final int NO_RUNS = 8;
+    private static int NO_CUSTOMERS = 4;
     private static final int NO_VISITS = 100000000;
     private static final boolean PAYIN_ONLY = true;
     
@@ -109,7 +110,7 @@ public class AccountAccessCustomers {
         System.out.println();
         System.out.println("--------------------------------------");
         for ( StatisticElement element : statistics) {
-            System.out.println("time:" + element.elapsedTime + " cputime:" + element.cpuTime + "  " + element.impl);
+            System.out.println( element.elapsedTime + ", " + element.cpuTime);
         }
         System.out.println("--------------------------------------");
     }
@@ -125,6 +126,7 @@ public class AccountAccessCustomers {
 //                Clock.fs("Account Type:" + impl);
                 System.out.println("Vergangene Zeit: " + Clock.elapsed());
                 statistics.add(new StatisticElement(impl,Clock.elapsed(), Clock.elapsedCpu()));
+                NO_CUSTOMERS++;
             } 
         }
         printStatistics();
