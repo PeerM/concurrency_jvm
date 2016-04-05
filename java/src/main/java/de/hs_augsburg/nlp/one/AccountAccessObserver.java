@@ -11,7 +11,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 @SuppressWarnings("Duplicates")
 public class AccountAccessObserver {
-    private static final int NO_RUNS = 8;
+    private static final int NO_RUNS = 2;
     private static int NO_CUSTOMERS = 4;
     private static final int NO_VISITS = 100000000;
     private static final boolean PAYIN_ONLY = false;
@@ -24,7 +24,8 @@ public class AccountAccessObserver {
 //                                                 AccountImpl.SPINLOCKFACADE,
 //                                                 AccountImpl.ATOMIC,
 //                                                 AccountImpl.TASLOCKFACADE,
-//                                                 AccountImpl.TTASLOCKFACADE
+//                                                 AccountImpl.TTASLOCKFACADE,
+                                                 AccountImpl.LESSMONITORACCOUNT
                                                  };
     
     private enum AccountImpl {
@@ -35,8 +36,9 @@ public class AccountAccessObserver {
         SPINLOCKFACADE(new SpinLockFacadeAccount()),
         ATOMIC(new AtomicAccount()),
         TASLOCKFACADE(new LockFacadeAccount(new TASLock())),
-        TTASLOCKFACADE(new LockFacadeAccount(new TTASLock()));
-        
+        TTASLOCKFACADE(new LockFacadeAccount(new TTASLock())),
+        LESSMONITORACCOUNT(new LessMonitorAccount());
+
         private final Account account;
         private AccountImpl(Account account) {
             this.account = account;

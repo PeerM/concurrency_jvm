@@ -1,6 +1,6 @@
 package de.hs_augsburg.nlp.one;
 
-import banking.accounts.Account;
+import de.hs_augsburg.meixner.account.Account;
 
 public class LessMonitorAccount implements Account {
 
@@ -21,7 +21,7 @@ public class LessMonitorAccount implements Account {
     public int getBalance() {
         return balance;
     }
-    
+
     public synchronized String toString() {
         return "Konto mit Stand: " + balance;
     }
