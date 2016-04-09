@@ -4,7 +4,7 @@ import de.hs_augsburg.meixner.account.Account;
 
 public class LessMonitorAccount implements Account {
 
-    private int balance;
+    private volatile int balance;
 
     public synchronized void  deposit(int i) {
         balance += i;
