@@ -27,31 +27,38 @@ public class MRPrimeCheckProfilingTest {
     @Test
     public void profileMR() throws Exception {
         PrimeCheck checker = new MillerRabinPrimalityTest();
-        profile(checker,"MilerRabin");
+        profile(checker, "MilerRabin");
     }
 
     @Test
     public void profileMRRosetta() throws Exception {
         PrimeCheck checker = new MillerRabinPrimalityTestRosetta();
-        profile(checker,"MilerRabin");
+        profile(checker, "MilerRabin");
     }
 
     @Test
     public void profileMRParallel() throws Exception {
         PrimeCheck checker = new MillerRabinPrimalityTestRosetta();
-        profile(checker,"MilerRabin");
+        profile(checker, "MilerRabin");
     }
 
     @Test
     public void profileSimple() throws Exception {
         PrimeCheck checker = new SimplePrimeCheck();
-        profile(checker,"Simple");
+        profile(checker, "Simple");
     }
 
     @Test
     public void profileParallelNaive() throws Exception {
         PrimeCheck checker = new PMapPrimeCheck();
-        profile(checker,"ParallelJavaMap");
+        profile(checker, "ParallelJavaMap");
+    }
+
+    @Test
+    public void profileMap() {
+        PrimeCheck checker = new MapPrimeCheck();
+        profile(checker, "MapPrimeCheck");
+
     }
 
     private void profile(PrimeCheck checker, String name) {
