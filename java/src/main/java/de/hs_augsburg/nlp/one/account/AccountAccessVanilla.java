@@ -11,7 +11,7 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class AccountAccessVanilla {
     private static final int NO_RUNS = 1;
-    private static final int NO_CUSTOMERS = 4;
+    private static final int NO_CUSTOMERS = 20;
     private static final int NO_VISITS = 100000000;
     private static final boolean PAYIN_ONLY = true;
 

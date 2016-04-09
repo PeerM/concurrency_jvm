@@ -19,13 +19,14 @@ public class AccountAccessWithWithdrawal {
     
     private static AccountImpl[] accountImpls = {
 //                                                 AccountImpl.UNSAFE, 
-//                                                 AccountImpl.MONITOR,
+                                                 AccountImpl.MONITOR,
 //                                                 AccountImpl.WAITNOTIFY,
 //                                                 AccountImpl.LOCKFACADE,
 //                                                 AccountImpl.SPINLOCKFACADE,
                                                  AccountImpl.ATOMIC,
 //                                                 AccountImpl.TASLOCKFACADE,
-//                                                 AccountImpl.TTASLOCKFACADE
+//                                                 AccountImpl.TTASLOCKFACADE,
+                                                AccountImpl.ADDER_ACCOUNT,
                                                 AccountImpl.ATOMIC_ADDER_ACCOUNT
                                                  };
     
@@ -38,8 +39,10 @@ public class AccountAccessWithWithdrawal {
         ATOMIC(new AtomicAccount()),
         TASLOCKFACADE(new LockFacadeAccount(new TASLock())),
         TTASLOCKFACADE(new LockFacadeAccount(new TTASLock())),
-        ATOMIC_ADDER_ACCOUNT(new AtomicAdderAccount());
-        
+        ATOMIC_ADDER_ACCOUNT(new AtomicAdderAccount()),
+        ADDER_ACCOUNT(new AdderAccount());
+
+
         private final Account account;
         private AccountImpl(Account account) {
             this.account = account;
