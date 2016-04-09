@@ -25,6 +25,9 @@ public class AtomicAdderAccount implements Account {
         // long deposited = deposits.sum();
         while (true) {
             long currentValue = withdrawals.get();
+            // Summing the deposits every time makes this critical section bigger.
+            // There is the possibility of making the trade off,
+            // of summing only once and having a few more withdraw calls returning false.
             if (deposits.sum() - currentValue < amount)  // do not allow overdrawing
                 return false;
             if (withdrawals.compareAndSet(currentValue, currentValue + amount))
