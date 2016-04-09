@@ -2,7 +2,7 @@ package de.hs_augsburg.nlp.one;
 
 import de.hs_augsburg.meixner.primes.MillerRabinPrimalityTest;
 import de.hs_augsburg.meixner.primes.PrimeCheck;
-import de.hs_augsburg.meixner.utils.profiling.Clock;
+import de.hs_augsburg.nlp.one.prime.MillerRabinPrimalityTestRosetta;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;

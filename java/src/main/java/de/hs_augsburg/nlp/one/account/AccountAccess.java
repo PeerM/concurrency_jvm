@@ -1,4 +1,6 @@
-package de.hs_augsburg.nlp.one;
+package de.hs_augsburg.nlp.one.account;
+
+
 
 import de.hs_augsburg.meixner.account.*;
 import de.hs_augsburg.meixner.utils.profiling.Clock;
@@ -10,10 +12,10 @@ import java.util.Vector;
 import java.util.concurrent.locks.ReentrantLock;
 
 @SuppressWarnings("Duplicates")
-public class AccountAccessCustomers {
-    private static final int NO_RUNS = 8;
-    private static int NO_CUSTOMERS = 4;
-    private static final int NO_VISITS = 100000000;
+public class AccountAccess {
+    private static final int NO_RUNS = 1;
+    private static final int NO_CUSTOMERS = 4;
+    private static final int NO_VISITS = 100_000_000;
     private static final boolean PAYIN_ONLY = true;
     
     private static AccountImpl[] accountImpls = {
@@ -60,14 +62,16 @@ public class AccountAccessCustomers {
     private static class Customer implements Runnable {
         private Account account;
         private boolean payin; // Einzahler oder Auszahler
+        private int noVisits;
 
-        public Customer(Account a, boolean pin) {
+        public Customer(Account a, boolean pin, int noVisits) {
             account = a;
             payin = pin;
+            this.noVisits = noVisits;
         }
 
         public void run() {
-            for (int i = 1; i <= NO_VISITS/NO_CUSTOMERS; i++) { // try also more contended case 
+            for (int i = 1; i <= noVisits/NO_CUSTOMERS; i++) { // try also more contended case
                 if (payin)
                     account.deposit(1);
                 else
@@ -77,7 +81,7 @@ public class AccountAccessCustomers {
     }
 
 
-    private static void runOn(Account account) {
+    private static void runOn(Account account, int noRuns) {
         System.out.println("KontoStand am Anfang: " + account.getBalance());
 
         Thread[] customerThreads = new Thread[NO_CUSTOMERS];
@@ -86,7 +90,7 @@ public class AccountAccessCustomers {
             boolean payIn = true;
             if (!PAYIN_ONLY)
                 payIn = (i % 2) == 0;
-            customerThreads[i] = new ProfiledThread(new Customer(account, payIn ));
+            customerThreads[i] = new ProfiledThread(new Customer(account, payIn, noRuns ));
 //            System.out.println(customerThreads[i]);
         }
         
@@ -122,11 +126,13 @@ public class AccountAccessCustomers {
             for (AccountImpl impl: accountImpls) {
                 System.out.println();
                 System.out.println("Account Type:" + impl);
-                runOn(impl.account);
+                int noRuns = (int) Math.pow(2, i+15);
+                runOn(impl.account, noRuns);
+                impl.account.withdraw(noRuns);
 //                Clock.fs("Account Type:" + impl);
+                System.out.println("noruns: " + noRuns);
                 System.out.println("Vergangene Zeit: " + Clock.elapsed());
                 statistics.add(new StatisticElement(impl,Clock.elapsed(), Clock.elapsedCpu()));
-                NO_CUSTOMERS++;
             } 
         }
         printStatistics();

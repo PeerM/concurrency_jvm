@@ -1,4 +1,4 @@
-package de.hs_augsburg.nlp.one;
+package de.hs_augsburg.nlp.one.prime;
 
 public class Task {
     final long start;

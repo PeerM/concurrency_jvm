@@ -1,7 +1,6 @@
-package de.hs_augsburg.nlp.one;
+package de.hs_augsburg.nlp.one.prime;
 
 import de.hs_augsburg.meixner.primes.PrimeCheck;
-import de.hs_augsburg.nlp.one.Task;
 import one.util.streamex.StreamEx;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

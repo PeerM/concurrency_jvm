@@ -4,6 +4,7 @@ import de.hs_augsburg.meixner.primes.MillerRabinPrimalityTest;
 import de.hs_augsburg.meixner.primes.PrimeCheck;
 import de.hs_augsburg.meixner.primes.SimplePrimeCheck;
 import de.hs_augsburg.meixner.utils.profiling.Clock;
+import de.hs_augsburg.nlp.one.prime.TaskedPrimeCheck;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;

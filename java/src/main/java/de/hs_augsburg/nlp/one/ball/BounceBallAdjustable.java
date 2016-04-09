@@ -1,4 +1,4 @@
-package de.hs_augsburg.nlp.one;
+package de.hs_augsburg.nlp.one.ball;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
