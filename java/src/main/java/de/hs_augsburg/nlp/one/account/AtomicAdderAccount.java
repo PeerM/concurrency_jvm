@@ -22,11 +22,12 @@ public class AtomicAdderAccount implements Account {
 
     public boolean withdraw(int amount) {
         // withdraw performance is worse than AdderAccount, but you can't overdraw this account.
+        // long deposited = deposits.sum();
         while (true) {
             long currentValue = withdrawals.get();
             if (deposits.sum() - currentValue < amount)  // do not allow overdrawing
-                continue;
-            if (withdrawals.compareAndSet(currentValue, currentValue - amount))
+                return false;
+            if (withdrawals.compareAndSet(currentValue, currentValue + amount))
                 return true;
         }
     }
