@@ -20,15 +20,14 @@
                          (< number 2) false
                          (= number 2) true
                          (= (mod number 2) 0) false
-                         true
-                         (let [interval (calcInterval number)]
-                           (not
-                             (->>
-                               (iterate
-                                 (fn [task] (nextSeqment number interval task))
-                                 (nextSeqment number interval [0 3]))
-                               (take-while (fn [[start _]] (<= (* start start) number)))
-                               (pmap
-                                 (fn [[start end]] (PrimeChecker/doesRangeContainDivider start end number)))
-                               (some
-                                 true?))))))
+                         true (let [interval (calcInterval number)]
+                               (not
+                                 (->>
+                                   (iterate
+                                     (fn [task] (nextSeqment number interval task))
+                                     (nextSeqment number interval [0 3]))
+                                   (take-while (fn [[start _]] (<= (* start start) number)))
+                                   (pmap
+                                     (fn [[start end]] (PrimeChecker/doesRangeContainDivider start end number)))
+                                   (some
+                                     true?))))))
