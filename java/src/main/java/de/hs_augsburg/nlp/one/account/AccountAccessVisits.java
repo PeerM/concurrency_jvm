@@ -11,9 +11,10 @@ import java.util.List;
 import java.util.Vector;
 import java.util.concurrent.locks.ReentrantLock;
 
+// varies the number of visits per run
 @SuppressWarnings("Duplicates")
-public class AccountAccess {
-    private static final int NO_RUNS = 1;
+public class AccountAccessVisits {
+    private static final int NO_RUNS = 4;
     private static final int NO_CUSTOMERS = 4;
     private static final int NO_VISITS = 100_000_000;
     private static final boolean PAYIN_ONLY = true;
