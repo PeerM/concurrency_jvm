@@ -6,6 +6,7 @@ import java.util.concurrent.atomic.LongAdder;
 
 public class AdderAccount implements Account {
 
+    // volatile may not be necessary but class gets constructed in one thread and the used in an other, so better save then sorry
     private volatile LongAdder balance;
 
     public AdderAccount() {
