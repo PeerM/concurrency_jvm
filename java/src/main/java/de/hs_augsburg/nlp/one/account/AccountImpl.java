@@ -15,8 +15,8 @@ enum AccountImpl {
     ATOMIC(new AtomicAccount()),
     TASLOCKFACADE(new LockFacadeAccount(new TASLock())),
     TTASLOCKFACADE(new LockFacadeAccount(new TTASLock())),
-    ATOMIC_ADDER_ACCOUNT(new AtomicAdderAccount()),
-    ADDER_ACCOUNT(new AdderAccount());
+    ATOMIC_ADDER(new AtomicAdderAccount()),
+    ADDER(new AdderAccount());
 
     final Account account;
 

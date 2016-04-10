@@ -7,7 +7,6 @@ import de.hs_augsburg.meixner.utils.profiling.ProfiledThread;
 import java.io.IOException;
 import java.util.List;
 import java.util.Vector;
-import java.util.concurrent.locks.ReentrantLock;
 
 @SuppressWarnings("Duplicates")
 public class AccountAccessCustomers {
@@ -26,8 +25,8 @@ public class AccountAccessCustomers {
             AccountImpl.ATOMIC,
 //                                                 AccountImpl.TASLOCKFACADE,
 //                                                 AccountImpl.TTASLOCKFACADE
-            AccountImpl.ADDER_ACCOUNT,
-            AccountImpl.ATOMIC_ADDER_ACCOUNT,
+            AccountImpl.ADDER,
+            AccountImpl.ATOMIC_ADDER,
     };
 
     private static class StatisticElement {
