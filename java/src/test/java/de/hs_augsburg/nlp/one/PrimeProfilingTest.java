@@ -3,10 +3,7 @@ package de.hs_augsburg.nlp.one;
 import de.hs_augsburg.meixner.primes.MillerRabinPrimalityTest;
 import de.hs_augsburg.meixner.primes.PrimeCheck;
 import de.hs_augsburg.meixner.primes.SimplePrimeCheck;
-import de.hs_augsburg.nlp.one.prime.MapPrimeCheck;
-import de.hs_augsburg.nlp.one.prime.MillerRabinPrimalityTestParallel;
-import de.hs_augsburg.nlp.one.prime.MillerRabinPrimalityTestRosetta;
-import de.hs_augsburg.nlp.one.prime.PMapPrimeCheck;
+import de.hs_augsburg.nlp.one.prime.*;
 import de.hs_augsburg.nlp.util.TimeIt;
 import org.junit.Rule;
 import org.junit.Test;
@@ -61,6 +58,13 @@ public class PrimeProfilingTest {
     public void profileMap() {
         PrimeCheck checker = new MapPrimeCheck();
         profile(checker, "MapPrimeCheck");
+
+    }
+
+    @Test
+    public void profileTasked() {
+        PrimeCheck checker = new TaskedPrimeCheck();
+        profile(checker, "Tasked Prime");
 
     }
 

@@ -15,7 +15,7 @@ public class TaskedPrimeCheck implements PrimeCheck, AutoCloseable {
     private ForkJoinPool pool;
 
     public TaskedPrimeCheck() {
-        this.pool = new ForkJoinPool();
+        this.pool = new ForkJoinPool(4);
     }
 
     public static long interval(long number) {
