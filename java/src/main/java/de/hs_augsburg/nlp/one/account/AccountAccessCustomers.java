@@ -57,7 +57,7 @@ public class AccountAccessCustomers {
         public void run() {
             for (int i = 1; i <= NO_VISITS/NO_CUSTOMERS; i++) { // try also more contended case
                 if (payin)
-                    account.getBalance();
+                    account.deposit(1);
                 else
                     account.withdraw(1);
             }
