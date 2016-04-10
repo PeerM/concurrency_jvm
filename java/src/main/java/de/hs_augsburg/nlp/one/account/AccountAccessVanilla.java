@@ -96,7 +96,7 @@ public class AccountAccessVanilla {
         System.out.println();
         System.out.println("--------------------------------------");
         for ( StatisticElement element : statistics) {
-            System.out.println("time:" + element.elapsedTime + " cputime:" + element.cpuTime + "  " + element.impl);
+            System.out.println("time," + element.elapsedTime + ",cputime," + element.cpuTime + ",impl," + element.impl);
         }
         System.out.println("--------------------------------------");
     }
