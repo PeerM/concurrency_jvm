@@ -21,7 +21,8 @@ public class AccountAccessVisits {
     
     private static AccountImpl[] accountImpls = {
 //                                                 AccountImpl.UNSAFE, 
-                                                 AccountImpl.MONITOR,
+            AccountImpl.MONITOR,
+            AccountImpl.LESS_MONITOR,
 //                                                 AccountImpl.WAITNOTIFY,
 //                                                 AccountImpl.LOCKFACADE,
 //                                                 AccountImpl.SPINLOCKFACADE,
@@ -29,22 +30,7 @@ public class AccountAccessVisits {
 //                                                 AccountImpl.TASLOCKFACADE,
 //                                                 AccountImpl.TTASLOCKFACADE
                                                  };
-    
-    private enum AccountImpl {
-        UNSAFE(new UnsafeAccount()),
-        MONITOR(new MonitorAccount()),
-        WAITNOTIFY(new WaitNotifyAccount()),
-        LOCKFACADE(new LockFacadeAccount(new ReentrantLock())),
-        SPINLOCKFACADE(new SpinLockFacadeAccount()),
-        ATOMIC(new AtomicAccount()),
-        TASLOCKFACADE(new LockFacadeAccount(new TASLock())),
-        TTASLOCKFACADE(new LockFacadeAccount(new TTASLock()));
-        
-        private final Account account;
-        private AccountImpl(Account account) {
-            this.account = account;
-        }
-    }
+
     
     private static class StatisticElement {
         public final AccountImpl impl;
@@ -115,7 +101,7 @@ public class AccountAccessVisits {
         System.out.println();
         System.out.println("--------------------------------------");
         for ( StatisticElement element : statistics) {
-            System.out.println( element.elapsedTime + ", " + element.cpuTime);
+            System.out.println( element.elapsedTime + ", " + element.cpuTime+ ", " + element.impl);
         }
         System.out.println("--------------------------------------");
     }

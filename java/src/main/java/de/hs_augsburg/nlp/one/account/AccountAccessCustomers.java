@@ -26,23 +26,7 @@ public class AccountAccessCustomers {
 //                                                 AccountImpl.TASLOCKFACADE,
 //                                                 AccountImpl.TTASLOCKFACADE
                                                  };
-    
-    private enum AccountImpl {
-        UNSAFE(new UnsafeAccount()),
-        MONITOR(new MonitorAccount()),
-        WAITNOTIFY(new WaitNotifyAccount()),
-        LOCKFACADE(new LockFacadeAccount(new ReentrantLock())),
-        SPINLOCKFACADE(new SpinLockFacadeAccount()),
-        ATOMIC(new AtomicAccount()),
-        TASLOCKFACADE(new LockFacadeAccount(new TASLock())),
-        TTASLOCKFACADE(new LockFacadeAccount(new TTASLock()));
-        
-        private final Account account;
-        private AccountImpl(Account account) {
-            this.account = account;
-        }
-    }
-    
+
     private static class StatisticElement {
         public final AccountImpl impl;
         public final long elapsedTime;

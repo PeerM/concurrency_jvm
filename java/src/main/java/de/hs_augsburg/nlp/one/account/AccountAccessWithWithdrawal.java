@@ -19,35 +19,17 @@ public class AccountAccessWithWithdrawal {
     
     private static AccountImpl[] accountImpls = {
 //                                                 AccountImpl.UNSAFE, 
-                                                 AccountImpl.MONITOR,
+            AccountImpl.MONITOR,
+            AccountImpl.LESS_MONITOR,
 //                                                 AccountImpl.WAITNOTIFY,
 //                                                 AccountImpl.LOCKFACADE,
 //                                                 AccountImpl.SPINLOCKFACADE,
-                                                 AccountImpl.ATOMIC,
+            AccountImpl.ATOMIC,
 //                                                 AccountImpl.TASLOCKFACADE,
 //                                                 AccountImpl.TTASLOCKFACADE,
-                                                AccountImpl.ADDER_ACCOUNT,
-                                                AccountImpl.ATOMIC_ADDER_ACCOUNT
+            AccountImpl.ADDER_ACCOUNT,
+            AccountImpl.ATOMIC_ADDER_ACCOUNT
                                                  };
-    
-    private enum AccountImpl {
-        UNSAFE(new UnsafeAccount()),
-        MONITOR(new MonitorAccount()),
-        WAITNOTIFY(new WaitNotifyAccount()),
-        LOCKFACADE(new LockFacadeAccount(new ReentrantLock())),
-        SPINLOCKFACADE(new SpinLockFacadeAccount()),
-        ATOMIC(new AtomicAccount()),
-        TASLOCKFACADE(new LockFacadeAccount(new TASLock())),
-        TTASLOCKFACADE(new LockFacadeAccount(new TTASLock())),
-        ATOMIC_ADDER_ACCOUNT(new AtomicAdderAccount()),
-        ADDER_ACCOUNT(new AdderAccount());
-
-
-        private final Account account;
-        private AccountImpl(Account account) {
-            this.account = account;
-        }
-    }
     
     private static class StatisticElement {
         public final AccountImpl impl;
