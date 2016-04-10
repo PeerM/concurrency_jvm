@@ -17,10 +17,10 @@ public class AccountAccessVanilla {
 
     private static AccountImpl[] accountImpls = {
 //                                                 AccountImpl.UNSAFE, 
-//                                                 AccountImpl.MONITOR,
+            AccountImpl.MONITOR,
             AccountImpl.LESS_MONITOR,
 //                                                 AccountImpl.WAITNOTIFY,
-//                                                 AccountImpl.LOCKFACADE,
+            AccountImpl.LOCKFACADE,
 //                                                 AccountImpl.SPINLOCKFACADE,
             AccountImpl.ATOMIC,
 //                                                 AccountImpl.TASLOCKFACADE,
