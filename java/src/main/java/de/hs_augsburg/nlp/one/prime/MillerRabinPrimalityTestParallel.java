@@ -3,14 +3,15 @@ package de.hs_augsburg.nlp.one.prime;
 import de.hs_augsburg.meixner.primes.PrimeCheck;
 
 import java.math.BigInteger;
+import java.util.Arrays;
 import java.util.Random;
-import java.util.stream.LongStream;
+import java.util.stream.IntStream;
 
 import static java.math.BigInteger.ONE;
 
 @SuppressWarnings("Duplicates")
-public class MillerRabinPrimalityTestRosetta implements PrimeCheck {
-
+public class MillerRabinPrimalityTestParallel implements PrimeCheck {
+// comparable in speed to the non parallel version MillerRabinPrimalityTestRosetta
     static private long nextCanditate(Random r, long upper) {
         return (long) (r.nextDouble() * (upper - 4)) + 2;
     }
@@ -32,19 +33,15 @@ public class MillerRabinPrimalityTestRosetta implements PrimeCheck {
             s = s.add(ONE);
         }
         Random r = new Random();
+        final BigInteger finalS = s;
+        final BigInteger finalD = d;
         int iterations = numberOfRounds(certainty, n);
         Long[] randomSet = new Long[iterations];
         for (int i = 0; i < randomSet.length; i++) {
             randomSet[i] = nextCanditate(r, n.longValue());
         }
-//        LongStream randomSet = LongStream
-//                .iterate(nextCanditate(r, n.longValue()), p -> nextCanditate(r, n.longValue())).limit(iterations);
-        for (Long a : randomSet) {
-            if (try_composite(a, d, n, s)) {
-                return false;
-            }
-        }
-        return true;
+//        LongStream rStream = LongStream.iterate(nextCanditate(r, n.longValue()), p -> nextCanditate(r, n.longValue())).limit(iterations);
+        return !Arrays.stream(randomSet).parallel().anyMatch(a -> try_composite(a, finalD, n, finalS));
     }
 
     // 90% of time is spend in here
@@ -53,13 +50,17 @@ public class MillerRabinPrimalityTestRosetta implements PrimeCheck {
         if (aB.modPow(d, n).equals(ONE)) {
             return false;
         }
-        for (int i = 0; BigInteger.valueOf(i).compareTo(s) < 0; i++) {
-            // if pow(a, 2**i * d, n) == n-1
-            if (aB.modPow(BigInteger.valueOf(2).pow(i).multiply(d), n).equals(n.subtract(ONE))) {
-                return false;
-            }
-        }
-        return true;
+        //1 bis 16
+//        for (int i = 0; BigInteger.valueOf(i).compareTo(s) < 0; i++) {
+//            // if pow(a, 2**i * d, n) == n-1
+//            if (aB.modPow(BigInteger.valueOf(2).pow(i).multiply(d), n).equals(n.subtract(ONE))) {
+//                return false;
+//            }
+//        }
+//        return true;
+        return !IntStream.range(0,s.intValue())
+                .parallel()
+                .anyMatch(i -> aB.modPow(BigInteger.valueOf(2).pow(i).multiply(d), n).equals(n.subtract(ONE)));
     }
 
 

@@ -4,6 +4,7 @@ import de.hs_augsburg.meixner.primes.MillerRabinPrimalityTest;
 import de.hs_augsburg.meixner.primes.PrimeCheck;
 import de.hs_augsburg.meixner.primes.SimplePrimeCheck;
 import de.hs_augsburg.nlp.one.prime.MapPrimeCheck;
+import de.hs_augsburg.nlp.one.prime.MillerRabinPrimalityTestParallel;
 import de.hs_augsburg.nlp.one.prime.MillerRabinPrimalityTestRosetta;
 import de.hs_augsburg.nlp.one.prime.PMapPrimeCheck;
 import de.hs_augsburg.nlp.util.TimeIt;
@@ -40,8 +41,8 @@ public class MRPrimeCheckProfilingTest {
 
     @Test
     public void profileMRParallel() throws Exception {
-        PrimeCheck checker = new MillerRabinPrimalityTestRosetta();
-        profile(checker, "MilerRabin");
+        PrimeCheck checker = new MillerRabinPrimalityTestParallel();
+        profile(checker, "MilerRabin Parallel");
     }
 
     @Test

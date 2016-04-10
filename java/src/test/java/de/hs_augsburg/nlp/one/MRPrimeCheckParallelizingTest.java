@@ -2,6 +2,7 @@ package de.hs_augsburg.nlp.one;
 
 import de.hs_augsburg.meixner.primes.MillerRabinPrimalityTest;
 import de.hs_augsburg.meixner.primes.PrimeCheck;
+import de.hs_augsburg.nlp.one.prime.MillerRabinPrimalityTestParallel;
 import de.hs_augsburg.nlp.one.prime.MillerRabinPrimalityTestRosetta;
 import de.hs_augsburg.nlp.util.TimeIt;
 import org.junit.Rule;
@@ -23,7 +24,7 @@ public class MRPrimeCheckParallelizingTest {
     @Test
     public void profileMR() throws Exception {
         PrimeCheck checker = new MillerRabinPrimalityTest();
-        profile(checker,"MilerRabin");
+        profile(checker,"standard");
     }
 
     @Test
@@ -32,11 +33,11 @@ public class MRPrimeCheckParallelizingTest {
         profile(checker,"MilerRabin");
     }
 
-//    @Test
-//    public void profileMRParallel() throws Exception {
-//        PrimeCheck checker = new MillerRabinPrimalityTestRosetta();
-//        profile(checker,"MilerRabin");
-//    }
+    @Test
+    public void profileMRParallel() throws Exception {
+        PrimeCheck checker = new MillerRabinPrimalityTestParallel();
+        profile(checker,"MilerRabin Parallel");
+    }
 
     private void profile(PrimeCheck checker, String name) {
         TimeIt.TimeData<List<Boolean>> timeData = TimeIt.timeIt(() -> LongStream.range(100000000000000L, 100000000010000L).boxed().map(checker::isPrime).collect(Collectors.toList()));
