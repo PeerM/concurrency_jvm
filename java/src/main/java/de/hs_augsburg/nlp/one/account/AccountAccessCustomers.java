@@ -58,7 +58,7 @@ public class AccountAccessCustomers {
         public void run() {
             for (int i = 1; i <= NO_VISITS/NO_CUSTOMERS; i++) { // try also more contended case
                 if (payin)
-                    account.deposit(1);
+                    account.getBalance();
                 else
                     account.withdraw(1);
             }
@@ -67,8 +67,8 @@ public class AccountAccessCustomers {
 
 
     private static void runOn(Account account) {
+        System.out.println("Anzahl Threads: " + NO_CUSTOMERS);
         System.out.println("KontoStand am Anfang: " + account.getBalance());
-
         Thread[] customerThreads = new Thread[NO_CUSTOMERS];
 
         for (int i = 0; i < NO_CUSTOMERS; i++) {
@@ -116,8 +116,8 @@ public class AccountAccessCustomers {
 //                Clock.fs("Account Type:" + impl);
                 System.out.println("Vergangene Zeit: " + Clock.elapsed());
                 statistics.add(new StatisticElement(impl,Clock.elapsed(), Clock.elapsedCpu(),NO_CUSTOMERS));
-                NO_CUSTOMERS*=2;
             }
+            NO_CUSTOMERS*=2;
         }
         printStatistics();
     }
