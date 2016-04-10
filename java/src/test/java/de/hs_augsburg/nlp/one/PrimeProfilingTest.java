@@ -22,7 +22,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 @SuppressWarnings("Duplicates")
-public class MRPrimeCheckProfilingTest {
+public class PrimeProfilingTest {
     @Rule
     public ErrorCollector collector = new ErrorCollector();
     private Logger logger = LoggerFactory.getLogger(this.getClass());
