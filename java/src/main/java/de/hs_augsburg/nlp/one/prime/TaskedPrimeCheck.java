@@ -9,13 +9,13 @@ import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.ForkJoinTask;
 
 @SuppressWarnings("Duplicates")
-public class TaskedPrimeCheck implements PrimeCheck, AutoCloseable {
+public class TaskedPrimeCheck implements PrimeCheck {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
     private ForkJoinPool pool;
 
     public TaskedPrimeCheck() {
-        this.pool = new ForkJoinPool(4);
+        this.pool = new ForkJoinPool(8);
     }
 
     public static long interval(long number) {
@@ -65,12 +65,8 @@ public class TaskedPrimeCheck implements PrimeCheck, AutoCloseable {
                         .map(TaskedPrimeCheck::dividerInTask)
                         //.peek(b -> logger.info("stream got " + b))
                         .anyMatch(b -> b));
-        return forkJoinTask.join();
-    }
-
-    @Override
-    public void close() throws Exception {
+        Boolean result = forkJoinTask.join();
         pool.shutdown();
+        return result;
     }
-
 }
