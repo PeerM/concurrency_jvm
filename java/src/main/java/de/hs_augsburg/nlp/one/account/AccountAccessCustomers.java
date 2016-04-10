@@ -59,7 +59,7 @@ public class AccountAccessCustomers {
                 if (payin)
                     account.deposit(1);
                 else
-                    account.getBalance();
+                    account.withdraw(1);
             }
         }
     }
