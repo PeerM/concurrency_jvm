@@ -11,36 +11,41 @@ import java.util.concurrent.locks.ReentrantLock;
 
 @SuppressWarnings("Duplicates")
 public class AccountAccessCustomers {
-    private static final int NO_RUNS = 8;
-    private static int NO_CUSTOMERS = 4;
-    private static final int NO_VISITS = 100000000;
+    private static final int NO_RUNS = 6;
+    private static int NO_CUSTOMERS = 2;
+    private static final int NO_VISITS = 10_000_000;
     private static final boolean PAYIN_ONLY = true;
-    
+
     private static AccountImpl[] accountImpls = {
 //                                                 AccountImpl.UNSAFE, 
-                                                 AccountImpl.MONITOR,
+            AccountImpl.MONITOR,
+            AccountImpl.LESS_MONITOR,
 //                                                 AccountImpl.WAITNOTIFY,
-//                                                 AccountImpl.LOCKFACADE,
+            AccountImpl.LOCKFACADE,
 //                                                 AccountImpl.SPINLOCKFACADE,
-//                                                 AccountImpl.ATOMIC,
+            AccountImpl.ATOMIC,
 //                                                 AccountImpl.TASLOCKFACADE,
 //                                                 AccountImpl.TTASLOCKFACADE
-                                                 };
+            AccountImpl.ADDER_ACCOUNT,
+            AccountImpl.ATOMIC_ADDER_ACCOUNT,
+    };
 
     private static class StatisticElement {
         public final AccountImpl impl;
         public final long elapsedTime;
         public final long cpuTime;
+        public final int noCustomers;
 
-        public StatisticElement(AccountImpl impl, long elapsedTime, long cpuTime) {
+        public StatisticElement(AccountImpl impl, long elapsedTime, long cpuTime, int noCustomers) {
             this.impl = impl;
             this.elapsedTime = elapsedTime;
             this.cpuTime =cpuTime;
+            this.noCustomers = noCustomers;
         }
     }
-    
+
     private static List<StatisticElement> statistics = new Vector<StatisticElement> ();
-    
+
     private static class Customer implements Runnable {
         private Account account;
         private boolean payin; // Einzahler oder Auszahler
@@ -51,7 +56,7 @@ public class AccountAccessCustomers {
         }
 
         public void run() {
-            for (int i = 1; i <= NO_VISITS/NO_CUSTOMERS; i++) { // try also more contended case 
+            for (int i = 1; i <= NO_VISITS/NO_CUSTOMERS; i++) { // try also more contended case
                 if (payin)
                     account.deposit(1);
                 else
@@ -73,7 +78,7 @@ public class AccountAccessCustomers {
             customerThreads[i] = new ProfiledThread(new Customer(account, payIn ));
 //            System.out.println(customerThreads[i]);
         }
-        
+
         Clock.reset();
         for (int i = 0; i < NO_CUSTOMERS; i++) {
             customerThreads[i].start();
@@ -86,19 +91,20 @@ public class AccountAccessCustomers {
                 System.out.println(e);
             }
 
-        }   
+        }
         System.out.println("KontoStand am Ende: " + account.getBalance());
     }
-    
+
     private static void printStatistics() {
         System.out.println();
         System.out.println("--------------------------------------");
+        System.out.println("time,cputime,impl,noCustomers");
         for ( StatisticElement element : statistics) {
-            System.out.println( element.elapsedTime + ", " + element.cpuTime);
+            System.out.println(element.elapsedTime + "," + element.cpuTime + "," + element.impl+","+element.noCustomers);
         }
         System.out.println("--------------------------------------");
     }
-    
+
     public static void main(String[] args) throws IOException {
 //        System.out.println("hit enter to continue");
 //        System.in.read();
@@ -109,9 +115,9 @@ public class AccountAccessCustomers {
                 runOn(impl.account);
 //                Clock.fs("Account Type:" + impl);
                 System.out.println("Vergangene Zeit: " + Clock.elapsed());
-                statistics.add(new StatisticElement(impl,Clock.elapsed(), Clock.elapsedCpu()));
-                NO_CUSTOMERS++;
-            } 
+                statistics.add(new StatisticElement(impl,Clock.elapsed(), Clock.elapsedCpu(),NO_CUSTOMERS));
+                NO_CUSTOMERS*=2;
+            }
         }
         printStatistics();
     }
