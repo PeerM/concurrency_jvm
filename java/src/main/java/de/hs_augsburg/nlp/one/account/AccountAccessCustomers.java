@@ -13,7 +13,7 @@ public class AccountAccessCustomers {
     private static final int NO_RUNS = 6;
     private static int NO_CUSTOMERS = 2;
     private static final int NO_VISITS = 10_000_000;
-    private static final boolean PAYIN_ONLY = true;
+    private static final boolean PAYIN_ONLY = false;
 
     private static AccountImpl[] accountImpls = {
 //                                                 AccountImpl.UNSAFE, 
@@ -59,7 +59,7 @@ public class AccountAccessCustomers {
                 if (payin)
                     account.deposit(1);
                 else
-                    account.withdraw(1);
+                    account.getBalance();
             }
         }
     }
