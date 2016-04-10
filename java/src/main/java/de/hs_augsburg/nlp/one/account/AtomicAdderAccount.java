@@ -16,7 +16,7 @@ public class AtomicAdderAccount implements Account {
         withdrawals = new AtomicLong();
     }
 
-    public synchronized void deposit(int i) {
+    public void deposit(int i) {
         deposits.add(i);
     }
 
@@ -39,7 +39,7 @@ public class AtomicAdderAccount implements Account {
         return (int) (deposits.sum() - withdrawals.get());
     }
 
-    public synchronized String toString() {
+    public String toString() {
         return "Konto mit Stand: " + getBalance();
     }
 }

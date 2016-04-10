@@ -4,7 +4,6 @@ import de.hs_augsburg.meixner.account.Account;
 
 import java.util.concurrent.atomic.LongAdder;
 
-// interestingly this is slower than the Atomic Account on my two core (with hyperthreading) laptop
 public class AdderAccount implements Account {
 
 
@@ -15,11 +14,11 @@ public class AdderAccount implements Account {
         balance = new LongAdder();
     }
 
-    public synchronized void deposit(int i) {
+    public void deposit(int i) {
         balance.add(i);
     }
 
-    public synchronized boolean withdraw(int i) {
+    public boolean withdraw(int i) {
 
         if (balance.sum() >= i) {
             // Warning: this smells like check then act
@@ -37,7 +36,7 @@ public class AdderAccount implements Account {
         return balance.intValue();
     }
 
-    public synchronized String toString() {
+    public String toString() {
         return "Konto mit Stand: " + balance.sum();
     }
 }
