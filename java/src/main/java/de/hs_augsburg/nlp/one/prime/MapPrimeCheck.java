@@ -8,6 +8,7 @@ import java.util.stream.LongStream;
 import static java.lang.Math.sqrt;
 
 @SuppressWarnings("Duplicates")
+@Deprecated
 public class MapPrimeCheck implements PrimeCheck {
     @Override
     public boolean isPrime(long number) {
