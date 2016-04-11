@@ -11,11 +11,6 @@ import static java.lang.Math.sqrt;
 @SuppressWarnings("Duplicates")
 @Deprecated
 public class PMapPrimeCheck implements PrimeCheck {
-    private ForkJoinPool pool;
-
-    public PMapPrimeCheck() {
-        this.pool = new ForkJoinPool(5);
-    }
 
     @Override
     public boolean isPrime(long number) {
@@ -25,6 +20,7 @@ public class PMapPrimeCheck implements PrimeCheck {
             return true;
         if (number % 2 == 0)
             return false;
+        ForkJoinPool pool = new ForkJoinPool();
         ForkJoinTask<Boolean> task = pool.submit(() ->
                 !LongStreamEx
                         .range(3, ((long) sqrt(number) + 1) / 2, 2)

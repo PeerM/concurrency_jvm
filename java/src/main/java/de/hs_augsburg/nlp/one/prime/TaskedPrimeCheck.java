@@ -12,12 +12,6 @@ import java.util.concurrent.ForkJoinTask;
 public class TaskedPrimeCheck implements PrimeCheck {
     private Logger logger = LoggerFactory.getLogger(this.getClass());
 
-    private ForkJoinPool pool;
-
-    public TaskedPrimeCheck() {
-        this.pool = new ForkJoinPool(8);
-    }
-
     public static long interval(long number) {
         //return 10000;
         // this effectively controls the number of tasks created
@@ -53,6 +47,7 @@ public class TaskedPrimeCheck implements PrimeCheck {
             return true;
         if (number % 2 == 0)
             return false;
+        ForkJoinPool pool = new ForkJoinPool(8);
         long interval = interval(number);
         StreamEx<Task> tasks = StreamEx
                 .iterate(new Task(3, 3 + interval, number), t -> nextTask(t, interval))
