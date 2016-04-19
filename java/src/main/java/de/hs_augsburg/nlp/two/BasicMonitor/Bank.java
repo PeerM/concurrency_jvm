@@ -1,12 +1,14 @@
 package de.hs_augsburg.nlp.two.BasicMonitor;
 
 
+import de.hs_augsburg.nlp.two.IBank;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class Bank {
+public class Bank implements IBank {
     private Map<Long, Account> accounts;
     private NumberGenerator accNoGenerator;
 
@@ -15,20 +17,24 @@ public class Bank {
         accNoGenerator = new NumberGenerator();
     }
 
+    @Override
     public synchronized void deposit(long accNo, int amount) {
         getAcc(accNo).deposit(amount, "deposit: " + new Date().getTime());
     }
 
+    @Override
     public synchronized void withdraw(long accNo, int amount) {
         getAcc(accNo).withdraw(amount, "withdraw: " + new Date().getTime());
     }
 
+    @Override
     public synchronized void transfer(long from, long to, int amount) {
         long time = new Date().getTime();
         getAcc(from).withdraw(amount, "transfer form: " + time);
         getAcc(to).deposit(amount, "transfer to" + time);
     }
 
+    @Override
     public synchronized List<Entry> getAccountEntries(long accNo) {
         return getAcc(accNo).getEntries();
     }
@@ -37,6 +43,7 @@ public class Bank {
         return accounts.get(accNo);
     }
 
+    @Override
     public synchronized long createAccount() {
         long accNo = accNoGenerator.getNext();
         Account acc = new Account(accNo);
