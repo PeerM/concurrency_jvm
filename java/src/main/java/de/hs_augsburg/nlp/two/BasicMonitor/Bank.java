@@ -17,6 +17,15 @@ public class Bank implements IBank {
         accNoGenerator = new NumberGenerator();
     }
 
+    public Bank(Map<Long, Account> accounts, NumberGenerator accNoGenerator) {
+        if (accounts == null) {
+            this.accounts = new HashMap<>();
+        } else {
+            this.accounts = accounts;
+        }
+        this.accNoGenerator = accNoGenerator;
+    }
+
     @Override
     public synchronized void deposit(long accNo, int amount) {
         getAcc(accNo).deposit(amount, "deposit: " + new Date().getTime());
