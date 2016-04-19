@@ -5,9 +5,9 @@ import org.apache.commons.lang3.builder.HashCodeBuilder;
 import org.apache.commons.lang3.builder.ToStringBuilder;
 
 public class Entry {
-    private final String text;
-    private final int amount;
-    private final EntryType type;
+    public final String text;
+    public final int amount;
+    public final EntryType type;
 
     public Entry(String text, int amount, EntryType type) {
         this.text = text;

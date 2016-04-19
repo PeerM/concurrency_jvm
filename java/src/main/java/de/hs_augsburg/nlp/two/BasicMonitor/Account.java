@@ -2,6 +2,7 @@ package de.hs_augsburg.nlp.two.BasicMonitor;
 
 
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Account {
@@ -13,14 +14,20 @@ public class Account {
 
     public Account(long id) {
         this.id = id;
+        entries = new LinkedList<>();
     }
 
     public void deposit(int a, String text) {
-
+        entries.add(new Entry(text, a, EntryType.DEPOSIT));
     }
 
     public void withdraw(int a, String text) {
+        entries.add(new Entry(text, a, EntryType.WITHDRAW));
+    }
 
+    public List<Entry> getEntries() {
+        //TODO improve this
+        return entries;
     }
 
     @Override
