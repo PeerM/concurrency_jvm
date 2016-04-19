@@ -5,21 +5,21 @@ import java.util.Date;
 import java.util.List;
 
 public class Account {
+    // only for debug toString?
+    private final long id;
     private int balance;
     private Date lastModified = new Date();
     private List<Entry> entries;
-    // only for debug toString?
-    private final long id;
 
     public Account(long id) {
         this.id = id;
     }
 
-    public void deposit(int a, String text){
+    public void deposit(int a, String text) {
 
     }
 
-    public void withdraw(int a, String text){
+    public void withdraw(int a, String text) {
 
     }
 
