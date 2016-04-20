@@ -5,7 +5,10 @@ import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Random;
 import java.util.Vector;
@@ -32,8 +35,8 @@ public class BenchBank {
     }
 
     public long randomAccNo(BenchmarkState state) {
-        Random randomGenerator = ThreadLocalRandom.current();
-        int index = randomGenerator.nextInt(state.accNos.size());
+        int index = (int) (System.nanoTime() % state.accNos.size());
+//        state.logger.info(Integer.toString(index));
         return state.accNos.get(index);
     }
 
@@ -71,6 +74,7 @@ public class BenchBank {
         String implName;
         volatile Bank bankImpl;
         volatile List<Long> accNos = new Vector<>();
+//        private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
         @Setup
         public void setup() {
@@ -81,7 +85,7 @@ public class BenchBank {
                 default:
                     throw new IllegalArgumentException("impl '" + implName + "' not supported");
             }
-            for (int i = 0; i < 5; i++) {
+            for (int i = 0; i < 10; i++) {
                 accNos.add(bankImpl.createAccount());
             }
         }
