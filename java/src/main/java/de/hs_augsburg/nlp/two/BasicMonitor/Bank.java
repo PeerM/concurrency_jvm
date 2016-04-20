@@ -59,4 +59,10 @@ public class Bank implements IBank {
         accounts.put(accNo, acc);
         return accNo;
     }
+
+
+    @Override
+    public String toString() {
+        return "Bank: Monitor";
+    }
 }
