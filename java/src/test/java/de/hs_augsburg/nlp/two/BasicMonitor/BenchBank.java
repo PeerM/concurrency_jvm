@@ -5,15 +5,11 @@ import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.time.Instant;
 import java.util.List;
-import java.util.Random;
 import java.util.Vector;
-import java.util.concurrent.ThreadLocalRandom;
 
+@SuppressWarnings("WeakerAccess")
 public class BenchBank {
 
 
@@ -22,19 +18,19 @@ public class BenchBank {
         // this is the config, you can play around with this
         Options opt = new OptionsBuilder()
                 .include(BenchBank.class.getSimpleName() + "")
-                .param("impl", "Monitor")
-                .forks(1)
-                .warmupIterations(4)
+//                .param("impl", "Monitor")
+                .forks(2)
+                .warmupIterations(10)
                 .measurementIterations(8)
                 .mode(Mode.Throughput)
-                .threads(4)
+                .threads(2)
                 .build();
 
         new Runner(opt).run();
 
     }
 
-    public long randomAccNo(BenchmarkState state) {
+    private long randomAccNo(BenchmarkState state) {
         int index = (int) (System.nanoTime() % state.accNos.size());
 //        state.logger.info(Integer.toString(index));
         return state.accNos.get(index);
@@ -44,14 +40,14 @@ public class BenchBank {
     @Group("one")
     public void deposit(BenchmarkState state) {
         Bank impl = state.bankImpl;
-        impl.deposit(randomAccNo(state),5);
+        impl.deposit(randomAccNo(state), 5);
     }
 
     @Benchmark
     @Group("one")
     public void withdraw(BenchmarkState state) {
         Bank impl = state.bankImpl;
-        impl.withdraw(randomAccNo(state),4);
+        impl.withdraw(randomAccNo(state), 4);
     }
 
     @Benchmark
@@ -65,7 +61,7 @@ public class BenchBank {
     @Group("one")
     public void transfer(BenchmarkState state) {
         Bank impl = state.bankImpl;
-        impl.transfer(randomAccNo(state),randomAccNo(state),6);
+        impl.transfer(randomAccNo(state), randomAccNo(state), 6);
     }
 
     @State(Scope.Benchmark)
