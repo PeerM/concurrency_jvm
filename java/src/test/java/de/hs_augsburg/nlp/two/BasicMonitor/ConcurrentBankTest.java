@@ -1,16 +1,19 @@
 package de.hs_augsburg.nlp.two.BasicMonitor;
 
 import de.hs_augsburg.nlp.two.IBank;
+import one.util.streamex.StreamEx;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.util.*;
+import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.ForkJoinPool;
 import java.util.stream.Collectors;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.*;
 
 abstract class Action {
     public final IBank impl;
@@ -138,24 +141,24 @@ public class ConcurrentBankTest {
     @Test
     public void creationTest() throws Exception {
         List<Action> actions = Collections.nCopies(100000, create());
-        actions.stream().parallel().peek(Action::apply).count();
+        runActions(actions);
         assertEquals(100000, accNoQueue.size());
     }
 
     @Test
     public void depositTest() throws Exception {
         List<Action> actions = Collections.nCopies(100000, deposit());
-        actions.stream().parallel().peek(Action::apply).count();
+        runActions(actions);
         assertEquals(100000, getEntries().size());
     }
 
     @Test
     public void transferTest() throws Exception {
-        int nrActions = 100000;
+        int nrActions = 4000000;
         InvariantChecker checker = new InvariantChecker();
         checker.start();
         List<Action> actions = Collections.nCopies(nrActions, transfer());
-        actions.stream().parallel().peek(Action::apply).count();
+        runActions(actions);
         assertEquals(nrActions * 2, getEntries().size());
         checker.interrupt();
         checker.join();
@@ -173,7 +176,7 @@ public class ConcurrentBankTest {
         actions.addAll(deposits);
         actions.addAll(withdrawals);
         Collections.shuffle(actions);
-        actions.stream().parallel().peek(Action::apply).count();
+        runActions(actions);
         List<Entry> entries = getEntries();
         assertEquals(nrActions, entries.stream().filter(entry -> entry.type == EntryType.DEPOSIT).count());
         assertEquals(nrActions, entries.stream().filter(entry -> entry.type == EntryType.WITHDRAW).count());
@@ -187,7 +190,7 @@ public class ConcurrentBankTest {
     public void mixedTest() throws Exception {
         InvariantChecker checker = new InvariantChecker();
         checker.start();
-        int nrActions = 100000;
+        int nrActions = 200000;
         List<Action> deposits = Collections.nCopies(nrActions, deposit());
         List<Action> withdrawals = Collections.nCopies(nrActions, withdraw());
         List<Action> transfers = Collections.nCopies(nrActions, transfer());
@@ -198,7 +201,7 @@ public class ConcurrentBankTest {
         actions.addAll(transfers);
         actions.addAll(creations);
         Collections.shuffle(actions);
-        actions.stream().parallel().peek(Action::apply).count();
+        runActions(actions);
         List<Entry> entries = getEntries();
         assertEquals(nrActions * 2, entries.stream().filter(entry -> entry.type == EntryType.DEPOSIT).count());
         assertEquals(nrActions * 2, entries.stream().filter(entry -> entry.type == EntryType.WITHDRAW).count());
@@ -209,16 +212,69 @@ public class ConcurrentBankTest {
         assertFalse(checker.message, checker.isSomethingWrong);
     }
 
-    class ActionTask extends Thread {
-        List<Action> actions;
+    private void runActions(List<Action> actions) {
+        int parallelism = 4;
+//        runWithStream(actions, parallelism);
+        runWithThread(actions, parallelism);
+    }
 
-        public ActionTask(List<Action> actions) {
+    private void runWithThread(List<Action> actions, int parallelism) {
+        CyclicBarrier barrier = new CyclicBarrier(parallelism + 1);
+        List<Thread> threads = StreamEx.ofSubLists(actions, (actions.size() / parallelism) + 1)
+                .map(actionList -> new ActionThread(actionList, barrier))
+                .collect(Collectors.toList());
+        threads.forEach(Thread::start);
+        try {
+            barrier.await();
+        } catch (InterruptedException | BrokenBarrierException e) {
+            fail(e.toString());
+        }
+        // at this point the threads are running
+        try {
+            barrier.await();
+        } catch (InterruptedException | BrokenBarrierException e) {
+            fail(e.toString());
+        }
+        for (Thread actionThread : threads) {
+            try {
+                actionThread.join();
+            } catch (InterruptedException e) {
+                fail(e.toString());
+            }
+        }
+    }
+
+    private void runWithStream(List<Action> actions, int parallelism) {
+//        ForkJoinPool fjp = new ForkJoinPool(32);
+        StreamEx.of(actions.stream()).parallel(ForkJoinPool.commonPool()).peek(Action::apply).count();
+//        fjp.awaitQuiescence(5, TimeUnit.SECONDS);
+//        fjp.shutdown();
+    }
+
+    class ActionThread extends Thread {
+        List<Action> actions;
+        CyclicBarrier barrier;
+
+        public ActionThread(List<Action> actions, CyclicBarrier barrier) {
+//            super("ActionThread");
+            this.setName(getName()+" Action");
             this.actions = actions;
+            this.barrier = barrier;
         }
 
         @Override
         public void run() {
+            try {
+                barrier.await();
+            } catch (InterruptedException | BrokenBarrierException e) {
+                e.printStackTrace();
+            }
             actions.forEach(Action::apply);
+            try {
+                barrier.await();
+            } catch (InterruptedException | BrokenBarrierException e) {
+                e.printStackTrace();
+            }
         }
     }
 
