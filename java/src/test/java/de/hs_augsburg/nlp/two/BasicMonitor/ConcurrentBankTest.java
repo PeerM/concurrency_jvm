@@ -1,18 +1,15 @@
 package de.hs_augsburg.nlp.two.BasicMonitor;
 
-import de.hs_augsburg.nlp.one.prime.Task;
 import de.hs_augsburg.nlp.two.IBank;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-import java.util.Random;
+import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.stream.Stream;
 
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertEquals;
 
 abstract class Action {
     public final IBank impl;
@@ -106,13 +103,6 @@ public class ConcurrentBankTest {
     public void tearDown() throws Exception {
     }
 
-    @Test
-    public void createAccount() throws Exception {
-        long accNo = impl.createAccount();
-        List<Entry> entries = impl.getAccountEntries(accNo);
-        assertNotNull(entries);
-    }
-
     public long randomAccNo() {
         Random randomGenerator = new Random();
         int index = randomGenerator.nextInt(accNos.size());
@@ -135,9 +125,63 @@ public class ConcurrentBankTest {
         return new TransferAction(this.impl, randomAccNo(), randomAccNo());
     }
 
-    class ActionTask extends Thread{
+    public Stream<Entry> getEntries() {
+        return accNos.stream().flatMap(accNo -> impl.getAccountEntries(accNo).stream());
+    }
+
+    @Test
+    public void creationTest() throws Exception {
+        List<Action> actions = Collections.nCopies(100000, create());
+        actions.stream().parallel().peek(Action::apply).count();
+        assertEquals(100000, accNoQueue.size());
+    }
+
+    @Test
+    public void depositTest() throws Exception {
+        List<Action> actions = Collections.nCopies(100000, deposit());
+        actions.stream().parallel().peek(Action::apply).count();
+        assertEquals(100000, getEntries().count());
+    }
+
+    @Test
+    public void depositAndWithdrawTest() throws Exception {
+        int nrActions = 100000;
+        List<Action> deposits = Collections.nCopies(nrActions, deposit());
+        List<Action> withdrawals = Collections.nCopies(nrActions, withdraw());
+        List<Action> actions = new ArrayList<>(nrActions * 2);
+        actions.addAll(deposits);
+        actions.addAll(withdrawals);
+        Collections.shuffle(actions);
+        actions.stream().parallel().peek(Action::apply).count();
+        assertEquals(nrActions, getEntries().filter(entry -> entry.type == EntryType.DEPOSIT).count());
+        assertEquals(nrActions, getEntries().filter(entry -> entry.type == EntryType.WITHDRAW).count());
+        assertEquals(nrActions * 2, getEntries().count());
+    }
+
+    @Test
+    public void mixedTest() throws Exception {
+        int nrActions = 100000;
+        List<Action> deposits = Collections.nCopies(nrActions, deposit());
+        List<Action> withdrawals = Collections.nCopies(nrActions, withdraw());
+        List<Action> transfers = Collections.nCopies(nrActions, transfer());
+        List<Action> creations = Collections.nCopies(nrActions, create());
+        List<Action> actions = new ArrayList<>(nrActions * 4);
+        actions.addAll(deposits);
+        actions.addAll(withdrawals);
+        actions.addAll(transfers);
+        actions.addAll(creations);
+        Collections.shuffle(actions);
+        actions.stream().parallel().peek(Action::apply).count();
+        assertEquals(nrActions * 2, getEntries().filter(entry -> entry.type == EntryType.DEPOSIT).count());
+        assertEquals(nrActions * 2, getEntries().filter(entry -> entry.type == EntryType.WITHDRAW).count());
+        assertEquals(nrActions * 4, getEntries().count());
+        assertEquals(nrActions, accNoQueue.size());
+    }
+
+    class ActionTask extends Thread {
         List<Action> actions;
-        public ActionTask( List<Action> actions) {
+
+        public ActionTask(List<Action> actions) {
             this.actions = actions;
         }
 
@@ -145,11 +189,5 @@ public class ConcurrentBankTest {
         public void run() {
             actions.forEach(Action::apply);
         }
-    }
-
-    @Test
-    public void creationTest() throws Exception {
-        List<Action> actions = Collections.nCopies(20,create());
-
     }
 }
