@@ -16,5 +16,7 @@ public interface IBank {
 
     List<Entry> getAccountEntries(long accNo);
 
+    List<Entry> getAccountEntries(List<Long> accNo);
+
     long createAccount();
 }

@@ -7,9 +7,10 @@ import org.junit.Test;
 
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.stream.Stream;
+import java.util.stream.Collectors;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 
 abstract class Action {
     public final IBank impl;
@@ -95,7 +96,11 @@ public class ConcurrentBankTest {
     @Before
     public void setUp() throws Exception {
         impl = new Bank();
-        accNos = Arrays.asList(impl.createAccount(), impl.createAccount(), impl.createAccount());
+        accNos = new LinkedList<>();
+        for (int i = 0; i < 4; i++) {
+            accNos.add(impl.createAccount());
+        }
+        accNos = Arrays.asList(impl.createAccount(), impl.createAccount());
         accNoQueue = new ConcurrentLinkedQueue<>();
     }
 
@@ -125,8 +130,9 @@ public class ConcurrentBankTest {
         return new TransferAction(this.impl, randomAccNo(), randomAccNo());
     }
 
-    public Stream<Entry> getEntries() {
-        return accNos.stream().flatMap(accNo -> impl.getAccountEntries(accNo).stream());
+    public List<Entry> getEntries() {
+        // We need to get all of them atomically
+        return impl.getAccountEntries(accNos);
     }
 
     @Test
@@ -140,11 +146,26 @@ public class ConcurrentBankTest {
     public void depositTest() throws Exception {
         List<Action> actions = Collections.nCopies(100000, deposit());
         actions.stream().parallel().peek(Action::apply).count();
-        assertEquals(100000, getEntries().count());
+        assertEquals(100000, getEntries().size());
+    }
+
+    @Test
+    public void transferTest() throws Exception {
+        int nrActions = 100000;
+        InvariantChecker checker = new InvariantChecker();
+        checker.start();
+        List<Action> actions = Collections.nCopies(nrActions, transfer());
+        actions.stream().parallel().peek(Action::apply).count();
+        assertEquals(nrActions * 2, getEntries().size());
+        checker.interrupt();
+        checker.join();
+        assertFalse(checker.message, checker.isSomethingWrong);
     }
 
     @Test
     public void depositAndWithdrawTest() throws Exception {
+        InvariantChecker checker = new InvariantChecker();
+        checker.start();
         int nrActions = 100000;
         List<Action> deposits = Collections.nCopies(nrActions, deposit());
         List<Action> withdrawals = Collections.nCopies(nrActions, withdraw());
@@ -153,13 +174,19 @@ public class ConcurrentBankTest {
         actions.addAll(withdrawals);
         Collections.shuffle(actions);
         actions.stream().parallel().peek(Action::apply).count();
-        assertEquals(nrActions, getEntries().filter(entry -> entry.type == EntryType.DEPOSIT).count());
-        assertEquals(nrActions, getEntries().filter(entry -> entry.type == EntryType.WITHDRAW).count());
-        assertEquals(nrActions * 2, getEntries().count());
+        List<Entry> entries = getEntries();
+        assertEquals(nrActions, entries.stream().filter(entry -> entry.type == EntryType.DEPOSIT).count());
+        assertEquals(nrActions, entries.stream().filter(entry -> entry.type == EntryType.WITHDRAW).count());
+        assertEquals(nrActions * 2, entries.size());
+        checker.interrupt();
+        checker.join();
+        assertFalse(checker.message, checker.isSomethingWrong);
     }
 
     @Test
     public void mixedTest() throws Exception {
+        InvariantChecker checker = new InvariantChecker();
+        checker.start();
         int nrActions = 100000;
         List<Action> deposits = Collections.nCopies(nrActions, deposit());
         List<Action> withdrawals = Collections.nCopies(nrActions, withdraw());
@@ -172,10 +199,14 @@ public class ConcurrentBankTest {
         actions.addAll(creations);
         Collections.shuffle(actions);
         actions.stream().parallel().peek(Action::apply).count();
-        assertEquals(nrActions * 2, getEntries().filter(entry -> entry.type == EntryType.DEPOSIT).count());
-        assertEquals(nrActions * 2, getEntries().filter(entry -> entry.type == EntryType.WITHDRAW).count());
-        assertEquals(nrActions * 4, getEntries().count());
+        List<Entry> entries = getEntries();
+        assertEquals(nrActions * 2, entries.stream().filter(entry -> entry.type == EntryType.DEPOSIT).count());
+        assertEquals(nrActions * 2, entries.stream().filter(entry -> entry.type == EntryType.WITHDRAW).count());
+        assertEquals(nrActions * 4, entries.size());
         assertEquals(nrActions, accNoQueue.size());
+        checker.interrupt();
+        checker.join();
+        assertFalse(checker.message, checker.isSomethingWrong);
     }
 
     class ActionTask extends Thread {
@@ -188,6 +219,29 @@ public class ConcurrentBankTest {
         @Override
         public void run() {
             actions.forEach(Action::apply);
+        }
+    }
+
+    class InvariantChecker extends Thread {
+        private boolean isSomethingWrong = false;
+        private String message;
+
+        public InvariantChecker() {
+
+        }
+
+        @Override
+        public void run() {
+            while (!this.isInterrupted()) {
+                List<Entry> entries = getEntries();
+                long fromCount = entries.stream().filter(entry -> entry.text.startsWith("transfer form:")).count();
+                long toCount = entries.stream().filter(entry -> entry.text.startsWith("transfer to:")).count();
+                if (fromCount != toCount) {
+                    isSomethingWrong = true;
+                    message = "from Count was " + fromCount + ", but to Count was " + toCount;
+                    return;
+                }
+            }
         }
     }
 }

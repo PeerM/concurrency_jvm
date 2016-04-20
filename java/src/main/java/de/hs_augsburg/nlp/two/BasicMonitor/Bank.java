@@ -3,10 +3,7 @@ package de.hs_augsburg.nlp.two.BasicMonitor;
 
 import de.hs_augsburg.nlp.two.IBank;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Bank implements IBank {
     private Map<Long, Account> accounts;
@@ -40,12 +37,22 @@ public class Bank implements IBank {
     public synchronized void transfer(long from, long to, int amount) {
         long time = new Date().getTime();
         getAcc(from).withdraw(amount, "transfer form: " + time);
-        getAcc(to).deposit(amount, "transfer to" + time);
+        getAcc(to).deposit(amount, "transfer to: " + time);
     }
 
     @Override
     public synchronized List<Entry> getAccountEntries(long accNo) {
         return getAcc(accNo).getEntries();
+    }
+
+    @Override
+    public synchronized List<Entry> getAccountEntries(List<Long> accNos) {
+        List<Entry> entries = new ArrayList<>();
+        for (long accNo :
+                accNos) {
+            entries.addAll(getAcc(accNo).getEntries());
+        }
+        return entries;
     }
 
     private Account getAcc(long accNo) {
