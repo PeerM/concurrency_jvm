@@ -147,14 +147,14 @@ public class ConcurrentBankTest {
 
     @Test
     public void depositTest() throws Exception {
-        List<Action> actions = Collections.nCopies(100000, deposit());
+        List<Action> actions = Collections.nCopies(1000000, deposit());
         runActions(actions);
-        assertEquals(100000, getEntries().size());
+        assertEquals(1000000, getEntries().size());
     }
 
     @Test
     public void transferTest() throws Exception {
-        int nrActions = 4000000;
+        int nrActions = 400000;
         InvariantChecker checker = new InvariantChecker();
         checker.start();
         List<Action> actions = Collections.nCopies(nrActions, transfer());
@@ -169,7 +169,7 @@ public class ConcurrentBankTest {
     public void depositAndWithdrawTest() throws Exception {
         InvariantChecker checker = new InvariantChecker();
         checker.start();
-        int nrActions = 100000;
+        int nrActions = 200000;
         List<Action> deposits = Collections.nCopies(nrActions, deposit());
         List<Action> withdrawals = Collections.nCopies(nrActions, withdraw());
         List<Action> actions = new ArrayList<>(nrActions * 2);
