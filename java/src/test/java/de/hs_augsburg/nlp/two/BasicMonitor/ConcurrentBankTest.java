@@ -42,7 +42,7 @@ class WithdrawAction extends SingleAccAction {
 
     @Override
     public void apply() {
-        impl.withdraw(this.accNo, 3);
+        impl.withdraw(this.accNo, 1);
     }
 }
 
@@ -54,7 +54,7 @@ class DepositAction extends SingleAccAction {
 
     @Override
     public void apply() {
-        impl.deposit(this.accNo, 4);
+        impl.deposit(this.accNo, 1);
     }
 }
 
@@ -87,7 +87,7 @@ class TransferAction extends Action {
 
     @Override
     public void apply() {
-        impl.transfer(from, to, 6);
+        impl.transfer(from, to, 1);
     }
 }
 
@@ -103,7 +103,6 @@ public class ConcurrentBankTest {
         for (int i = 0; i < 4; i++) {
             accNos.add(impl.createAccount());
         }
-        accNos = Arrays.asList(impl.createAccount(), impl.createAccount());
         accNoQueue = new ConcurrentLinkedQueue<>();
     }
 
@@ -146,10 +145,28 @@ public class ConcurrentBankTest {
     }
 
     @Test
-    public void depositTest() throws Exception {
-        List<Action> actions = Collections.nCopies(1000000, deposit());
+    public void balanceTest() throws Exception {
+        int factor = 100000;
+        for (int i = 0; i < 5 - accNos.size(); i++) {
+            accNos.add(impl.createAccount());
+        }
+        List<List<Action>> groups = Arrays.asList(
+                Collections.nCopies(2 * factor, new DepositAction(impl, accNos.get(0))),
+                Collections.nCopies(factor, new WithdrawAction(impl, accNos.get(0))),
+                Collections.nCopies(factor, new DepositAction(impl, accNos.get(1))),
+                Collections.nCopies(factor, new WithdrawAction(impl, accNos.get(2))),
+                Collections.nCopies(factor, new DepositAction(impl, accNos.get(3))),
+                Collections.nCopies(factor, new TransferAction(impl, accNos.get(3), accNos.get(4)))
+        );
+        List<Action> actions = new ArrayList<>(7 * factor);
+        groups.forEach(actions::addAll);
+        Collections.shuffle(actions);
         runActions(actions);
-        assertEquals(1000000, getEntries().size());
+        assertEquals(factor, impl.getBalance(accNos.get(0)));
+        assertEquals(factor, impl.getBalance(accNos.get(1)));
+        assertEquals(-1 * factor, impl.getBalance(accNos.get(2)));
+        assertEquals(0, impl.getBalance(accNos.get(3)));
+        assertEquals(factor, impl.getBalance(accNos.get(4)));
     }
 
     @Test
@@ -257,7 +274,7 @@ public class ConcurrentBankTest {
 
         public ActionThread(List<Action> actions, CyclicBarrier barrier) {
 //            super("ActionThread");
-            this.setName(getName()+" Action");
+            this.setName(getName() + " Action");
             this.actions = actions;
             this.barrier = barrier;
         }
