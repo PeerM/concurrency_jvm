@@ -21,7 +21,7 @@ public class BenchBank {
     public static void main(String[] args) throws RunnerException {
         // this is the config, you can play around with this
         Options opt = new OptionsBuilder()
-                .include(BenchBank.class.getSimpleName() + ".depositOnly")
+                .include(BenchBank.class.getSimpleName() + "..*Only")
 //                .param("impl", "Monitor")
                 .forks(1)
                 .warmupIterations(10)
@@ -29,7 +29,7 @@ public class BenchBank {
                 .mode(Mode.Throughput)
                 .threads(5)
 //                .output("jmh_out.txt")
-                .resultFormat(ResultFormatType.CSV)
+                .resultFormat(ResultFormatType.JSON)
                 .build();
 
         new Runner(opt).run();
@@ -89,7 +89,7 @@ public class BenchBank {
 
     @State(Scope.Benchmark)
     public static class BenchmarkState {
-        @Param({"Monitor","SmallLock"})
+        @Param({"Monitor","SmallLock", "Unsafe"})
         String implName;
         volatile IBank bankImpl;
         volatile List<Long> accNos = new Vector<>();
@@ -104,6 +104,9 @@ public class BenchBank {
                     break;
                 case "SmallLock":
                     bankImpl = new SmallLockBank();
+                    break;
+                case "Unsafe":
+                    bankImpl = new UnsafeBank();
                     break;
                 default:
                     throw new IllegalArgumentException("impl '" + implName + "' not supported");
