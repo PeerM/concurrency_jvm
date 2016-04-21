@@ -1,10 +1,13 @@
 package de.hs_augsburg.nlp.two.BasicMonitor;
 
 import de.hs_augsburg.nlp.two.IBank;
+import de.hs_augsburg.nlp.two.SmallLock.SmallLockBank;
 import one.util.streamex.StreamEx;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import java.util.*;
 import java.util.concurrent.BrokenBarrierException;
@@ -91,10 +94,18 @@ class TransferAction extends Action {
     }
 }
 
+@RunWith(Parameterized.class)
 public class ConcurrentBankTest {
+    @Parameterized.Parameter
     public IBank impl;
     private List<Long> accNos;
     private ConcurrentLinkedQueue<Long> accNoQueue;
+
+    @Parameterized.Parameters(name = "{index}: {0}")
+    public static List<IBank> data() {
+        return Arrays.asList(new CentralMoniBank(), new SmallLockBank());
+    }
+
 
     @Before
     public void setUp() throws Exception {
@@ -146,7 +157,7 @@ public class ConcurrentBankTest {
 
     @Test
     public void balanceTest() throws Exception {
-        int factor = 100000;
+        int factor = 400000;
         for (int i = 0; i < 5 - accNos.size(); i++) {
             accNos.add(impl.createAccount());
         }
@@ -171,7 +182,7 @@ public class ConcurrentBankTest {
 
     @Test
     public void transferTest() throws Exception {
-        int nrActions = 4000000;
+        int nrActions = 400000;
         InvariantChecker checker = new InvariantChecker();
         checker.start();
         List<Action> actions = Collections.nCopies(nrActions, transfer());

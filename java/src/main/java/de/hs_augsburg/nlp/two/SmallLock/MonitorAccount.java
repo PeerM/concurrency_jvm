@@ -16,7 +16,7 @@ import java.util.List;
 public class MonitorAccount {
     // only for debug toString?
     private final long id;
-    private int balance;
+    private volatile int balance;
     private Instant lastModified = Instant.now();
     private List<Entry> entries;
 
@@ -41,7 +41,7 @@ public class MonitorAccount {
         return Collections.unmodifiableList(entries);
     }
 
-    public synchronized int currentBalance(){
+    public int currentBalance(){
         return balance;
     }
 
