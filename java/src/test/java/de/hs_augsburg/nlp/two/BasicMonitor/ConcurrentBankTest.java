@@ -300,7 +300,7 @@ public class ConcurrentBankTest {
         private String message;
 
         public InvariantChecker() {
-
+            super("Invariant Checker");
         }
 
         @Override
