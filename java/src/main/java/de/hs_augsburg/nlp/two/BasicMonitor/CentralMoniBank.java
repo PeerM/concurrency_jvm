@@ -6,7 +6,7 @@ import de.hs_augsburg.nlp.two.IBank;
 import java.util.*;
 
 public class CentralMoniBank implements IBank {
-    private Map<Long, Account> accounts;
+    private Map<Long, UnsafeAccount> accounts;
     private NumberGenerator accNoGenerator;
 
     public CentralMoniBank() {
@@ -14,7 +14,7 @@ public class CentralMoniBank implements IBank {
         accNoGenerator = new NumberGenerator();
     }
 
-    public CentralMoniBank(Map<Long, Account> accounts, NumberGenerator accNoGenerator) {
+    public CentralMoniBank(Map<Long, UnsafeAccount> accounts, NumberGenerator accNoGenerator) {
         if (accounts == null) {
             this.accounts = new HashMap<>();
         } else {
@@ -66,14 +66,14 @@ public class CentralMoniBank implements IBank {
         return entries;
     }
 
-    private Account getAcc(long accNo) {
+    private UnsafeAccount getAcc(long accNo) {
         return accounts.get(accNo);
     }
 
     @Override
     public synchronized long createAccount() {
         long accNo = accNoGenerator.getNext();
-        Account acc = new Account(accNo);
+        UnsafeAccount acc = new UnsafeAccount(accNo);
         accounts.put(accNo, acc);
         return accNo;
     }

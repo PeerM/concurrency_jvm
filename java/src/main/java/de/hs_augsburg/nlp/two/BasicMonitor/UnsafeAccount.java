@@ -11,14 +11,14 @@ import java.util.List;
 /**
  * This class is Not Thread-safe
  */
-public class Account {
+public class UnsafeAccount {
     // only for debug toString?
     private final long id;
     private int balance;
     private Instant lastModified = Instant.now();
     private List<Entry> entries;
 
-    public Account(long id) {
+    public UnsafeAccount(long id) {
         this.id = id;
         entries = new LinkedList<>();
     }
