@@ -21,13 +21,14 @@ public class BenchBank {
     public static void main(String[] args) throws RunnerException {
         // this is the config, you can play around with this
         Options opt = new OptionsBuilder()
-                .include(BenchBank.class.getSimpleName() + "..*Only")
-//                .param("impl", "Monitor")
+                .include(BenchBank.class.getSimpleName() + "")
+                .param("impl", "Monitor", "SmallLock")
                 .forks(1)
                 .warmupIterations(10)
                 .measurementIterations(6)
                 .mode(Mode.Throughput)
                 .threads(5)
+                .jvmArgsAppend("-Xms3g")
 //                .output("jmh_out.txt")
                 .resultFormat(ResultFormatType.JSON)
                 .build();
@@ -43,11 +44,13 @@ public class BenchBank {
     }
 
     @Benchmark
+    @Group("depositOnly")
     public void depositOnly(BenchmarkState state) {
         deposit(state);
     }
 
     @Benchmark
+    @Group("readOnly")
     public void balanceOnly(BenchmarkState state) {
         balance(state);
     }
@@ -90,7 +93,9 @@ public class BenchBank {
     @State(Scope.Benchmark)
     public static class BenchmarkState {
         @Param({"Monitor","SmallLock", "Unsafe"})
-        String implName;
+        volatile String implName;
+        @Param({"2","10","30","100"})
+        volatile int numberOfAccounts;
         volatile IBank bankImpl;
         volatile List<Long> accNos = new Vector<>();
         volatile Blackhole hole = new Blackhole();
@@ -111,7 +116,7 @@ public class BenchBank {
                 default:
                     throw new IllegalArgumentException("impl '" + implName + "' not supported");
             }
-            for (int i = 0; i < 10; i++) {
+            for (int i = 0; i < numberOfAccounts; i++) {
                 accNos.add(bankImpl.createAccount());
             }
         }
