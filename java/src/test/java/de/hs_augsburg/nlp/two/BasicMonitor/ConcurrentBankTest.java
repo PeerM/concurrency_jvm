@@ -1,6 +1,7 @@
 package de.hs_augsburg.nlp.two.BasicMonitor;
 
 import de.hs_augsburg.nlp.two.IBank;
+import de.hs_augsburg.nlp.two.SmallLock.SmallLockBank;
 import one.util.streamex.StreamEx;
 import org.junit.After;
 import org.junit.Before;
@@ -100,9 +101,9 @@ public class ConcurrentBankTest {
     @Parameterized.Parameters(name = "{index}: {0}")
     public static List<IBank> data() {
         return Arrays.asList(
-                new UnsafeBank()
-                , new CentralMoniBank()
-//                , new SmallLockBank()
+//                new UnsafeBank()
+//                , new CentralMoniBank()
+                new SmallLockBank()
         );
     }
 
@@ -145,7 +146,7 @@ public class ConcurrentBankTest {
 
     public List<Entry> getEntries() {
         // We need to get all of them atomically
-        return impl.getAccountEntries(accNos);
+        return impl.getAccountEntries(new ArrayList<Long>(accNos));
     }
 
     @Test
@@ -308,8 +309,8 @@ public class ConcurrentBankTest {
     }
 
     class InvariantChecker extends Thread {
-        private boolean isSomethingWrong = false;
-        private String message;
+        private boolean isSomethingWrong = true;
+        private String message = "Invariant Checker did not complete";
 
         public InvariantChecker() {
             super("Invariant Checker");
@@ -327,6 +328,8 @@ public class ConcurrentBankTest {
                     return;
                 }
             }
+            isSomethingWrong = false;
+            return;
         }
     }
 }

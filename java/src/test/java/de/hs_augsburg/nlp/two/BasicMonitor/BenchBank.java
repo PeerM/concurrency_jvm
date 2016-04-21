@@ -4,6 +4,7 @@ import de.hs_augsburg.nlp.two.IBank;
 import de.hs_augsburg.nlp.two.SmallLock.SmallLockBank;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Blackhole;
+import org.openjdk.jmh.results.format.ResultFormatType;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
@@ -20,13 +21,15 @@ public class BenchBank {
     public static void main(String[] args) throws RunnerException {
         // this is the config, you can play around with this
         Options opt = new OptionsBuilder()
-                .include(BenchBank.class.getSimpleName() + "")
+                .include(BenchBank.class.getSimpleName() + ".depositOnly")
 //                .param("impl", "Monitor")
                 .forks(1)
                 .warmupIterations(10)
-                .measurementIterations(8)
+                .measurementIterations(6)
                 .mode(Mode.Throughput)
                 .threads(5)
+//                .output("jmh_out.txt")
+                .resultFormat(ResultFormatType.CSV)
                 .build();
 
         new Runner(opt).run();

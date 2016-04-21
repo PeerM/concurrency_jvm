@@ -3,16 +3,18 @@ package de.hs_augsburg.nlp.two.SmallLock;
 
 import de.hs_augsburg.nlp.two.BasicMonitor.Entry;
 import de.hs_augsburg.nlp.two.BasicMonitor.NumberGenerator;
-import de.hs_augsburg.nlp.two.BasicMonitor.UnsafeAccount;
 import de.hs_augsburg.nlp.two.IBank;
 
 import java.time.Instant;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class SmallLockBank implements IBank {
-    private Map<Long, UnsafeAccount> accounts;
+    private Map<Long, MonitorAccount> accounts;
     private NumberGenerator accNoGenerator;
     private ReadWriteLock readWriteLock;
 
@@ -67,9 +69,12 @@ public class SmallLockBank implements IBank {
         List<Entry> entries = new ArrayList<>();
         readWriteLock.readLock().lock();
         try {
-            for (long accNo :
-                    accNos) {
-                entries.addAll(getAcc(accNo).getEntries());
+            for (long accNo : accNos) {
+                MonitorAccount acc = getAcc(accNo);
+                synchronized (acc) {
+                    List<Entry> entriesOfAcc = acc.getEntries();
+                    entries.addAll(entriesOfAcc);
+                }
             }
         } finally {
             readWriteLock.readLock().unlock();
@@ -77,14 +82,14 @@ public class SmallLockBank implements IBank {
         return entries;
     }
 
-    private UnsafeAccount getAcc(long accNo) {
+    private MonitorAccount getAcc(long accNo) {
         return accounts.get(accNo);
     }
 
     @Override
     public long createAccount() {
         long accNo = accNoGenerator.getNext();
-        UnsafeAccount acc = new UnsafeAccount(accNo);
+        MonitorAccount acc = new MonitorAccount(accNo);
         accounts.put(accNo, acc);
         return accNo;
     }
