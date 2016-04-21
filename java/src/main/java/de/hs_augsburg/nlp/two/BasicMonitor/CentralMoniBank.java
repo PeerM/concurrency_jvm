@@ -5,16 +5,16 @@ import de.hs_augsburg.nlp.two.IBank;
 
 import java.util.*;
 
-public class Bank implements IBank {
+public class CentralMoniBank implements IBank {
     private Map<Long, Account> accounts;
     private NumberGenerator accNoGenerator;
 
-    public Bank() {
+    public CentralMoniBank() {
         accounts = new HashMap<>();
         accNoGenerator = new NumberGenerator();
     }
 
-    public Bank(Map<Long, Account> accounts, NumberGenerator accNoGenerator) {
+    public CentralMoniBank(Map<Long, Account> accounts, NumberGenerator accNoGenerator) {
         if (accounts == null) {
             this.accounts = new HashMap<>();
         } else {

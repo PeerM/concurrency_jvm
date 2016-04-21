@@ -1,5 +1,6 @@
 package de.hs_augsburg.nlp.two.BasicMonitor;
 
+import de.hs_augsburg.nlp.two.IBank;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
@@ -39,28 +40,28 @@ public class BenchBank {
     @Benchmark
     @Group("one")
     public void deposit(BenchmarkState state) {
-        Bank impl = state.bankImpl;
+        IBank impl = state.bankImpl;
         impl.deposit(randomAccNo(state), 5);
     }
 
     @Benchmark
     @Group("one")
     public void withdraw(BenchmarkState state) {
-        Bank impl = state.bankImpl;
+        IBank impl = state.bankImpl;
         impl.withdraw(randomAccNo(state), 4);
     }
 
     @Benchmark
     @Group("one")
     public void getEntries(BenchmarkState state) {
-        Bank impl = state.bankImpl;
+        IBank impl = state.bankImpl;
         impl.getAccountEntries(randomAccNo(state));
     }
 
     @Benchmark
     @Group("one")
     public void transfer(BenchmarkState state) {
-        Bank impl = state.bankImpl;
+        IBank impl = state.bankImpl;
         impl.transfer(randomAccNo(state), randomAccNo(state), 6);
     }
 
@@ -68,7 +69,7 @@ public class BenchBank {
     public static class BenchmarkState {
         @Param({"Monitor"})
         String implName;
-        volatile Bank bankImpl;
+        volatile IBank bankImpl;
         volatile List<Long> accNos = new Vector<>();
 //        private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -76,7 +77,7 @@ public class BenchBank {
         public void setup() {
             switch (implName) {
                 case "Monitor":
-                    bankImpl = new Bank();
+                    bankImpl = new CentralMoniBank();
                     break;
                 default:
                     throw new IllegalArgumentException("impl '" + implName + "' not supported");

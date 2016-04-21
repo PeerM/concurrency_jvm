@@ -98,7 +98,7 @@ public class ConcurrentBankTest {
 
     @Before
     public void setUp() throws Exception {
-        impl = new Bank();
+        impl = new CentralMoniBank();
         accNos = new LinkedList<>();
         for (int i = 0; i < 4; i++) {
             accNos.add(impl.createAccount());

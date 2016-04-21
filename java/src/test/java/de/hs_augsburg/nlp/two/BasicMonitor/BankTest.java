@@ -26,7 +26,7 @@ public class BankTest {
 
     @Parameterized.Parameters(name = "{index}: {0}")
     public static List<IBank> data() {
-        return Arrays.asList(new Bank());
+        return Arrays.asList(new CentralMoniBank());
     }
 
     @Before
