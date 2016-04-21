@@ -10,12 +10,12 @@ import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-public class SmallMoniBank implements IBank {
+public class SmallLockBank implements IBank {
     private Map<Long, UnsafeAccount> accounts;
     private NumberGenerator accNoGenerator;
     private ReadWriteLock readWriteLock;
 
-    public SmallMoniBank() {
+    public SmallLockBank() {
         accounts = new Hashtable<>();
         accNoGenerator = new NumberGenerator();
         readWriteLock = new ReentrantReadWriteLock();

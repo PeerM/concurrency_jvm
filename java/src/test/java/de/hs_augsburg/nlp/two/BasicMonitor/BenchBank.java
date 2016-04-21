@@ -1,6 +1,7 @@
 package de.hs_augsburg.nlp.two.BasicMonitor;
 
 import de.hs_augsburg.nlp.two.IBank;
+import de.hs_augsburg.nlp.two.SmallLock.SmallLockBank;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
@@ -78,6 +79,9 @@ public class BenchBank {
             switch (implName) {
                 case "Monitor":
                     bankImpl = new CentralMoniBank();
+                    break;
+                case "SmallLock":
+                    bankImpl = new SmallLockBank();
                     break;
                 default:
                     throw new IllegalArgumentException("impl '" + implName + "' not supported");
