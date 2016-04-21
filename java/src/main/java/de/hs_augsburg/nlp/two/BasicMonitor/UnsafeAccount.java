@@ -36,7 +36,6 @@ public class UnsafeAccount {
     }
 
     public List<Entry> getEntries() {
-        //make a shallow copy
         return Collections.unmodifiableList(entries);
     }
 
