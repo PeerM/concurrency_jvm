@@ -1,6 +1,7 @@
 package de.hs_augsburg.nlp.two.BasicMonitor;
 
 import de.hs_augsburg.nlp.two.IBank;
+import de.hs_augsburg.nlp.two.SmallLock.SmallMoniBank;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -26,7 +27,7 @@ public class BankTest {
 
     @Parameterized.Parameters(name = "{index}: {0}")
     public static List<IBank> data() {
-        return Arrays.asList(new CentralMoniBank());
+        return Arrays.asList(new CentralMoniBank(),new SmallMoniBank());
     }
 
     @Before
