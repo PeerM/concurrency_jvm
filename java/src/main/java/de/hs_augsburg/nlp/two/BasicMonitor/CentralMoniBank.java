@@ -86,6 +86,6 @@ public class CentralMoniBank implements IBank {
 
     @Override
     public String toString() {
-        return "Bank: Monitor";
+        return "Bank: Central Monitor";
     }
 }

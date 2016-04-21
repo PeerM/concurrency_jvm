@@ -96,6 +96,6 @@ public class SmallMoniBank implements IBank {
 
     @Override
     public String toString() {
-        return "Bank: Monitor";
+        return "Bank: Smaller Locks";
     }
 }
