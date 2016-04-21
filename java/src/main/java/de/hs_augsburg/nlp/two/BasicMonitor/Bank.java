@@ -40,11 +40,21 @@ public class Bank implements IBank {
         getAcc(to).deposit(amount, "transfer to: " + time);
     }
 
+    /**
+     * It seems like this is not thread save, but here you get only the entries of one account
+     * @param accNo
+     * @return
+     */
     @Override
     public synchronized List<Entry> getAccountEntries(long accNo) {
         return getAcc(accNo).getEntries();
     }
 
+    /**
+     * Down here you get the entries of multiple accounts and this is atomic and does not go against our invariant
+     * @param accNos
+     * @return
+     */
     @Override
     public synchronized List<Entry> getAccountEntries(List<Long> accNos) {
         List<Entry> entries = new ArrayList<>();

@@ -3,6 +3,7 @@ package de.hs_augsburg.nlp.two.BasicMonitor;
 
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -36,7 +37,7 @@ public class Account {
 
     public List<Entry> getEntries() {
         //make a shallow copy
-        return new ArrayList<>(entries);
+        return Collections.unmodifiableList(entries);
     }
 
     public int currentBalance(){

@@ -171,7 +171,7 @@ public class ConcurrentBankTest {
 
     @Test
     public void transferTest() throws Exception {
-        int nrActions = 400000;
+        int nrActions = 4000000;
         InvariantChecker checker = new InvariantChecker();
         checker.start();
         List<Action> actions = Collections.nCopies(nrActions, transfer());
@@ -230,7 +230,7 @@ public class ConcurrentBankTest {
     }
 
     private void runActions(List<Action> actions) {
-        int parallelism = 4;
+        int parallelism = 6;
 //        runWithStream(actions, parallelism);
         runWithThread(actions, parallelism);
     }
