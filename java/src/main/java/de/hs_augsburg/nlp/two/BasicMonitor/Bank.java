@@ -67,6 +67,11 @@ public class Bank implements IBank {
         return accNo;
     }
 
+    @Override
+    public synchronized int getBalance(long accNo) {
+        return getAcc(accNo).currentBalance();
+    }
+
 
     @Override
     public String toString() {

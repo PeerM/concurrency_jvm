@@ -1,16 +1,20 @@
 package de.hs_augsburg.nlp.two.BasicMonitor;
 
 
+import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+
+/**
+ * This class is Not Thread-safe
+ */
 public class Account {
     // only for debug toString?
     private final long id;
     private int balance;
-    private Date lastModified = new Date();
+    private Instant lastModified = Instant.now();
     private List<Entry> entries;
 
     public Account(long id) {
@@ -19,16 +23,24 @@ public class Account {
     }
 
     public void deposit(int a, String text) {
+        balance += a;
+        lastModified = Instant.now();
         entries.add(new Entry(text, a, EntryType.DEPOSIT));
     }
 
     public void withdraw(int a, String text) {
+        balance -= a;
+        lastModified = Instant.now();
         entries.add(new Entry(text, a, EntryType.WITHDRAW));
     }
 
     public List<Entry> getEntries() {
         //make a shallow copy
         return new ArrayList<>(entries);
+    }
+
+    public int currentBalance(){
+        return balance;
     }
 
     @Override
