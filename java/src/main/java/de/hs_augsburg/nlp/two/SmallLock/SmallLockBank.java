@@ -6,6 +6,7 @@ import de.hs_augsburg.nlp.two.BasicMonitor.NumberGenerator;
 import de.hs_augsburg.nlp.two.BasicMonitor.UnsafeAccount;
 import de.hs_augsburg.nlp.two.IBank;
 
+import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -23,19 +24,19 @@ public class SmallLockBank implements IBank {
 
     @Override
     public void deposit(long accNo, int amount) {
-        getAcc(accNo).deposit(amount, "deposit: " + new Date().getTime());
+        getAcc(accNo).deposit(amount, "deposit: " + Instant.now().toString());
     }
 
     @Override
     public void withdraw(long accNo, int amount) {
-        getAcc(accNo).withdraw(amount, "withdraw: " + new Date().getTime());
+        getAcc(accNo).withdraw(amount, "withdraw: " + Instant.now().toString());
     }
 
     @Override
     public void transfer(long from, long to, int amount) {
         readWriteLock.writeLock().lock();
         try {
-            long time = new Date().getTime();
+            String time = Instant.now().toString();
             getAcc(from).withdraw(amount, "transfer form: " + time);
             getAcc(to).deposit(amount, "transfer to: " + time);
         } finally {
