@@ -52,6 +52,7 @@ public class Bank implements IBank {
 
     /**
      * Down here you get the entries of multiple accounts and this is atomic and does not go against our invariant
+     * TODO Maybe this should be changed to a map for easier use
      * @param accNos
      * @return
      */
