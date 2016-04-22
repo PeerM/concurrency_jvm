@@ -24,18 +24,14 @@ public class CasBank implements IBank {
     public void deposit(long accNo, int amount) {
         accounts.getAndUpdate(
                 accs -> accs
-                        .minus(accNo)
-                        .plus(accNo,
-                                accs.get(accNo).deposit(amount, "deposit: " + new Date().getTime())));
+                        .plus(accNo, accs.get(accNo).deposit(amount, "deposit: " + new Date().getTime())));
     }
 
     @Override
     public void withdraw(long accNo, int amount) {
         accounts.getAndUpdate(
                 accs -> accs
-                        .minus(accNo)
-                        .plus(accNo,
-                                accs.get(accNo).withdraw(amount, "withdraw: " + new Date().getTime())));
+                        .plus(accNo, accs.get(accNo).withdraw(amount, "withdraw: " + new Date().getTime())));
     }
 
     @Override
@@ -43,12 +39,8 @@ public class CasBank implements IBank {
         long time = new Date().getTime();
         accounts.getAndUpdate(
                 accs -> accs
-                        .minus(from)
-                        .plus(from,
-                                accs.get(from).withdraw(amount, "transfer form: " + time))
-                        .minus(to)
-                        .plus(to,
-                                accs.get(to).deposit(amount, "transfer to: " + time)));
+                        .plus(from, accs.get(from).withdraw(amount, "transfer form: " + time))
+                        .plus(to, accs.get(to).deposit(amount, "transfer to: " + time)));
     }
 
     /**
@@ -61,7 +53,6 @@ public class CasBank implements IBank {
     }
 
     /**
-     * Down here you get the entries of multiple accounts and this is atomic and does not go against our invariant
      * TODO Maybe this should be changed to a map for easier use
      *
      * @param accNos
