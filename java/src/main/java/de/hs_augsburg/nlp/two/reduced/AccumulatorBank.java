@@ -1,6 +1,5 @@
 package de.hs_augsburg.nlp.two.reduced;
 
-import de.hs_augsburg.meixner.account.Account;
 import de.hs_augsburg.nlp.two.BasicMonitor.Entry;
 import de.hs_augsburg.nlp.two.BasicMonitor.INumberGenerator;
 import de.hs_augsburg.nlp.two.Functional.AtomicNumberGenerator;
@@ -11,7 +10,6 @@ import org.pcollections.PVector;
 import org.pcollections.TreePVector;
 
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.concurrent.atomic.AtomicReference;
@@ -87,7 +85,7 @@ public class AccumulatorBank implements IBank {
             PMap<Long, ReducibleAccount> oldMap = accountReferences.get(threadIndex);
             PMap<Long, ReducibleAccount> newMap = oldMap
                     .plus(from, ReducibleAccount.withdraw(oldMap.get(from), amount, "transfer form: " + time))
-                    .plus(to,   ReducibleAccount.deposit (oldMap.get(to  ), amount, "transfer to: " + time));
+                    .plus(to, ReducibleAccount.deposit(oldMap.get(to), amount, "transfer to: " + time));
             if (accountReferences.compareAndSet(threadIndex, oldMap, newMap)) {
                 return;
             } else {
@@ -105,15 +103,18 @@ public class AccumulatorBank implements IBank {
         if (!validAccNos.get().contains(accNo)) {
             throw new IllegalArgumentException("accNo is not valid");
         }
-        PVector<Entry> step = TreePVector.empty();
+        List<Entry> entries = new MultipleBackedList<>();
         for (int i = 0; i < arraySize; i++) {
-            step = ReducibleAccount.reduceEntries(accountReferences.get(i).get(accNo), step);
+            ReducibleAccount acc = accountReferences.get(i).get(accNo);
+            if (acc != null) {
+                ReducibleAccount.reduceEntries(acc, entries);
+            }
         }
-        return step;
+        return entries;
     }
 
     /**
-     * TODO Maybe this should be changed to a map for easier use
+     * TODO Somehow there is still a race condition or some other thing like that making half of the transfers go missing
      *
      * @param accNos
      * @return
@@ -141,8 +142,8 @@ public class AccumulatorBank implements IBank {
             PMap<Long, ReducibleAccount> accountMap = accountReferences.get(i);
             for (long accNo : accNos) {
                 ReducibleAccount acc = accountMap.get(accNo);
-                if (acc != null){
-                    entries.addAll(acc.getEntries());
+                if (acc != null) {
+                    ReducibleAccount.reduceEntries(acc, entries);
                 }
             }
         }

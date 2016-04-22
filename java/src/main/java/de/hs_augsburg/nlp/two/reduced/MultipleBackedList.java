@@ -3,16 +3,18 @@ package de.hs_augsburg.nlp.two.reduced;
 
 import com.google.common.collect.Iterators;
 
-import java.util.AbstractList;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class MultipleBackedList<T> extends AbstractList<T> {
     private List<List<T>> backing;
     private List<Integer> sizes;
     private int completeSize;
 
+    public MultipleBackedList() {
+        backing = new LinkedList<>();
+        sizes = new LinkedList<>();
+        completeSize = 0;
+    }
 
     @Override
     public T get(int index) {
@@ -43,12 +45,14 @@ public class MultipleBackedList<T> extends AbstractList<T> {
 
     @SuppressWarnings("unchecked")
     @Override
-    public boolean addAll(int index, Collection<? extends T> c) {
+    public boolean addAll(Collection<? extends T> c) {
         if (c instanceof List) {
             // it's a instance of a List and is of type T
             addList((List<T>) c);
+            return true;
         }
-        return super.addAll(index, c);
+        throw new IllegalArgumentException(c.getClass().getSimpleName()+ " is not an Instance of List");
+//        return super.addAll(c);
     }
 
     @Override
