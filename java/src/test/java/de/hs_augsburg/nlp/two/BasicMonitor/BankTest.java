@@ -2,6 +2,8 @@ package de.hs_augsburg.nlp.two.BasicMonitor;
 
 import de.hs_augsburg.nlp.two.Functional.CasBank;
 import de.hs_augsburg.nlp.two.IBank;
+import de.hs_augsburg.nlp.two.SmallLock.SmallLockBank;
+import de.hs_augsburg.nlp.two.reduced.AccumulatorBank;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -15,6 +17,7 @@ import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 
 @RunWith(Parameterized.class)
@@ -29,9 +32,10 @@ public class BankTest {
     public static List<IBank> data() {
         return Arrays.asList(
 //                new UnsafeBank()
-//                new CentralMoniBank()
+//                ,new CentralMoniBank()
 //                ,new SmallLockBank()
-                new CasBank()
+//                ,new CasBank()
+                new AccumulatorBank(2)
         );
     }
 
@@ -52,6 +56,17 @@ public class BankTest {
         long accNo = impl.createAccount();
         List<Entry> entries = impl.getAccountEntries(accNo);
         assertNotNull(entries);
+    }
+
+    @Test
+    public void depositIntoNonExistentAccount() throws Exception {
+        boolean threw = false;
+        try {
+            impl.deposit(333039,5);
+        } catch (Exception e) {
+            threw = true;
+        }
+        assertTrue("deposit into non existent Account should throw an exception",threw);
     }
 
     @Test

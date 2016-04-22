@@ -1,8 +1,7 @@
 package de.hs_augsburg.nlp.two.BasicMonitor;
 
-import de.hs_augsburg.nlp.two.Functional.CasBank;
 import de.hs_augsburg.nlp.two.IBank;
-import de.hs_augsburg.nlp.two.SmallLock.SmallLockBank;
+import de.hs_augsburg.nlp.two.reduced.AccumulatorBank;
 import one.util.streamex.StreamEx;
 import org.junit.After;
 import org.junit.Before;
@@ -94,6 +93,7 @@ class TransferAction extends Action {
 
 @RunWith(Parameterized.class)
 public class ConcurrentBankTest {
+    private static final int parallelism = 6;
     @Parameterized.Parameter
     public IBank impl;
     private List<Long> accNos;
@@ -105,7 +105,9 @@ public class ConcurrentBankTest {
 //                new UnsafeBank()
 //                , new CentralMoniBank()
 //                new SmallLockBank()
-                new CasBank()
+//                new CasBank()
+                new AccumulatorBank(parallelism + (int) (parallelism * 0.5f))
+//                new AccumulatorBank(parallelism )
         );
     }
 
@@ -244,7 +246,6 @@ public class ConcurrentBankTest {
     }
 
     private void runActions(List<Action> actions) {
-        int parallelism = 6;
 //        runWithStream(actions, parallelism);
         runWithThread(actions, parallelism);
     }
@@ -277,7 +278,7 @@ public class ConcurrentBankTest {
     }
 
     private void runWithStream(List<Action> actions, int parallelism) {
-        ForkJoinPool fjp = new ForkJoinPool(5);
+        ForkJoinPool fjp = new ForkJoinPool(parallelism);
         StreamEx.of(actions.stream()).parallel(fjp).peek(Action::apply).count();
         fjp.awaitQuiescence(5, TimeUnit.SECONDS);
         fjp.shutdown();

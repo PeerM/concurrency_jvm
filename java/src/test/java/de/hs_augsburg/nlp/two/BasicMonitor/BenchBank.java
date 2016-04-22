@@ -3,6 +3,7 @@ package de.hs_augsburg.nlp.two.BasicMonitor;
 import de.hs_augsburg.nlp.two.Functional.CasBank;
 import de.hs_augsburg.nlp.two.IBank;
 import de.hs_augsburg.nlp.two.SmallLock.SmallLockBank;
+import de.hs_augsburg.nlp.two.reduced.AccumulatorBank;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Blackhole;
 import org.openjdk.jmh.results.format.ResultFormatType;
@@ -18,21 +19,23 @@ import java.util.List;
 public class BenchBank {
 
 
+    private static final int threadCount = 5;
+
     // to play with JMH without plugins or custom runners
     public static void main(String[] args) throws RunnerException {
         // this is the config, you can play around with this
         Options opt = new OptionsBuilder()
 //                .include(BenchBank.class.getSimpleName() + ".mixed")
-                .param("implName","Cas", "Monitor" , "SmallLock")
+                .param("implName", "Cas", "Accumulator")
                 .param("numberOfAccounts", "10")
-                .include(BenchBank.class.getSimpleName() + ".create")
+                .include(BenchBank.class.getSimpleName() + ".mixed")
 //                .param("implName", "Unsafe", "Monitor", "Cas", "SmallLock")
 //                .param("numberOfAccounts", "10", "32", "200", "1000")
                 .forks(1)
                 .warmupIterations(10)
                 .measurementIterations(6)
                 .mode(Mode.Throughput)
-                .threads(5)
+                .threads(threadCount)
                 .jvmArgsAppend("-Xms3g")
 //                .output("jmh_out.txt")
                 .resultFormat(ResultFormatType.CSV)
@@ -103,7 +106,7 @@ public class BenchBank {
 
     @State(Scope.Benchmark)
     public static class BenchmarkState {
-        @Param({"Monitor", "SmallLock", "Unsafe", "Cas"})
+        @Param({"Monitor", "SmallLock", "Unsafe", "Cas", "Accumulator"})
         volatile String implName;
         @Param({"2", "10", "30", "100"})
         volatile int numberOfAccounts;
@@ -126,6 +129,9 @@ public class BenchBank {
                     break;
                 case "Cas":
                     bankImpl = new CasBank();
+                    break;
+                case "Accumulator":
+                    bankImpl = new AccumulatorBank(threadCount + (int) (threadCount * 0.7f));
                     break;
                 default:
                     throw new IllegalArgumentException("impl '" + implName + "' not supported");
