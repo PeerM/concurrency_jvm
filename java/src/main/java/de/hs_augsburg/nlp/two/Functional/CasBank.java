@@ -2,7 +2,6 @@ package de.hs_augsburg.nlp.two.Functional;
 
 import de.hs_augsburg.nlp.two.BasicMonitor.Entry;
 import de.hs_augsburg.nlp.two.BasicMonitor.INumberGenerator;
-import de.hs_augsburg.nlp.two.BasicMonitor.NumberGenerator;
 import de.hs_augsburg.nlp.two.IBank;
 import org.pcollections.HashTreePMap;
 import org.pcollections.PMap;
@@ -76,7 +75,7 @@ public class CasBank implements IBank {
     @Override
     public long createAccount() {
         long accNo = accNoGenerator.getNext();
-        ImmutableAccount acc = new ImmutableAccount(accNo);
+        ImmutableAccount acc = ImmutableAccount.empty;
         accounts.updateAndGet(accs -> accs.plus(accNo, acc));
         return accNo;
     }

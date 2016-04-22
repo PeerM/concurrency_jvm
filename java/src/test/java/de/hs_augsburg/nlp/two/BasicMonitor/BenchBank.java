@@ -23,7 +23,7 @@ public class BenchBank {
         // this is the config, you can play around with this
         Options opt = new OptionsBuilder()
 //                .include(BenchBank.class.getSimpleName() + ".mixed")
-                .param("implName", "Monitor", "Cas", "SmallLock")
+                .param("implName","Cas", "Monitor" , "SmallLock")
                 .param("numberOfAccounts", "10")
                 .include(BenchBank.class.getSimpleName() + ".create")
 //                .param("implName", "Unsafe", "Monitor", "Cas", "SmallLock")
