@@ -24,10 +24,10 @@ public class BenchBank {
         Options opt = new OptionsBuilder()
 //                .include(BenchBank.class.getSimpleName() + ".mixed")
                 .param("implName", "Monitor", "Cas", "SmallLock")
-//                .param("numberOfAccounts", "10")
-                .include(BenchBank.class.getSimpleName() + ".readOnly")
+                .param("numberOfAccounts", "10")
+                .include(BenchBank.class.getSimpleName() + ".create")
 //                .param("implName", "Unsafe", "Monitor", "Cas", "SmallLock")
-                .param("numberOfAccounts", "10", "32", "200", "1000")
+//                .param("numberOfAccounts", "10", "32", "200", "1000")
                 .forks(1)
                 .warmupIterations(10)
                 .measurementIterations(6)
@@ -58,6 +58,12 @@ public class BenchBank {
     @Group("readOnly")
     public void balanceOnly(BenchmarkState state) {
         balance(state);
+    }
+
+    @Benchmark
+    public void create(BenchmarkState state) {
+        IBank impl = state.bankImpl;
+        state.hole.consume(impl.createAccount());
     }
 
     @Benchmark

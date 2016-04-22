@@ -1,6 +1,7 @@
 package de.hs_augsburg.nlp.two.Functional;
 
 import de.hs_augsburg.nlp.two.BasicMonitor.Entry;
+import de.hs_augsburg.nlp.two.BasicMonitor.INumberGenerator;
 import de.hs_augsburg.nlp.two.BasicMonitor.NumberGenerator;
 import de.hs_augsburg.nlp.two.IBank;
 import org.pcollections.HashTreePMap;
@@ -13,11 +14,11 @@ import java.util.concurrent.atomic.AtomicReference;
 
 public class CasBank implements IBank {
     private AtomicReference<PMap<Long, ImmutableAccount>> accounts;
-    private NumberGenerator accNoGenerator;
+    private INumberGenerator accNoGenerator;
 
     public CasBank() {
         accounts = new AtomicReference<>(HashTreePMap.empty());
-        accNoGenerator = new NumberGenerator();
+        accNoGenerator = new AtomicNumberGenerator();
     }
 
     @Override
