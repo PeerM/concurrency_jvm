@@ -1,5 +1,6 @@
 package de.hs_augsburg.nlp.two.BasicMonitor;
 
+import de.hs_augsburg.nlp.two.Functional.CasBank;
 import de.hs_augsburg.nlp.two.IBank;
 import de.hs_augsburg.nlp.two.SmallLock.SmallLockBank;
 import org.openjdk.jmh.annotations.*;
@@ -10,8 +11,8 @@ import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 
 @SuppressWarnings("WeakerAccess")
 public class BenchBank {
@@ -21,8 +22,12 @@ public class BenchBank {
     public static void main(String[] args) throws RunnerException {
         // this is the config, you can play around with this
         Options opt = new OptionsBuilder()
-                .include(BenchBank.class.getSimpleName() + "")
-                .param("impl", "Monitor", "SmallLock")
+//                .include(BenchBank.class.getSimpleName() + ".mixed")
+                .param("implName", "Monitor", "Cas", "SmallLock")
+//                .param("numberOfAccounts", "10")
+                .include(BenchBank.class.getSimpleName() + ".readOnly")
+//                .param("implName", "Unsafe", "Monitor", "Cas", "SmallLock")
+                .param("numberOfAccounts", "10", "32", "200", "1000")
                 .forks(1)
                 .warmupIterations(10)
                 .measurementIterations(6)
@@ -30,7 +35,7 @@ public class BenchBank {
                 .threads(5)
                 .jvmArgsAppend("-Xms3g")
 //                .output("jmh_out.txt")
-                .resultFormat(ResultFormatType.JSON)
+                .resultFormat(ResultFormatType.CSV)
                 .build();
 
         new Runner(opt).run();
@@ -92,12 +97,12 @@ public class BenchBank {
 
     @State(Scope.Benchmark)
     public static class BenchmarkState {
-        @Param({"Monitor","SmallLock", "Unsafe"})
+        @Param({"Monitor", "SmallLock", "Unsafe", "Cas"})
         volatile String implName;
-        @Param({"2","10","30","100"})
+        @Param({"2", "10", "30", "100"})
         volatile int numberOfAccounts;
         volatile IBank bankImpl;
-        volatile List<Long> accNos = new Vector<>();
+        volatile List<Long> accNos = new ArrayList<>(numberOfAccounts);
         volatile Blackhole hole = new Blackhole();
 //        private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
@@ -113,12 +118,16 @@ public class BenchBank {
                 case "Unsafe":
                     bankImpl = new UnsafeBank();
                     break;
+                case "Cas":
+                    bankImpl = new CasBank();
+                    break;
                 default:
                     throw new IllegalArgumentException("impl '" + implName + "' not supported");
             }
             for (int i = 0; i < numberOfAccounts; i++) {
                 accNos.add(bankImpl.createAccount());
             }
+            numberOfAccounts = numberOfAccounts;
         }
     }
 }

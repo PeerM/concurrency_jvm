@@ -1,5 +1,6 @@
 package de.hs_augsburg.nlp.two.BasicMonitor;
 
+import de.hs_augsburg.nlp.two.Functional.CasBank;
 import de.hs_augsburg.nlp.two.IBank;
 import de.hs_augsburg.nlp.two.SmallLock.SmallLockBank;
 import one.util.streamex.StreamEx;
@@ -103,7 +104,8 @@ public class ConcurrentBankTest {
         return Arrays.asList(
 //                new UnsafeBank()
 //                , new CentralMoniBank()
-                new SmallLockBank()
+//                new SmallLockBank()
+                new CasBank()
         );
     }
 

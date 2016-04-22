@@ -1,5 +1,6 @@
 package de.hs_augsburg.nlp.two.BasicMonitor;
 
+import de.hs_augsburg.nlp.two.Functional.CasBank;
 import de.hs_augsburg.nlp.two.IBank;
 import org.junit.After;
 import org.junit.Before;
@@ -27,9 +28,10 @@ public class BankTest {
     @Parameterized.Parameters(name = "{index}: {0}")
     public static List<IBank> data() {
         return Arrays.asList(
-                new UnsafeBank()
+//                new UnsafeBank()
 //                new CentralMoniBank()
 //                ,new SmallLockBank()
+                new CasBank()
         );
     }
 

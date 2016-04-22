@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -19,13 +20,14 @@ public class SmallLockBank implements IBank {
     private ReadWriteLock readWriteLock;
 
     public SmallLockBank() {
-        accounts = new Hashtable<>();
+        accounts = new ConcurrentHashMap<>();
         accNoGenerator = new NumberGenerator();
         readWriteLock = new ReentrantReadWriteLock();
     }
 
     @Override
     public void deposit(long accNo, int amount) {
+        // getAcc is still monitored through Hashtable
         getAcc(accNo).deposit(amount, "deposit: " + Instant.now().toString());
     }
 
