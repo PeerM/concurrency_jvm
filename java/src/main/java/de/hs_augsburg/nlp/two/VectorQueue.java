@@ -1,9 +1,6 @@
 package de.hs_augsburg.nlp.two;
 
-import java.util.AbstractQueue;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Vector;
+import java.util.*;
 
 
 public class VectorQueue<T> extends AbstractQueue<T> {
@@ -13,10 +10,6 @@ public class VectorQueue<T> extends AbstractQueue<T> {
     private volatile int start = 0;
     private volatile boolean full = false;
 
-    @Override
-    public Iterator<T> iterator() {
-        return null;
-    }
 
     @Override
     public int size() {
@@ -75,4 +68,40 @@ public class VectorQueue<T> extends AbstractQueue<T> {
         }
         return vec.get(start);
     }
+
+    @Override
+    public Iterator<T> iterator() {
+        return new Iterator<T>() {
+
+            private volatile int index = start;
+            private volatile int lastReturnedIndex = -1;
+            private volatile boolean isFirst = full;
+
+            @Override
+            public boolean hasNext() {
+                return isFirst || index != end;
+            }
+
+            @Override
+            public T next() {
+                if (!hasNext()) {
+                    throw new NoSuchElementException();
+                }
+                isFirst = false;
+                lastReturnedIndex = index;
+                index = increment(index);
+                return vec.get(lastReturnedIndex);
+            }
+        };
+    }
+
+    private int increment(int index) {
+        index++;
+        if (index >= maxElements) {
+            index = 0;
+        }
+        return index;
+    }
+
+
 }
