@@ -2,15 +2,11 @@ package de.hs_augsburg.nlp.two;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.junit.Assert.*;
 
 
-@SuppressWarnings("Duplicates")
 public class ListTest {
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     public VectorQueue<Integer> vectorQueue;
 
     @Before
@@ -34,19 +30,34 @@ public class ListTest {
     }
 
     @Test
-    public void pollWhenEmpty()
-    {
+    public void pollWhenEmpty() {
         assertNull(vectorQueue.poll());
     }
 
     @Test
-    public void offerWhenFull()
-    {
-        for(int i = 0; i<50; i++)
-        {
+    public void offerWhenFull() {
+        for (int i = 0; i < 50; i++) {
             vectorQueue.offer(i);
         }
         assertFalse(vectorQueue.offer(5));
 
+    }
+
+    @Test
+    public void fifoTest() {
+        for (int i = 0; i < 50; i++) {
+            vectorQueue.offer(i);
+        }
+        for (int j = 0; j < 50; j++) {
+            int out = vectorQueue.poll();
+            assertEquals(j, out);
+        }
+    }
+
+    @Test
+    public void objectCorrect() {
+        vectorQueue.offer(5);
+        int out = vectorQueue.poll();
+        assertEquals(5, out);
     }
 }

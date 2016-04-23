@@ -18,7 +18,7 @@ public class VectorQueue<T> extends AbstractQueue<T> {
     }
 
     @Override
-    public int size() {
+    public synchronized int size() {
         int size = 0;
 
         if (end < start) {
@@ -33,7 +33,7 @@ public class VectorQueue<T> extends AbstractQueue<T> {
     }
 
     @Override
-    public boolean offer(T t) {
+    public synchronized boolean offer(T t) {
         if (size() == maxElements)
             return false;
         vec.set(end++, t);
@@ -51,7 +51,7 @@ public class VectorQueue<T> extends AbstractQueue<T> {
     }
 
     @Override
-    public T poll() {
+    public synchronized T poll() {
         if (isEmpty()) {
             return null;
         }
@@ -68,7 +68,7 @@ public class VectorQueue<T> extends AbstractQueue<T> {
     }
 
     @Override
-    public T peek() {
+    public synchronized T peek() {
         if (isEmpty()) {
             return null;
         }

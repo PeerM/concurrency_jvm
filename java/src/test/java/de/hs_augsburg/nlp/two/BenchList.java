@@ -20,7 +20,7 @@ public class BenchList {
         // this is the config, you can play around with this
         Options opt = new OptionsBuilder()
                 .include(BenchList.class.getSimpleName() + "")
-//                .param("implName", "Monitor", "Cas", "SmallLock")
+                .param("implName", "ConcurrentLinkedQueue", "VectorQueue")
                 .forks(1)
                 .warmupIterations(10)
                 .measurementIterations(6)
@@ -38,7 +38,7 @@ public class BenchList {
     @Benchmark
     @Group("main")
     public void add(BenchmarkState state) {
-        state.impl.add(5);
+        state.impl.offer(5);
     }
 
     @Benchmark
@@ -61,6 +61,9 @@ public class BenchList {
             switch (implName) {
                 case "ConcurrentLinkedQueue":
                     impl = new ConcurrentLinkedQueue<>();
+                    break;
+                case "VectorQueue":
+                    impl = new VectorQueue<>();
                     break;
                 default:
                     throw new IllegalArgumentException("impl '" + implName + "' not supported");
