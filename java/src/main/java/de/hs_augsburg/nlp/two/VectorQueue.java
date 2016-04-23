@@ -11,6 +11,12 @@ public class VectorQueue<T> extends AbstractQueue<T> {
     private volatile boolean full = false;
 
 
+    public VectorQueue() {
+        for (int i = 0; i < maxElements; i++) {
+            vec.add(null);
+        }
+    }
+
     @Override
     public int size() {
         int size = 0;
@@ -30,7 +36,7 @@ public class VectorQueue<T> extends AbstractQueue<T> {
     public boolean offer(T t) {
         if (size() == maxElements)
             return false;
-        vec.add(end++, t);
+        vec.set(end++, t);
 
         if (end >= maxElements) {
             end = 0;
@@ -51,7 +57,7 @@ public class VectorQueue<T> extends AbstractQueue<T> {
         }
         final T element = vec.get(start);
         if (null != element) {
-            vec.add(start++, null);
+            vec.set(start++, null);
 
             if (start >= maxElements) {
                 start = 0;
