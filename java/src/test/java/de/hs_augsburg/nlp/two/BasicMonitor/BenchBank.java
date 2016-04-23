@@ -27,8 +27,10 @@ public class BenchBank {
     public static void main(String[] args) throws RunnerException {
         // this is the config, you can play around with this
         Options opt = new OptionsBuilder()
-                .include(BenchBank.class.getSimpleName() + ".mixed")
-//                .param("implName", "Accumulator")
+                .include(BenchBank.class.getSimpleName() + ".[(mixed)(write)]")
+//                .param("implName","Cas", "Accumulator")
+//                .param("implName","Cas")
+                .param("implName", "Accumulator")
                 .param("numberOfAccounts", "30")
 //                .include(BenchBank.class.getSimpleName() + ".readWrite")
 //                .param("implName", "Unsafe", "Monitor", "Cas", "SmallLock")
@@ -38,7 +40,7 @@ public class BenchBank {
                 .measurementIterations(5)
                 .mode(Mode.Throughput)
                 .threads(threadCount)
-                .addProfiler("gc")
+//                .addProfiler("gc")
 //                .addProfiler("stack")
                 .jvmArgsAppend("-Xms4g")
 //                .output("jmh_out.txt")
@@ -78,6 +80,19 @@ public class BenchBank {
     public void balanceReadWrite(BenchmarkState state) {
         balance(state);
     }
+
+    @Benchmark
+    @Group("write")
+    public void depositWrite(BenchmarkState state) {
+        deposit(state);
+    }
+
+    @Benchmark
+    @Group("write")
+    public void withdrawWrite(BenchmarkState state) {
+        withdraw(state);
+    }
+
 
     @Benchmark
     @Group("createOnly")
@@ -149,7 +164,7 @@ public class BenchBank {
                     bankImpl = new CasBank();
                     break;
                 case "Accumulator":
-                    bankImpl = new AccumulatorBank(threadCount + (int) (threadCount * 3f));
+                    bankImpl = new AccumulatorBank((int) (threadCount * 1.5f));
                     break;
                 default:
                     throw new IllegalArgumentException("impl '" + implName + "' not supported");
