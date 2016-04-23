@@ -11,6 +11,8 @@ import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
 import org.openjdk.jmh.runner.options.OptionsBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,18 +27,20 @@ public class BenchBank {
     public static void main(String[] args) throws RunnerException {
         // this is the config, you can play around with this
         Options opt = new OptionsBuilder()
-//                .include(BenchBank.class.getSimpleName() + ".mixed")
-                .param("implName", "Cas", "Accumulator")
-                .param("numberOfAccounts", "10")
                 .include(BenchBank.class.getSimpleName() + ".mixed")
+//                .param("implName", "Accumulator")
+                .param("numberOfAccounts", "30")
+//                .include(BenchBank.class.getSimpleName() + ".readWrite")
 //                .param("implName", "Unsafe", "Monitor", "Cas", "SmallLock")
 //                .param("numberOfAccounts", "10", "32", "200", "1000")
                 .forks(1)
-                .warmupIterations(10)
-                .measurementIterations(6)
+                .warmupIterations(6)
+                .measurementIterations(5)
                 .mode(Mode.Throughput)
                 .threads(threadCount)
-                .jvmArgsAppend("-Xms3g")
+                .addProfiler("gc")
+//                .addProfiler("stack")
+                .jvmArgsAppend("-Xms4g")
 //                .output("jmh_out.txt")
                 .resultFormat(ResultFormatType.CSV)
                 .build();
@@ -64,6 +68,19 @@ public class BenchBank {
     }
 
     @Benchmark
+    @Group("readWrite")
+    public void depositReadWrite(BenchmarkState state) {
+        deposit(state);
+    }
+
+    @Benchmark
+    @Group("readWrite")
+    public void balanceReadWrite(BenchmarkState state) {
+        balance(state);
+    }
+
+    @Benchmark
+    @Group("createOnly")
     public void create(BenchmarkState state) {
         IBank impl = state.bankImpl;
         state.hole.consume(impl.createAccount());
@@ -113,10 +130,11 @@ public class BenchBank {
         volatile IBank bankImpl;
         volatile List<Long> accNos = new ArrayList<>(numberOfAccounts);
         volatile Blackhole hole = new Blackhole();
-//        private final Logger logger = LoggerFactory.getLogger(this.getClass());
+        private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
         @Setup
         public void setup() {
+            logger.info("setup");
             switch (implName) {
                 case "Monitor":
                     bankImpl = new CentralMoniBank();
@@ -131,7 +149,7 @@ public class BenchBank {
                     bankImpl = new CasBank();
                     break;
                 case "Accumulator":
-                    bankImpl = new AccumulatorBank(threadCount + (int) (threadCount * 0.7f));
+                    bankImpl = new AccumulatorBank(threadCount + (int) (threadCount * 3f));
                     break;
                 default:
                     throw new IllegalArgumentException("impl '" + implName + "' not supported");
