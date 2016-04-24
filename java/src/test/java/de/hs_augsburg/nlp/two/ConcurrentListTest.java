@@ -13,7 +13,7 @@ public class ConcurrentListTest {
     protected final AtomicInteger takeSum = new AtomicInteger(0);
 
 
-    private int nPairs = 10;
+    private int nPairs = 2;
     private int nTrials = 10;
 
     public VectorQueue<Integer> vectorQueue;
@@ -22,6 +22,7 @@ public class ConcurrentListTest {
     @Before
     public void setUp() {
         vectorQueue = new VectorQueue<>();
+        barrier = new CyclicBarrier(4);
     }
 
     @Test
