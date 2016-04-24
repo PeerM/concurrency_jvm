@@ -1,0 +1,4 @@
+"Benchmark","Mode","Threads","Samples","Score","Score Error (99,9%)","Unit","Param: implName"
+"de.hs_augsburg.nlp.two.BenchList.main","thrpt",6,24,"4353181,114669","619888,325424","ops/s",ConcurrentLinkedQueue
+"de.hs_augsburg.nlp.two.BenchList.main:add","thrpt",6,24,"1869140,030981","466549,186737","ops/s",ConcurrentLinkedQueue
+"de.hs_augsburg.nlp.two.BenchList.main:poll","thrpt",6,24,"2484041,083688","164723,085347","ops/s",ConcurrentLinkedQueue

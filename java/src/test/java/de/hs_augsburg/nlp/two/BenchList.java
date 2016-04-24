@@ -20,7 +20,7 @@ public class BenchList {
         // this is the config, you can play around with this
         Options opt = new OptionsBuilder()
                 .include(BenchList.class.getSimpleName() + "")
-//                .param("implName", "ConcurrentLinkedQueue", "VectorQueue")
+                .param("implName", "ConcurrentLinkedQueue", "VectorQueue")
                 .forks(4)
                 .warmupIterations(10)
                 .measurementIterations(6)
