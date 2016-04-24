@@ -8,4 +8,4 @@
     :methods [^:static [makeRefBank [] "de.hs_augsburg.nlp.two.IBank"]]))
 
 
-(defn ^IBank -makeRefBank [] (new CasBank))
+(defn ^IBank -makeRefBank [] (new RefBank/make-Bank))
