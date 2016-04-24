@@ -1,0 +1,13 @@
+"Benchmark","Mode","Threads","Samples","Score","Score Error (99,9%)","Unit","Param: implName","Param: numberOfAccounts"
+"de.hs_augsburg.nlp.two.BasicMonitor.BenchBank.mixed","thrpt",40,6,"5356133,678671","2389227,298315","ops/s",Cas,40
+"de.hs_augsburg.nlp.two.BasicMonitor.BenchBank.mixed:balance","thrpt",40,6,"2742093,896685","1345354,175233","ops/s",Cas,40
+"de.hs_augsburg.nlp.two.BasicMonitor.BenchBank.mixed:deposit","thrpt",40,6,"82862,901586","35831,522346","ops/s",Cas,40
+"de.hs_augsburg.nlp.two.BasicMonitor.BenchBank.mixed:getEntries","thrpt",40,6,"2449314,423912","1457613,563060","ops/s",Cas,40
+"de.hs_augsburg.nlp.two.BasicMonitor.BenchBank.mixed:transfer","thrpt",40,6,"1601,329619","5187,408967","ops/s",Cas,40
+"de.hs_augsburg.nlp.two.BasicMonitor.BenchBank.mixed:withdraw","thrpt",40,6,"80261,126870","78456,663987","ops/s",Cas,40
+"de.hs_augsburg.nlp.two.BasicMonitor.BenchBank.mixed","thrpt",40,6,"5378628,082945","3509967,023252","ops/s",Ref,40
+"de.hs_augsburg.nlp.two.BasicMonitor.BenchBank.mixed:balance","thrpt",40,6,"2793588,132392","2489876,805695","ops/s",Ref,40
+"de.hs_augsburg.nlp.two.BasicMonitor.BenchBank.mixed:deposit","thrpt",40,6,"62898,574829","36231,452282","ops/s",Ref,40
+"de.hs_augsburg.nlp.two.BasicMonitor.BenchBank.mixed:getEntries","thrpt",40,6,"2438755,348368","975195,112514","ops/s",Ref,40
+"de.hs_augsburg.nlp.two.BasicMonitor.BenchBank.mixed:transfer","thrpt",40,6,"3018,622630","5243,864354","ops/s",Ref,40
+"de.hs_augsburg.nlp.two.BasicMonitor.BenchBank.mixed:withdraw","thrpt",40,6,"80367,404726","51676,348100","ops/s",Ref,40
