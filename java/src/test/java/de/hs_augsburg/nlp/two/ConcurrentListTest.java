@@ -22,15 +22,15 @@ public class ConcurrentListTest {
     @Before
     public void setUp() {
         vectorQueue = new VectorQueue<>();
-        barrier = new CyclicBarrier(4);
+        barrier = new CyclicBarrier(nPairs*2 +1);
     }
 
     @Test
     public void testParallel() {
         try {
             for (int i = 0; i < nPairs; i++) {
-                new Thread(new Consumer());
-                new Thread(new Producer());
+                new Thread(new Consumer()).start();
+                new Thread(new Producer()).start();
             }
             barrier.await(); // wait for all threads to be ready
             barrier.await(); // wait for all threads to finish
