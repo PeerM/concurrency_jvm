@@ -4,9 +4,6 @@ import de.hs_augsburg.nlp.two.BasicMonitor.Entry;
 
 import java.util.List;
 
-/**
- * Created by Peer on 19.04.2016.
- */
 public interface IBank {
     void deposit(long accNo, int amount);
 
@@ -19,4 +16,6 @@ public interface IBank {
     List<Entry> getAccountEntries(List<Long> accNo);
 
     long createAccount();
+
+    int getBalance(long accNo);
 }

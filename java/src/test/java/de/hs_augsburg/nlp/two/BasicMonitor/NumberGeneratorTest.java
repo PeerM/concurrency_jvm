@@ -10,7 +10,7 @@ import static org.junit.Assert.*;
 public class NumberGeneratorTest {
     @Test
     public void testNext() throws Exception {
-        NumberGenerator gen = new NumberGenerator();
+        INumberGenerator gen = new NumberGenerator();
         assertEquals(0, gen.getNext());
         assertEquals(1, gen.getNext());
         assertEquals(2, gen.getNext());
@@ -19,7 +19,7 @@ public class NumberGeneratorTest {
 
     @Test
     public void testParallel() throws Exception {
-        NumberGenerator gen = new NumberGenerator();
+        INumberGenerator gen = new NumberGenerator();
         long[] values = LongStream.range(0, 300).parallel().map(i -> gen.getNext()).sorted().toArray();
         Assert.assertArrayEquals(LongStream.range(0, 300).toArray(), values);
     }

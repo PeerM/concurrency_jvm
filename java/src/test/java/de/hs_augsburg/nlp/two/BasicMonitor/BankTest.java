@@ -1,21 +1,28 @@
 package de.hs_augsburg.nlp.two.BasicMonitor;
 
+import de.hs_augsburg.nlp.two.Functional.CasBank;
 import de.hs_augsburg.nlp.two.IBank;
+import de.hs_augsburg.nlp.two.SmallLock.SmallLockBank;
+import de.hs_augsburg.nlp.two.reduced.AccumulatorBank;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 
 @RunWith(Parameterized.class)
 public class BankTest {
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
     @Parameterized.Parameter
     public IBank impl;
     private List<Long> accNos;
@@ -23,7 +30,13 @@ public class BankTest {
 
     @Parameterized.Parameters(name = "{index}: {0}")
     public static List<IBank> data() {
-        return Arrays.asList(new Bank());
+        return Arrays.asList(
+//                new UnsafeBank()
+//                ,new CentralMoniBank()
+//                ,new SmallLockBank()
+//                ,new CasBank()
+                new AccumulatorBank(2)
+        );
     }
 
     @Before
@@ -46,18 +59,32 @@ public class BankTest {
     }
 
     @Test
+    public void depositIntoNonExistentAccount() throws Exception {
+        boolean threw = false;
+        try {
+            impl.deposit(333039,5);
+        } catch (Exception e) {
+            threw = true;
+        }
+        assertTrue("deposit into non existent Account should throw an exception",threw);
+    }
+
+    @Test
     public void deposit() throws Exception {
         impl.deposit(accNo, 2);
         List<Entry> entries = impl.getAccountEntries(accNo);
         assertEquals(1, entries.size());
+        assertEquals(2, impl.getBalance(accNo));
 
         impl.deposit(accNo, 3);
         entries = impl.getAccountEntries(accNo);
         assertEquals(2, entries.size());
+        assertEquals(5, impl.getBalance(accNo));
 
         impl.deposit(accNo, 1);
         entries = impl.getAccountEntries(accNo);
         assertEquals(3, entries.size());
+        assertEquals(6, impl.getBalance(accNo));
 
         Entry entry = entries.get(0);
         assertEquals(2, entry.amount);
@@ -75,14 +102,17 @@ public class BankTest {
         impl.withdraw(accNo, 2);
         List<Entry> entries = impl.getAccountEntries(accNo);
         assertEquals(1, entries.size());
+        assertEquals(-2, impl.getBalance(accNo));
 
         impl.withdraw(accNo, 3);
         entries = impl.getAccountEntries(accNo);
         assertEquals(2, entries.size());
+        assertEquals(-5, impl.getBalance(accNo));
 
         impl.withdraw(accNo, 1);
         entries = impl.getAccountEntries(accNo);
         assertEquals(3, entries.size());
+        assertEquals(-6, impl.getBalance(accNo));
 
         Entry entry = entries.get(0);
         assertEquals(2, entry.amount);
@@ -110,6 +140,8 @@ public class BankTest {
         assertEquals(EntryType.WITHDRAW, fromEntry.type);
         assertEquals(5, toEntry.amount);
         assertEquals(EntryType.DEPOSIT, toEntry.type);
+        assertEquals(-5, impl.getBalance(from));
+        assertEquals(5, impl.getBalance(to));
         // transfer some back
         impl.transfer(to, from, 4);
         // make sure past is still the same
@@ -128,5 +160,7 @@ public class BankTest {
         assertEquals(EntryType.DEPOSIT, fromEntry.type);
         assertEquals(4, toEntry.amount);
         assertEquals(EntryType.WITHDRAW, toEntry.type);
+        assertEquals(-1, impl.getBalance(from));
+        assertEquals(1, impl.getBalance(to));
     }
 }

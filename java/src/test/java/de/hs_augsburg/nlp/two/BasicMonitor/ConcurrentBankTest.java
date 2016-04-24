@@ -1,16 +1,16 @@
 package de.hs_augsburg.nlp.two.BasicMonitor;
 
 import de.hs_augsburg.nlp.two.IBank;
+import de.hs_augsburg.nlp.two.reduced.AccumulatorBank;
 import one.util.streamex.StreamEx;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
 
 import java.util.*;
-import java.util.concurrent.BrokenBarrierException;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.CyclicBarrier;
-import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
@@ -42,7 +42,7 @@ class WithdrawAction extends SingleAccAction {
 
     @Override
     public void apply() {
-        impl.withdraw(this.accNo, 3);
+        impl.withdraw(this.accNo, 1);
     }
 }
 
@@ -54,7 +54,7 @@ class DepositAction extends SingleAccAction {
 
     @Override
     public void apply() {
-        impl.deposit(this.accNo, 4);
+        impl.deposit(this.accNo, 1);
     }
 }
 
@@ -87,28 +87,43 @@ class TransferAction extends Action {
 
     @Override
     public void apply() {
-        impl.transfer(from, to, 6);
+        impl.transfer(from, to, 1);
     }
 }
 
+@RunWith(Parameterized.class)
 public class ConcurrentBankTest {
+    private static final int parallelism = 6;
+    @Parameterized.Parameter
     public IBank impl;
     private List<Long> accNos;
     private ConcurrentLinkedQueue<Long> accNoQueue;
 
+    @Parameterized.Parameters(name = "{index}: {0}")
+    public static List<IBank> data() {
+        return Arrays.asList(
+//                new UnsafeBank()
+//                , new CentralMoniBank()
+//                new SmallLockBank()
+//                new CasBank()
+                new AccumulatorBank(parallelism + (int) (parallelism * 0.5f))
+//                new AccumulatorBank(parallelism )
+        );
+    }
+
+
     @Before
     public void setUp() throws Exception {
-        impl = new Bank();
         accNos = new LinkedList<>();
         for (int i = 0; i < 4; i++) {
             accNos.add(impl.createAccount());
         }
-        accNos = Arrays.asList(impl.createAccount(), impl.createAccount());
         accNoQueue = new ConcurrentLinkedQueue<>();
     }
 
     @After
     public void tearDown() throws Exception {
+        impl = null;
     }
 
     public long randomAccNo() {
@@ -135,7 +150,7 @@ public class ConcurrentBankTest {
 
     public List<Entry> getEntries() {
         // We need to get all of them atomically
-        return impl.getAccountEntries(accNos);
+        return impl.getAccountEntries(new ArrayList<Long>(accNos));
     }
 
     @Test
@@ -146,10 +161,28 @@ public class ConcurrentBankTest {
     }
 
     @Test
-    public void depositTest() throws Exception {
-        List<Action> actions = Collections.nCopies(1000000, deposit());
+    public void balanceTest() throws Exception {
+        int factor = 100000;
+        for (int i = 0; i < 5 - accNos.size(); i++) {
+            accNos.add(impl.createAccount());
+        }
+        List<List<Action>> groups = Arrays.asList(
+                Collections.nCopies(2 * factor, new DepositAction(impl, accNos.get(0))),
+                Collections.nCopies(factor, new WithdrawAction(impl, accNos.get(0))),
+                Collections.nCopies(factor, new DepositAction(impl, accNos.get(1))),
+                Collections.nCopies(factor, new WithdrawAction(impl, accNos.get(2))),
+                Collections.nCopies(factor, new DepositAction(impl, accNos.get(3))),
+                Collections.nCopies(factor, new TransferAction(impl, accNos.get(3), accNos.get(4)))
+        );
+        List<Action> actions = new ArrayList<>(7 * factor);
+        groups.forEach(actions::addAll);
+        Collections.shuffle(actions);
         runActions(actions);
-        assertEquals(1000000, getEntries().size());
+        assertEquals(factor, impl.getBalance(accNos.get(0)));
+        assertEquals(factor, impl.getBalance(accNos.get(1)));
+        assertEquals(-1 * factor, impl.getBalance(accNos.get(2)));
+        assertEquals(0, impl.getBalance(accNos.get(3)));
+        assertEquals(factor, impl.getBalance(accNos.get(4)));
     }
 
     @Test
@@ -213,7 +246,6 @@ public class ConcurrentBankTest {
     }
 
     private void runActions(List<Action> actions) {
-        int parallelism = 4;
 //        runWithStream(actions, parallelism);
         runWithThread(actions, parallelism);
     }
@@ -231,24 +263,25 @@ public class ConcurrentBankTest {
         }
         // at this point the threads are running
         try {
-            barrier.await();
-        } catch (InterruptedException | BrokenBarrierException e) {
+            barrier.await(20, TimeUnit.SECONDS);
+        } catch (InterruptedException | BrokenBarrierException | TimeoutException e) {
             fail(e.toString());
         }
-        for (Thread actionThread : threads) {
-            try {
-                actionThread.join();
-            } catch (InterruptedException e) {
-                fail(e.toString());
-            }
-        }
+
+//        for (Thread actionThread : threads) {
+//            try {
+//                actionThread.join();
+//            } catch (InterruptedException e) {
+//                fail(e.toString());
+//            }
+//        }
     }
 
     private void runWithStream(List<Action> actions, int parallelism) {
-//        ForkJoinPool fjp = new ForkJoinPool(32);
-        StreamEx.of(actions.stream()).parallel(ForkJoinPool.commonPool()).peek(Action::apply).count();
-//        fjp.awaitQuiescence(5, TimeUnit.SECONDS);
-//        fjp.shutdown();
+        ForkJoinPool fjp = new ForkJoinPool(parallelism);
+        StreamEx.of(actions.stream()).parallel(fjp).peek(Action::apply).count();
+        fjp.awaitQuiescence(5, TimeUnit.SECONDS);
+        fjp.shutdown();
     }
 
     class ActionThread extends Thread {
@@ -257,7 +290,7 @@ public class ConcurrentBankTest {
 
         public ActionThread(List<Action> actions, CyclicBarrier barrier) {
 //            super("ActionThread");
-            this.setName(getName()+" Action");
+            this.setName(getName() + " Action");
             this.actions = actions;
             this.barrier = barrier;
         }
@@ -279,11 +312,11 @@ public class ConcurrentBankTest {
     }
 
     class InvariantChecker extends Thread {
-        private boolean isSomethingWrong = false;
-        private String message;
+        private boolean isSomethingWrong = true;
+        private String message = "Invariant Checker did not complete";
 
         public InvariantChecker() {
-
+            super("Invariant Checker");
         }
 
         @Override
@@ -298,6 +331,8 @@ public class ConcurrentBankTest {
                     return;
                 }
             }
+            isSomethingWrong = false;
+            return;
         }
     }
 }
