@@ -6,8 +6,8 @@ import java.util.*;
 public class VectorQueue<T> extends AbstractQueue<T> {
     private final int maxElements = 50;
     private final List<T> vec = new Vector<>(maxElements);
-    private volatile int end = 0;
-    private volatile int start = 0;
+    private volatile int head = 0;
+    private volatile int tail = 0;
     private volatile boolean full = false;
 
 
@@ -21,12 +21,12 @@ public class VectorQueue<T> extends AbstractQueue<T> {
     public synchronized int size() {
         int size = 0;
 
-        if (end < start) {
-            size = maxElements - start + end;
-        } else if (end == start) {
+        if (head < tail) {
+            size = maxElements - tail + head;
+        } else if (head == tail) {
             size = full ? maxElements : 0;
         } else {
-            size = end - start;
+            size = head - tail;
         }
 
         return size;
@@ -36,13 +36,13 @@ public class VectorQueue<T> extends AbstractQueue<T> {
     public synchronized boolean offer(T t) {
         if (size() == maxElements)
             return false;
-        vec.set(end++, t);
+        vec.set(head++, t);
 
-        if (end >= maxElements) {
-            end = 0;
+        if (head >= maxElements) {
+            head = 0;
         }
 
-        if (end == start) {
+        if (head == tail) {
             full = true;
         }
 
@@ -55,12 +55,12 @@ public class VectorQueue<T> extends AbstractQueue<T> {
         if (isEmpty()) {
             return null;
         }
-        final T element = vec.get(start);
+        final T element = vec.get(tail);
         if (null != element) {
-            vec.set(start++, null);
+            vec.set(tail++, null);
 
-            if (start >= maxElements) {
-                start = 0;
+            if (tail >= maxElements) {
+                tail = 0;
             }
             full = false;
         }
@@ -72,20 +72,20 @@ public class VectorQueue<T> extends AbstractQueue<T> {
         if (isEmpty()) {
             return null;
         }
-        return vec.get(start);
+        return vec.get(tail);
     }
 
     @Override
     public Iterator<T> iterator() {
         return new Iterator<T>() {
 
-            private volatile int index = start;
+            private volatile int index = tail;
             private volatile int lastReturnedIndex = -1;
             private volatile boolean isFirst = full;
 
             @Override
             public boolean hasNext() {
-                return isFirst || index != end;
+                return isFirst || index != head;
             }
 
             @Override

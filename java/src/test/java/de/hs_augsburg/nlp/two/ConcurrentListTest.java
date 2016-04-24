@@ -2,11 +2,8 @@ package de.hs_augsburg.nlp.two;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -15,7 +12,6 @@ import static junit.framework.TestCase.assertEquals;
 public class ConcurrentListTest {
     protected final AtomicInteger putSum = new AtomicInteger(0);
     protected final AtomicInteger takeSum = new AtomicInteger(0);
-    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
     private int nPairs = 2;
@@ -67,10 +63,9 @@ public class ConcurrentListTest {
                 int sum = 0;
                 barrier.await(); // wait for common start signal
                 for (int i = nTrials; i > 0; --i) {
-//                    boolean res = vectorQueue.offer(Math.abs(seed%200000));
                     boolean res = vectorQueue.offer(1);
                     if(res) {
-                        sum += 1;
+                        sum += seed;
                         seed = xorShift(seed);
                     }
                 }
