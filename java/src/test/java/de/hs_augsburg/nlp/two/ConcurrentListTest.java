@@ -2,7 +2,11 @@ package de.hs_augsburg.nlp.two;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CyclicBarrier;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -11,12 +15,13 @@ import static junit.framework.TestCase.assertEquals;
 public class ConcurrentListTest {
     protected final AtomicInteger putSum = new AtomicInteger(0);
     protected final AtomicInteger takeSum = new AtomicInteger(0);
+    private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 
     private int nPairs = 2;
     private int nTrials = 1000000;
 
-    public VectorQueue<Integer> vectorQueue;
+    public Queue<Integer> vectorQueue;
     public CyclicBarrier barrier;
 
     @Before
@@ -34,8 +39,13 @@ public class ConcurrentListTest {
             }
             barrier.await(); // wait for all threads to be ready
             barrier.await(); // wait for all threads to finish
-            for(int i = 0; i < vectorQueue.size(); i++)
-                putSum.getAndAdd(vectorQueue.poll());
+            int sum = 0;
+            int size = vectorQueue.size();
+            for(int i = 0; i < size; i++) {
+                Integer poll = vectorQueue.poll();
+                sum += poll;
+            }
+            takeSum.addAndGet(sum);
             assertEquals(putSum.get(), takeSum.get());
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -57,9 +67,10 @@ public class ConcurrentListTest {
                 int sum = 0;
                 barrier.await(); // wait for common start signal
                 for (int i = nTrials; i > 0; --i) {
-                    boolean res = vectorQueue.offer(seed);
+//                    boolean res = vectorQueue.offer(Math.abs(seed%200000));
+                    boolean res = vectorQueue.offer(1);
                     if(res) {
-                        sum += seed;
+                        sum += 1;
                         seed = xorShift(seed);
                     }
                 }
