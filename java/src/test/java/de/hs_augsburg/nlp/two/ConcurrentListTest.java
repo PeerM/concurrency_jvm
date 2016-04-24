@@ -14,7 +14,7 @@ public class ConcurrentListTest {
 
 
     private int nPairs = 2;
-    private int nTrials = 10;
+    private int nTrials = 1000000;
 
     public VectorQueue<Integer> vectorQueue;
     public CyclicBarrier barrier;
@@ -34,6 +34,8 @@ public class ConcurrentListTest {
             }
             barrier.await(); // wait for all threads to be ready
             barrier.await(); // wait for all threads to finish
+            for(int i = 0; i < vectorQueue.size(); i++)
+                putSum.getAndAdd(vectorQueue.poll());
             assertEquals(putSum.get(), takeSum.get());
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -55,9 +57,11 @@ public class ConcurrentListTest {
                 int sum = 0;
                 barrier.await(); // wait for common start signal
                 for (int i = nTrials; i > 0; --i) {
-                    vectorQueue.offer(seed);
-                    sum += seed;
-                    seed = xorShift(seed);
+                    boolean res = vectorQueue.offer(seed);
+                    if(res) {
+                        sum += seed;
+                        seed = xorShift(seed);
+                    }
                 }
                 putSum.getAndAdd(sum);
                 barrier.await(); // signal end of computation
@@ -75,7 +79,9 @@ public class ConcurrentListTest {
                 barrier.await();
                 int sum = 0;
                 for (int i = nTrials; i > 0; --i) {
-                    sum += vectorQueue.poll();
+                    Integer res = vectorQueue.poll();
+                    if(res != null)
+                        sum += res;
                 }
                 takeSum.getAndAdd(sum);
                 barrier.await();
