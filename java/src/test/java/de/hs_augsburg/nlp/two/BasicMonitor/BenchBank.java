@@ -27,11 +27,11 @@ public class BenchBank {
     public static void main(String[] args) throws RunnerException {
         // this is the config, you can play around with this
         Options opt = new OptionsBuilder()
-                .include(BenchBank.class.getSimpleName() + ".[(mixed)(write)]")
-//                .param("implName","Cas", "Accumulator")
+                .include(BenchBank.class.getSimpleName() + "")
+                .param("implName","Monitor", "SmallLock",  "Cas", "Accumulator")
 //                .param("implName","Cas")
-                .param("implName", "Accumulator")
-                .param("numberOfAccounts", "30")
+//                .param("implName", "Accumulator")
+//                .param("numberOfAccounts", "30")
 //                .include(BenchBank.class.getSimpleName() + ".readWrite")
 //                .param("implName", "Unsafe", "Monitor", "Cas", "SmallLock")
 //                .param("numberOfAccounts", "10", "32", "200", "1000")
@@ -42,7 +42,7 @@ public class BenchBank {
                 .threads(threadCount)
 //                .addProfiler("gc")
 //                .addProfiler("stack")
-                .jvmArgsAppend("-Xms4g")
+                .jvmArgsAppend("-Xms10g")
 //                .output("jmh_out.txt")
                 .resultFormat(ResultFormatType.CSV)
                 .build();

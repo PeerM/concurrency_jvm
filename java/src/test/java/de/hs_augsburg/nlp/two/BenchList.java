@@ -20,13 +20,13 @@ public class BenchList {
         // this is the config, you can play around with this
         Options opt = new OptionsBuilder()
                 .include(BenchList.class.getSimpleName() + "")
-                .param("implName", "ConcurrentLinkedQueue", "VectorQueue")
-                .forks(1)
+//                .param("implName", "ConcurrentLinkedQueue", "VectorQueue")
+                .forks(4)
                 .warmupIterations(10)
                 .measurementIterations(6)
                 .mode(Mode.Throughput)
-//                .threads(5)
-                .jvmArgsAppend("-Xms3g")
+                .threads(5)
+//                .jvmArgsAppend("-Xms3g")
 //                .output("jmh_out.txt")
                 .resultFormat(ResultFormatType.CSV)
                 .build();
@@ -50,11 +50,10 @@ public class BenchList {
 
     @State(Scope.Benchmark)
     public static class BenchmarkState {
-        @Param({"ConcurrentLinkedQueue"})
+        @Param({"ConcurrentLinkedQueue", "VectorQueue"})
         volatile String implName;
         volatile Queue<Integer> impl;
         volatile Blackhole hole = new Blackhole();
-//        private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
         @Setup
         public void setup() {
