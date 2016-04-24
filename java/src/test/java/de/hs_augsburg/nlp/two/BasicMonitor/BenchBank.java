@@ -3,6 +3,7 @@ package de.hs_augsburg.nlp.two.BasicMonitor;
 import de.hs_augsburg.nlp.two.Functional.CasBank;
 import de.hs_augsburg.nlp.two.IBank;
 import de.hs_augsburg.nlp.two.SmallLock.SmallLockBank;
+import de.hs_augsburg.nlp.two.cl.RefBankFactory;
 import de.hs_augsburg.nlp.two.reduced.AccumulatorBank;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Blackhole;
@@ -27,9 +28,9 @@ public class BenchBank {
     public static void main(String[] args) throws RunnerException {
         // this is the config, you can play around with this
         Options opt = new OptionsBuilder()
-                .include(BenchBank.class.getSimpleName() + "")
-                .param("implName","Monitor", "SmallLock",  "Cas", "Accumulator")
-//                .param("implName","Cas")
+                .include(BenchBank.class.getSimpleName() + ".mixed")
+//                .param("implName","Monitor", "SmallLock",  "Cas", "Accumulator")
+                .param("implName","Ref","Cas")
 //                .param("implName", "Accumulator")
 //                .param("numberOfAccounts", "30")
 //                .include(BenchBank.class.getSimpleName() + ".readWrite")
@@ -165,6 +166,9 @@ public class BenchBank {
                     break;
                 case "Accumulator":
                     bankImpl = new AccumulatorBank((int) (threadCount * 1.5f));
+                    break;
+                case "Ref":
+                    bankImpl = RefBankFactory.makeRefBank();
                     break;
                 default:
                     throw new IllegalArgumentException("impl '" + implName + "' not supported");

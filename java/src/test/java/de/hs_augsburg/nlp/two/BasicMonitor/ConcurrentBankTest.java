@@ -1,6 +1,7 @@
 package de.hs_augsburg.nlp.two.BasicMonitor;
 
 import de.hs_augsburg.nlp.two.IBank;
+import de.hs_augsburg.nlp.two.cl.RefBankFactory;
 import de.hs_augsburg.nlp.two.reduced.AccumulatorBank;
 import one.util.streamex.StreamEx;
 import org.junit.After;
@@ -106,8 +107,8 @@ public class ConcurrentBankTest {
 //                , new CentralMoniBank()
 //                new SmallLockBank()
 //                new CasBank()
-                new AccumulatorBank(parallelism + (int) (parallelism * 0.5f))
-//                new AccumulatorBank(parallelism )
+//                new AccumulatorBank(parallelism + (int) (parallelism * 0.5f))
+                RefBankFactory.makeRefBank()
         );
     }
 
