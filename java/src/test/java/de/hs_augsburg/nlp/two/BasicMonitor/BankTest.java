@@ -36,7 +36,7 @@ public class BankTest {
 //                ,new SmallLockBank()
 //                ,new CasBank()
 //                new AccumulatorBank(2),
-                de.hs_augsburg.nlp.two.cl.RefBankFactory.makeRefBank()
+//                de.hs_augsburg.nlp.two.cl.RefBankFactory.makeRefBank()
         );
     }
 

@@ -70,3 +70,4 @@ clojure {
     warnOnReflection = true
     aotCompile = true
 }
+compileClojure.dependsOn(compileJava)

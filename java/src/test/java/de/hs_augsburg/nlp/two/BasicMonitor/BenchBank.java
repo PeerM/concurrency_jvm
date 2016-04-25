@@ -29,8 +29,8 @@ public class BenchBank {
         // this is the config, you can play around with this
         Options opt = new OptionsBuilder()
                 .include(BenchBank.class.getSimpleName() + ".mixed")
-//                .param("implName","Monitor", "SmallLock",  "Cas", "Accumulator")
-                .param("implName","Ref")
+                .param("implName","Monitor", "SmallLock",  "Cas", "Accumulator")
+//                .param("implName","Ref")
 //                .param("implName", "Accumulator")
                 .param("numberOfAccounts", "30")
 //                .include(BenchBank.class.getSimpleName() + ".readWrite")
@@ -167,9 +167,9 @@ public class BenchBank {
                 case "Accumulator":
                     bankImpl = new AccumulatorBank((int) (threadCount * 1.5f));
                     break;
-                case "Ref":
-                    bankImpl = RefBankFactory.makeRefBank();
-                    break;
+//                case "Ref":
+//                    bankImpl = RefBankFactory.makeRefBank();
+//                    break;
                 default:
                     throw new IllegalArgumentException("impl '" + implName + "' not supported");
             }
