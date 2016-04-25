@@ -133,7 +133,7 @@ public class BounceBallAdjustable {
                     // potential for a race condition if the thread is interrupted here
                     ballAtom.compute(ballIdentity, (key, ball) -> ball.move());
                     Thread.sleep(5); // cpu-schonendes Warten
-                    // invoced from different thread, but only queues up an event
+                    // invoked from different thread, but only queues up an event
                     box.repaint();
                 }
                 Thread.sleep(100);
