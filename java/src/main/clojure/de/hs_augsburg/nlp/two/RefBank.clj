@@ -17,7 +17,7 @@
     (assoc account-with-balance :entires (conj (:entires account-with-balance) (entry amount :deposit "deposit")))))
 
 (defn withdraw-from [account amount]
-  (let [account-with-balance (assoc account :balance (- amount (:balance account)))]
+  (let [account-with-balance (assoc account :balance (- (:balance account) amount))]
     (assoc account-with-balance :entires (conj (:entires account-with-balance) (entry amount :withdraw "withdraw")))))
 
 (defn deposit! [accounts-atom accNo amount]
@@ -40,7 +40,7 @@
 (defn get-a-bunch-of-entries [accounts accnos] (dosync (flatten (map (fn [accno] (get-entries-local accounts accno)) accnos))))
 
 (defn make-Bank []
-  (let [accounts (atom []) nextAccNo (atom 0)]
+  (let [accounts (atom {}) nextAccNo (atom 0)]
     (reify IBank
       (deposit [this accno amount] (deposit! accounts, accno, amount))
       (withdraw [this accno amount] (withdraw! accounts, accno, amount))
