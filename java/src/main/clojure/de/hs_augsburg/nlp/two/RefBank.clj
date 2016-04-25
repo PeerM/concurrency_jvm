@@ -37,7 +37,7 @@
 
 (defn get-entries-local [accounts accno] (map entry-to-java (:entires @(get accounts accno))))
 (defn get-entries-complete [accounts-atom accno] (get-entries-local @accounts-atom accno))
-(defn get-a-bunch-of-entries [accounts accnos] (dosync (flatten (map (fn [accno] (get-entries-local accounts accno)) accnos))))
+(defn get-a-bunch-of-entries [accounts accnos] (dosync (mapcat (fn [accno] (get-entries-local accounts accno)) accnos)))
 
 (defn make-Bank []
   (let [accounts (atom {}) nextAccNo (atom 0)]
