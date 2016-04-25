@@ -48,7 +48,7 @@ public class UnsafeAccount {
         return new org.apache.commons.lang3.builder.ToStringBuilder(this)
                 .append("balance", balance)
                 .append("lastModified", lastModified)
-                .append("entries", entries)
+                .append("entries size", entries.size())
                 .append("id", id)
                 .toString();
     }

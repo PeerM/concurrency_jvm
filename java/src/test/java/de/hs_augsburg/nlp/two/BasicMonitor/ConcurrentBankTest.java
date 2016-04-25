@@ -1,7 +1,8 @@
 package de.hs_augsburg.nlp.two.BasicMonitor;
 
 import de.hs_augsburg.nlp.two.IBank;
-import de.hs_augsburg.nlp.two.SmallLock.SmallLockBank;
+import de.hs_augsburg.nlp.two.cl.RefBankFactory;
+import de.hs_augsburg.nlp.two.reduced.AccumulatorBank;
 import one.util.streamex.StreamEx;
 import org.junit.After;
 import org.junit.Before;
@@ -10,10 +11,7 @@ import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 
 import java.util.*;
-import java.util.concurrent.BrokenBarrierException;
-import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.CyclicBarrier;
-import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.*;
 import java.util.stream.Collectors;
 
 import static org.junit.Assert.*;
@@ -96,6 +94,7 @@ class TransferAction extends Action {
 
 @RunWith(Parameterized.class)
 public class ConcurrentBankTest {
+    private static final int parallelism = 6;
     @Parameterized.Parameter
     public IBank impl;
     private List<Long> accNos;
@@ -103,13 +102,19 @@ public class ConcurrentBankTest {
 
     @Parameterized.Parameters(name = "{index}: {0}")
     public static List<IBank> data() {
-        return Arrays.asList(new CentralMoniBank(), new SmallLockBank());
+        return Arrays.asList(
+//                new UnsafeBank()
+//                , new CentralMoniBank()
+//                new SmallLockBank()
+//                new CasBank()
+//                new AccumulatorBank(parallelism + (int) (parallelism * 0.5f))
+                RefBankFactory.makeRefBank()
+        );
     }
 
 
     @Before
     public void setUp() throws Exception {
-        impl = new CentralMoniBank();
         accNos = new LinkedList<>();
         for (int i = 0; i < 4; i++) {
             accNos.add(impl.createAccount());
@@ -119,6 +124,7 @@ public class ConcurrentBankTest {
 
     @After
     public void tearDown() throws Exception {
+        impl = null;
     }
 
     public long randomAccNo() {
@@ -145,7 +151,7 @@ public class ConcurrentBankTest {
 
     public List<Entry> getEntries() {
         // We need to get all of them atomically
-        return impl.getAccountEntries(accNos);
+        return impl.getAccountEntries(new ArrayList<Long>(accNos));
     }
 
     @Test
@@ -157,7 +163,7 @@ public class ConcurrentBankTest {
 
     @Test
     public void balanceTest() throws Exception {
-        int factor = 400000;
+        int factor = 100000;
         for (int i = 0; i < 5 - accNos.size(); i++) {
             accNos.add(impl.createAccount());
         }
@@ -241,7 +247,6 @@ public class ConcurrentBankTest {
     }
 
     private void runActions(List<Action> actions) {
-        int parallelism = 6;
 //        runWithStream(actions, parallelism);
         runWithThread(actions, parallelism);
     }
@@ -259,24 +264,25 @@ public class ConcurrentBankTest {
         }
         // at this point the threads are running
         try {
-            barrier.await();
-        } catch (InterruptedException | BrokenBarrierException e) {
+            barrier.await(20, TimeUnit.SECONDS);
+        } catch (InterruptedException | BrokenBarrierException | TimeoutException e) {
             fail(e.toString());
         }
-        for (Thread actionThread : threads) {
-            try {
-                actionThread.join();
-            } catch (InterruptedException e) {
-                fail(e.toString());
-            }
-        }
+
+//        for (Thread actionThread : threads) {
+//            try {
+//                actionThread.join();
+//            } catch (InterruptedException e) {
+//                fail(e.toString());
+//            }
+//        }
     }
 
     private void runWithStream(List<Action> actions, int parallelism) {
-//        ForkJoinPool fjp = new ForkJoinPool(32);
-        StreamEx.of(actions.stream()).parallel(ForkJoinPool.commonPool()).peek(Action::apply).count();
-//        fjp.awaitQuiescence(5, TimeUnit.SECONDS);
-//        fjp.shutdown();
+        ForkJoinPool fjp = new ForkJoinPool(parallelism);
+        StreamEx.of(actions.stream()).parallel(fjp).peek(Action::apply).count();
+        fjp.awaitQuiescence(5, TimeUnit.SECONDS);
+        fjp.shutdown();
     }
 
     class ActionThread extends Thread {
@@ -307,8 +313,8 @@ public class ConcurrentBankTest {
     }
 
     class InvariantChecker extends Thread {
-        private boolean isSomethingWrong = false;
-        private String message;
+        private boolean isSomethingWrong = true;
+        private String message = "Invariant Checker did not complete";
 
         public InvariantChecker() {
             super("Invariant Checker");
@@ -326,6 +332,8 @@ public class ConcurrentBankTest {
                     return;
                 }
             }
+            isSomethingWrong = false;
+            return;
         }
     }
 }
