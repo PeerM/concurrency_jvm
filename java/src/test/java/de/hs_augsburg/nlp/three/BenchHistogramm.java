@@ -1,0 +1,98 @@
+package de.hs_augsburg.nlp.three;
+
+import org.openjdk.jmh.annotations.*;
+import org.openjdk.jmh.infra.Blackhole;
+import org.openjdk.jmh.runner.Runner;
+import org.openjdk.jmh.runner.RunnerException;
+import org.openjdk.jmh.runner.options.Options;
+import org.openjdk.jmh.runner.options.OptionsBuilder;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.net.URL;
+import java.net.URLClassLoader;
+import java.util.ArrayList;
+import java.util.List;
+
+@SuppressWarnings("WeakerAccess")
+public class BenchHistogramm {
+
+
+    // to play with JMH without plugins or custom runners
+    public static void main(String[] args) throws RunnerException {
+        // this is the config, you can play around with this
+        Options opt = new OptionsBuilder()
+                .include(BenchHistogramm.class.getSimpleName() + "")
+//                .param("implName", "Sequential")
+                .forks(1)
+                .warmupIterations(2)
+                .measurementIterations(3)
+                .mode(Mode.Throughput)
+                .threads(1)
+//                .jvmArgsAppend("-Xms3g")
+//                .output("jmh_out.txt")
+//                .resultFormat(ResultFormatType.CSV)
+                .build();
+
+        new Runner(opt).run();
+
+    }
+
+    public static int[] loadImage(String path) {
+        BufferedImage image = null;
+        try {
+            URL resource = BenchHistogramm.class.getClassLoader().getResource(path);
+            if (resource == null) {
+                throw new FileNotFoundException(path);
+            }
+            image = ImageIO.read(resource);
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to load image", e);
+        }
+        return image.getRGB(0, 0, image.getWidth(), image.getHeight(), null, 0, image.getWidth());
+    }
+
+    private int[] randomImage(BenchmarkState state) {
+        int index = (int) (System.nanoTime() % state.images.size());
+        return state.images.get(index);
+    }
+
+
+    @Benchmark
+    public void main(BenchmarkState state) {
+        state.hole.consume(state.impl.histogram(randomImage(state)));
+    }
+
+    @State(Scope.Benchmark)
+    public static class BenchmarkState {
+        @Param({"Sequential"})
+        volatile String implName;
+        @Param({"false","true"})
+        volatile boolean persistentThreads;
+        volatile IHistogram impl;
+        volatile Blackhole hole = new Blackhole();
+        volatile List<int[]> images = new ArrayList<>(9);
+
+        @Setup
+        public void setup() {
+//            URLClassLoader classLoader = (URLClassLoader) BenchHistogramm.class.getClassLoader();
+//            for(URL url : classLoader.getURLs())
+//                System.out.println(url.getPath());
+            for (int i = 1; i < 10; i++) {
+                images.add(loadImage("benchdata/4160x2340/" + i + ".jpg"));
+            }
+            switch (implName) {
+                case "Sequential":
+                    impl = new SequentialHistogram();
+                    break;
+                default:
+                    throw new IllegalArgumentException("impl '" + implName + "' not supported");
+            }
+            // volatile write just to be sure
+            images = images;
+        }
+    }
+}
