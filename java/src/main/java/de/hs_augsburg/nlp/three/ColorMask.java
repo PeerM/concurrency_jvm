@@ -1,15 +1,19 @@
 package de.hs_augsburg.nlp.three;
 
 
+import java.awt.*;
+
 public enum ColorMask {
-    RED(32, 0xFF0000), GREEN(16, 0xFF00), BLUE(0, 0xFF);
+    RED(16, 0xFF0000, Color.RED), GREEN(8, 0xFF00, Color.GREEN), BLUE(0, 0xFF, Color.BLUE);
 
+    public final Color color;
     private final int offset;
-    private int mask;
+    private final int mask;
 
-    ColorMask(int offset, int mask) {
+    ColorMask(int offset, int mask, Color color) {
         this.offset = offset;
         this.mask = mask;
+        this.color = color;
     }
 
     public int apply(int value) {
