@@ -9,11 +9,9 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URL;
-import java.net.URLClassLoader;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +25,7 @@ public class BenchHistogramm {
         Options opt = new OptionsBuilder()
                 .include(BenchHistogramm.class.getSimpleName() + "")
 //                .param("implName", "Sequential")
+                .param("persistentThreads", "false")
                 .forks(1)
                 .warmupIterations(2)
                 .measurementIterations(3)
@@ -68,9 +67,9 @@ public class BenchHistogramm {
 
     @State(Scope.Benchmark)
     public static class BenchmarkState {
-        @Param({"Sequential"})
+        @Param({"Sequential", "Threaded"})
         volatile String implName;
-        @Param({"false","true"})
+        @Param({"false", "true"})
         volatile boolean persistentThreads;
         volatile IHistogram impl;
         volatile Blackhole hole = new Blackhole();
@@ -87,6 +86,9 @@ public class BenchHistogramm {
             switch (implName) {
                 case "Sequential":
                     impl = new SequentialHistogram();
+                    break;
+                case "Threaded":
+                    impl = new ThreadedHistogram(persistentThreads);
                     break;
                 default:
                     throw new IllegalArgumentException("impl '" + implName + "' not supported");
