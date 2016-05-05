@@ -24,7 +24,7 @@ public class BenchHistogramm {
         // this is the config, you can play around with this
         Options opt = new OptionsBuilder()
                 .include(BenchHistogramm.class.getSimpleName() + "")
-//                .param("implName", "Sequential")
+                .param("implName", "Threaded","Decomposition")
                 .param("persistentThreads", "false")
                 .forks(1)
                 .warmupIterations(2)
@@ -67,20 +67,20 @@ public class BenchHistogramm {
 
     @State(Scope.Benchmark)
     public static class BenchmarkState {
-        @Param({"Sequential", "Threaded"})
+        @Param({"Sequential", "Threaded", "Decomposition"})
         volatile String implName;
         @Param({"false", "true"})
         volatile boolean persistentThreads;
         volatile IHistogram impl;
         volatile Blackhole hole = new Blackhole();
-        volatile List<int[]> images = new ArrayList<>(9);
+        volatile List<int[]> images = new ArrayList<>();
 
         @Setup
         public void setup() {
 //            URLClassLoader classLoader = (URLClassLoader) BenchHistogramm.class.getClassLoader();
 //            for(URL url : classLoader.getURLs())
 //                System.out.println(url.getPath());
-            for (int i = 1; i < 10; i++) {
+            for (int i = 1; i < 5; i++) {
                 images.add(loadImage("benchdata/4160x2340/" + i + ".jpg"));
             }
             switch (implName) {
@@ -89,6 +89,9 @@ public class BenchHistogramm {
                     break;
                 case "Threaded":
                     impl = new ThreadedHistogram();
+                    break;
+                case "Decomposition":
+                    impl = new DecompositionHistogram(Runtime.getRuntime().availableProcessors() + 1);
                     break;
                 default:
                     throw new IllegalArgumentException("impl '" + implName + "' not supported");
