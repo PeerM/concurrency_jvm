@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-public class SequentialHistogram {
+public class SequentialHistogram implements IHistogram {
     public static void main(String[] args) {
 
         SequentialHistogram histogram = new SequentialHistogram();
@@ -62,6 +62,7 @@ public class SequentialHistogram {
 //        return null;
     }
 
+    @Override
     public Map<ColorMask, int[]> histogram(int[] pixels) {
         Map<ColorMask, int[]> hist = new HashMap<>(3);
         for (ColorMask mask : ColorMask.values()) {
