@@ -1,5 +1,6 @@
 package de.hs_augsburg.nlp.three;
 
+import com.google.common.primitives.Booleans;
 import com.google.common.primitives.Doubles;
 import com.google.common.primitives.Ints;
 import org.math.plot.Plot2DPanel;
@@ -15,14 +16,12 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @SuppressWarnings("Duplicates")
 public class ThreadedHistogram implements IHistogram {
-    private final boolean persistentThreads;
 
-    public ThreadedHistogram(boolean persistentThreads) {
-        this.persistentThreads = persistentThreads;
+    public ThreadedHistogram() {
     }
 
     public static void main(String[] args) {
-        ThreadedHistogram histogram = new ThreadedHistogram(false);
+        ThreadedHistogram histogram = new ThreadedHistogram();
         histogram.visualize(histogram.analyseImage("flickr1.jpg"));
     }
 

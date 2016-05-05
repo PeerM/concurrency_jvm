@@ -88,7 +88,7 @@ public class BenchHistogramm {
                     impl = new SequentialHistogram();
                     break;
                 case "Threaded":
-                    impl = new ThreadedHistogram(persistentThreads);
+                    impl = new ThreadedHistogram();
                     break;
                 default:
                     throw new IllegalArgumentException("impl '" + implName + "' not supported");
