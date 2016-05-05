@@ -108,7 +108,7 @@ public class ConcurrentBankTest {
 //                new SmallLockBank()
 //                new CasBank()
 //                new AccumulatorBank(parallelism + (int) (parallelism * 0.5f))
-                RefBankFactory.makeRefBank()
+//                RefBankFactory.makeRefBank()
         );
     }
 
