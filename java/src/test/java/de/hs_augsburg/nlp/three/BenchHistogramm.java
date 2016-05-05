@@ -24,7 +24,7 @@ public class BenchHistogramm {
         // this is the config, you can play around with this
         Options opt = new OptionsBuilder()
                 .include(BenchHistogramm.class.getSimpleName() + "")
-                .param("implName", "Threaded", "Decomposition", "AtomicDecomposition")
+                .param("implName", "Threaded", "Reduce")
                 .param("persistentThreads", "false")
                 .forks(1)
                 .warmupIterations(2)
@@ -95,6 +95,9 @@ public class BenchHistogramm {
                     break;
                 case "AtomicDecomposition":
                     impl = new AtomicDecompositionHistogram(Runtime.getRuntime().availableProcessors() + 1);
+                    break;
+                case "Reduce":
+                    impl = new ReduceHistogram();
                     break;
                 default:
                     throw new IllegalArgumentException("impl '" + implName + "' not supported");

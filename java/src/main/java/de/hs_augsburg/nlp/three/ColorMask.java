@@ -19,4 +19,9 @@ public enum ColorMask {
     public int apply(int value) {
         return (value & mask) >> offset;
     }
+
+    @Override
+    public String toString() {
+        return this.name();
+    }
 }
