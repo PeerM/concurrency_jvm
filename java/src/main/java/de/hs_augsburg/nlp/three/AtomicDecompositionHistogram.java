@@ -8,21 +8,39 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.*;
+import java.util.concurrent.atomic.AtomicIntegerArray;
 
 @SuppressWarnings("Duplicates")
-public class DecompositionHistogram implements IHistogram {
+public class AtomicDecompositionHistogram implements IHistogram {
 
     private int concurrency;
 
-    public DecompositionHistogram(int concurrency) {
+    public AtomicDecompositionHistogram(int concurrency) {
         this.concurrency = concurrency;
     }
 
     public static void main(String[] args) {
-        DecompositionHistogram histogram = new DecompositionHistogram(Runtime.getRuntime().availableProcessors());
+        AtomicDecompositionHistogram histogram = new AtomicDecompositionHistogram(Runtime.getRuntime().availableProcessors());
         histogram.visualize(histogram.analyseImage("flickr1.jpg"));
+    }
+
+    private static Map<ColorMask, int[]> AtomicToNormal(Map<ColorMask, AtomicIntegerArray> atomic) {
+        Map<ColorMask, int[]> normalMap = new HashMap<>(atomic.size());
+        for (Map.Entry<ColorMask, AtomicIntegerArray> entry : atomic.entrySet()) {
+            normalMap.put(entry.getKey(), AtomicToNormal(entry.getValue()));
+        }
+        return normalMap;
+    }
+
+    private static int[] AtomicToNormal(AtomicIntegerArray atomic) {
+        int[] normal = new int[atomic.length()];
+        for (int i = 0; i < atomic.length(); i++) {
+            normal[i] = atomic.get(i);
+        }
+        return normal;
     }
 
     private void visualize(Map<ColorMask, int[]> histogram) {
@@ -43,12 +61,10 @@ public class DecompositionHistogram implements IHistogram {
         frame.setVisible(true);
     }
 
-    private void makeHistogram(int[] data, ColorMask mask, int[] result, int start, int end, CountDownLatch barrier) {
+    private void makeHistogram(int[] data, ColorMask mask, AtomicIntegerArray result, int start, int end, CountDownLatch barrier) {
         for (int i = start; i < end; i++) {
             int value = mask.apply(data[i]);
-            synchronized (result) {
-                result[value]++;
-            }
+            result.getAndAdd(value, 1);
         }
         barrier.countDown();
     }
@@ -72,21 +88,22 @@ public class DecompositionHistogram implements IHistogram {
 
     @Override
     public Map<ColorMask, int[]> histogram(int[] pixels) {
-        Map<ColorMask, int[]> hist = new ConcurrentHashMap<>(3);
+        Map<ColorMask, AtomicIntegerArray> hist = new ConcurrentHashMap<>(3);
         ExecutorService executor = Executors.newFixedThreadPool(this.concurrency);
-        CountDownLatch latch = new CountDownLatch((this.concurrency + 1) * 3);
+        int NrTasks = concurrency;
+        CountDownLatch latch = new CountDownLatch((NrTasks + 1) * 3);
         for (ColorMask mask : ColorMask.values()) {
-            int[] partial = new int[256];
+            AtomicIntegerArray partial = new AtomicIntegerArray(256);
             int start = 0;
-            int end = pixels.length / concurrency;
-            for (int i = 0; i < concurrency; i++) {
+            int end = pixels.length / NrTasks;
+            for (int i = 0; i < NrTasks; i++) {
                 final int startLocal = start;
                 final int endLocal = end;
                 executor.execute(() -> makeHistogram(pixels, mask, partial, startLocal, endLocal, latch));
-                start += pixels.length / concurrency;
-                end += pixels.length / concurrency;
+                start += pixels.length / NrTasks;
+                end += pixels.length / NrTasks;
             }
-            int remainder = pixels.length % concurrency;
+            int remainder = pixels.length % NrTasks;
             makeHistogram(pixels, mask, partial, pixels.length - remainder, pixels.length, latch);
             hist.put(mask, partial);
         }
@@ -96,6 +113,6 @@ public class DecompositionHistogram implements IHistogram {
             throw new RuntimeException("problem with latch await", e);
         }
         executor.shutdown();
-        return hist;
+        return AtomicToNormal(hist);
     }
 }
