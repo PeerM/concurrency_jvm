@@ -1,6 +1,7 @@
 package de.hs_augsburg.nlp.two;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Queue;
@@ -9,6 +10,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import static junit.framework.TestCase.assertEquals;
 
+@Ignore
 public class ConcurrentListTest {
     protected final AtomicInteger putSum = new AtomicInteger(0);
     protected final AtomicInteger takeSum = new AtomicInteger(0);

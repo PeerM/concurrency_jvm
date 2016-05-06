@@ -1,11 +1,12 @@
 package de.hs_augsburg.nlp.two;
 
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.junit.Assert.*;
 
-
+@Ignore
 public class ListTest {
     public VectorQueue<Integer> vectorQueue;
 

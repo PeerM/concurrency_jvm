@@ -5,6 +5,7 @@ import de.hs_augsburg.meixner.primes.PrimeCheck;
 import de.hs_augsburg.meixner.primes.SimplePrimeCheck;
 import de.hs_augsburg.nlp.one.prime.*;
 import de.hs_augsburg.nlp.util.TimeIt;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
@@ -19,6 +20,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 @SuppressWarnings("Duplicates")
+@Ignore
 public class PrimeProfilingTest {
     @Rule
     public ErrorCollector collector = new ErrorCollector();

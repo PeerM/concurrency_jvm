@@ -6,6 +6,7 @@ import de.hs_augsburg.nlp.two.reduced.AccumulatorBank;
 import one.util.streamex.StreamEx;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -93,6 +94,7 @@ class TransferAction extends Action {
 }
 
 @RunWith(Parameterized.class)
+@Ignore
 public class ConcurrentBankTest {
     private static final int parallelism = 6;
     @Parameterized.Parameter

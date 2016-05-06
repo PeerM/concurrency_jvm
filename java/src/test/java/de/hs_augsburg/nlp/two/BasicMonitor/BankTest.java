@@ -6,6 +6,7 @@ import de.hs_augsburg.nlp.two.SmallLock.SmallLockBank;
 import de.hs_augsburg.nlp.two.reduced.AccumulatorBank;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -21,6 +22,7 @@ import static org.junit.Assert.assertTrue;
 
 
 @RunWith(Parameterized.class)
+@Ignore
 public class BankTest {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
     @Parameterized.Parameter

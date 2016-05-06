@@ -5,6 +5,7 @@ import de.hs_augsburg.meixner.primes.PrimeCheck;
 import de.hs_augsburg.nlp.one.prime.MillerRabinPrimalityTestParallel;
 import de.hs_augsburg.nlp.one.prime.MillerRabinPrimalityTestRosetta;
 import de.hs_augsburg.nlp.util.TimeIt;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
@@ -16,6 +17,7 @@ import java.util.stream.Collectors;
 import java.util.stream.LongStream;
 
 @SuppressWarnings("Duplicates")
+@Ignore
 public class MRPrimeCheckParallelizingTest {
     @Rule
     public ErrorCollector collector = new ErrorCollector();

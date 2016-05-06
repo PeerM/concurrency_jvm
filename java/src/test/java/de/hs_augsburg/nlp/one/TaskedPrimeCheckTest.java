@@ -5,6 +5,7 @@ import de.hs_augsburg.meixner.primes.PrimeCheck;
 import de.hs_augsburg.meixner.primes.SimplePrimeCheck;
 import de.hs_augsburg.meixner.utils.profiling.Clock;
 import de.hs_augsburg.nlp.one.prime.TaskedPrimeCheck;
+import org.junit.Ignore;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ErrorCollector;
@@ -14,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import static org.junit.Assert.*;
 
 @SuppressWarnings("Duplicates")
+@Ignore
 public class TaskedPrimeCheckTest {
     @Rule
     public ErrorCollector collector = new ErrorCollector();
