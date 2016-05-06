@@ -1,4 +1,4 @@
-package de.hs_augsburg.nlp.three;
+package de.hs_augsburg.nlp.three.histogram;
 
 import com.google.common.primitives.Doubles;
 import com.google.common.primitives.Ints;

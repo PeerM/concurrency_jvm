@@ -1,7 +1,7 @@
 (ns de.hs-augsburg.nlp.three.CljPerColorHistogram
   (:gen-class
-    :implements [de.hs_augsburg.nlp.three.IHistogram])
-  (:import (de.hs_augsburg.nlp.three ColorMask ClojureHelpers)))
+    :implements [de.hs_augsburg.nlp.three.histogram.IHistogram])
+  (:import (de.hs_augsburg.nlp.three.histogram ColorMask ClojureHelpers)))
 
 
 (def pixels (int-array [0xFF0001 0x01FF00]))

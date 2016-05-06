@@ -1,6 +1,5 @@
-package de.hs_augsburg.nlp.three;
+package de.hs_augsburg.nlp.three.histogram;
 
-import com.google.common.primitives.Booleans;
 import com.google.common.primitives.Doubles;
 import com.google.common.primitives.Ints;
 import org.math.plot.Plot2DPanel;
@@ -9,19 +8,20 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.*;
 
 @SuppressWarnings("Duplicates")
-public class ThreadedHistogram implements IHistogram {
+public class DecompositionHistogram implements IHistogram {
 
-    public ThreadedHistogram() {
+    private int concurrency;
+
+    public DecompositionHistogram(int concurrency) {
+        this.concurrency = concurrency;
     }
 
     public static void main(String[] args) {
-        ThreadedHistogram histogram = new ThreadedHistogram();
+        DecompositionHistogram histogram = new DecompositionHistogram(Runtime.getRuntime().availableProcessors());
         histogram.visualize(histogram.analyseImage("flickr1.jpg"));
     }
 
@@ -43,13 +43,14 @@ public class ThreadedHistogram implements IHistogram {
         frame.setVisible(true);
     }
 
-    private int[] makeHistogram(int[] data, ColorMask mask) {
-        int[] histogram = new int[256];
-        for (int i = 0; i < data.length; i++) {
+    private void makeHistogram(int[] data, ColorMask mask, int[] result, int start, int end, CountDownLatch barrier) {
+        for (int i = start; i < end; i++) {
             int value = mask.apply(data[i]);
-            histogram[value]++;
+            synchronized (result) {
+                result[value]++;
+            }
         }
-        return histogram;
+        barrier.countDown();
     }
 
     Map<ColorMask, int[]> analyseImage(String path) {
@@ -72,19 +73,29 @@ public class ThreadedHistogram implements IHistogram {
     @Override
     public Map<ColorMask, int[]> histogram(int[] pixels) {
         Map<ColorMask, int[]> hist = new ConcurrentHashMap<>(3);
-        List<Thread> threads = new ArrayList<>(3);
+        ExecutorService executor = Executors.newFixedThreadPool(this.concurrency);
+        CountDownLatch latch = new CountDownLatch((this.concurrency + 1) * 3);
         for (ColorMask mask : ColorMask.values()) {
-            Thread thread = new Thread(() -> hist.put(mask, makeHistogram(pixels, mask)));
-            thread.start();
-            threads.add(thread);
+            int[] partial = new int[256];
+            int start = 0;
+            int end = pixels.length / concurrency;
+            for (int i = 0; i < concurrency; i++) {
+                final int startLocal = start;
+                final int endLocal = end;
+                executor.execute(() -> makeHistogram(pixels, mask, partial, startLocal, endLocal, latch));
+                start += pixels.length / concurrency;
+                end += pixels.length / concurrency;
+            }
+            int remainder = pixels.length % concurrency;
+            makeHistogram(pixels, mask, partial, pixels.length - remainder, pixels.length, latch);
+            hist.put(mask, partial);
         }
         try {
-            for (Thread thread : threads) {
-                thread.join();
-            }
+            latch.await();
         } catch (InterruptedException e) {
-            throw new RuntimeException("joining thread was interrupted", e);
+            throw new RuntimeException("problem with latch await", e);
         }
+        executor.shutdown();
         return hist;
     }
 }

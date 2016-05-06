@@ -1,5 +1,6 @@
 package de.hs_augsburg.nlp.three;
 
+import de.hs_augsburg.nlp.three.histogram.*;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Blackhole;
 import org.openjdk.jmh.runner.Runner;

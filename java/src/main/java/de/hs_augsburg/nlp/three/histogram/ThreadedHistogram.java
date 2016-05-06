@@ -1,4 +1,4 @@
-package de.hs_augsburg.nlp.three;
+package de.hs_augsburg.nlp.three.histogram;
 
 import com.google.common.primitives.Doubles;
 import com.google.common.primitives.Ints;
@@ -8,13 +8,19 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.HashMap;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
-public class SequentialHistogram implements IHistogram {
+@SuppressWarnings("Duplicates")
+public class ThreadedHistogram implements IHistogram {
+
+    public ThreadedHistogram() {
+    }
+
     public static void main(String[] args) {
-
-        SequentialHistogram histogram = new SequentialHistogram();
+        ThreadedHistogram histogram = new ThreadedHistogram();
         histogram.visualize(histogram.analyseImage("flickr1.jpg"));
     }
 
@@ -64,9 +70,19 @@ public class SequentialHistogram implements IHistogram {
 
     @Override
     public Map<ColorMask, int[]> histogram(int[] pixels) {
-        Map<ColorMask, int[]> hist = new HashMap<>(3);
+        Map<ColorMask, int[]> hist = new ConcurrentHashMap<>(3);
+        List<Thread> threads = new ArrayList<>(3);
         for (ColorMask mask : ColorMask.values()) {
-            hist.put(mask, makeHistogram(pixels, mask));
+            Thread thread = new Thread(() -> hist.put(mask, makeHistogram(pixels, mask)));
+            thread.start();
+            threads.add(thread);
+        }
+        try {
+            for (Thread thread : threads) {
+                thread.join();
+            }
+        } catch (InterruptedException e) {
+            throw new RuntimeException("joining thread was interrupted", e);
         }
         return hist;
     }

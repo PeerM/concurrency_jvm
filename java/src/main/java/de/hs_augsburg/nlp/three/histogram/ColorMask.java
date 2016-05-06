@@ -1,4 +1,4 @@
-package de.hs_augsburg.nlp.three;
+package de.hs_augsburg.nlp.three.histogram;
 
 
 import java.awt.*;
