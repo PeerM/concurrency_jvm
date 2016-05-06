@@ -97,7 +97,7 @@ public class BenchHistogramm {
                     impl = new AtomicDecompositionHistogram(Runtime.getRuntime().availableProcessors() + 1);
                     break;
                 case "Reduce":
-                    impl = new ReduceHistogram();
+                    impl = new CljPerColorHistogram();
                     break;
                 default:
                     throw new IllegalArgumentException("impl '" + implName + "' not supported");

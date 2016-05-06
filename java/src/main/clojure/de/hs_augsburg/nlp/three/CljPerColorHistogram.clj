@@ -1,4 +1,4 @@
-(ns de.hs-augsburg.nlp.three.ReduceHistogram
+(ns de.hs-augsburg.nlp.three.CljPerColorHistogram
   (:gen-class
     :implements [de.hs_augsburg.nlp.three.IHistogram])
   (:import (de.hs_augsburg.nlp.three ColorMask ClojureHelpers)))
