@@ -25,7 +25,7 @@ public class BenchHistogramm {
         Options opt = new OptionsBuilder()
                 .include(BenchHistogramm.class.getSimpleName() + "")
                 .param("implName", "Threaded", "Reduce")
-                .param("persistentThreads", "false")
+//                .param("persistentThreads", "false")
                 .forks(1)
                 .warmupIterations(2)
                 .measurementIterations(3)
@@ -69,8 +69,8 @@ public class BenchHistogramm {
     public static class BenchmarkState {
         @Param({"Sequential", "Threaded", "Decomposition", "AtomicDecomposition"})
         volatile String implName;
-        @Param({"false", "true"})
-        volatile boolean persistentThreads;
+//        @Param({"false", "true"})
+//        volatile boolean persistentThreads;
         volatile IHistogram impl;
         volatile Blackhole hole = new Blackhole();
         volatile List<int[]> images = new ArrayList<>();
