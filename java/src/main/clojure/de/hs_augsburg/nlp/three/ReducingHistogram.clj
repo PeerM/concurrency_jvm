@@ -21,18 +21,23 @@
          (first-segment (segment-size pixels num-segments)))
        (take-while (fn [segment] (< (:start segment) (alength pixels))))))
 
-(defn color-hist [mask ^ints pixels] (->> (segments pixels 32)
-                                          (map (fn [segment]
-                                                 (ClojureHelpers/partialHistogram
-                                                   pixels mask
-                                                   (:start segment) (:end segment))))
-                                          (reduce (fn [prev next] (ClojureHelpers/arrayElementBasedAdd prev next)))))
+(defn color-hist [mask ^ints pixels cocurcencie]
+  (->> (segments pixels cocurcencie)
+       (pmap (fn [segment]
+              (ClojureHelpers/partialHistogram
+                pixels mask
+                (:start segment) (:end segment))))
+       (reduce (fn [prev next] (ClojureHelpers/arrayElementBasedAdd prev next)))))
+
+;(defn state [] 3)
 
 (defn -histogram [this ^ints pixels]
   (into {}
         (pmap
-          (fn [mask] [mask (color-hist mask pixels)])
+          (fn [mask] [mask (color-hist mask pixels (.. Runtime getRuntime availableProcessors))])
           [ColorMask/BLUE ColorMask/RED ColorMask/GREEN])))
+
+(defn -init [concurrencie] [[]concurrencie])
 
 (defn run [] (-histogram nil (ClojureHelpers/pathToPixels "flickr1.jpg")))
 
