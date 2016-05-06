@@ -3,9 +3,6 @@
     :implements [de.hs_augsburg.nlp.three.IHistogram])
   (:import (de.hs_augsburg.nlp.three ColorMask ClojureHelpers)))
 
-
-(def pixels (int-array [0x000001 0x000002 0x000003 0x000004 0x000005 0x000006 0x000007]))
-
 (defn segment-size [^ints pixels parts] (int (/ (alength pixels) parts)))
 
 (defn first-segment [segment-length] {:start 0 :end segment-length})
@@ -24,12 +21,10 @@
 (defn color-hist [mask ^ints pixels cocurcencie]
   (->> (segments pixels cocurcencie)
        (pmap (fn [segment]
-              (ClojureHelpers/partialHistogram
-                pixels mask
-                (:start segment) (:end segment))))
+               (ClojureHelpers/partialHistogram
+                 pixels mask
+                 (:start segment) (:end segment))))
        (reduce (fn [prev next] (ClojureHelpers/arrayElementBasedAdd prev next)))))
-
-;(defn state [] 3)
 
 (defn -histogram [this ^ints pixels]
   (into {}
@@ -37,12 +32,5 @@
           (fn [mask] [mask (color-hist mask pixels (.. Runtime getRuntime availableProcessors))])
           [ColorMask/BLUE ColorMask/RED ColorMask/GREEN])))
 
-(defn -init [concurrencie] [[]concurrencie])
 
 (defn run [] (-histogram nil (ClojureHelpers/pathToPixels "flickr1.jpg")))
-
-
-;(reduce
-;  (fn [prev, next] (assoc prev (get next 0) (get next 1)))
-;  {:a 1}
-;  (-histogram pixels))
