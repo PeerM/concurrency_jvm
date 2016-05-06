@@ -23,4 +23,12 @@ public class ClojureHelpers {
         }
         return result;
     }
+
+    public static int[] arrayElementBasedAdd(int[] a, int[] b) {
+        int[] result = new int[a.length];
+        for (int i = 0; i < a.length; i++) {
+            result[i] = a[i] + b[i];
+        }
+        return result;
+    }
 }
