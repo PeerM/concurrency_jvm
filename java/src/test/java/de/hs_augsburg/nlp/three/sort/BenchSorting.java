@@ -1,9 +1,6 @@
 package de.hs_augsburg.nlp.three.sort;
 
-import de.hs_augsburg.nlp.three.radix.ISort;
-import de.hs_augsburg.nlp.three.radix.JdkSort;
-import de.hs_augsburg.nlp.three.radix.PHistRadixSort;
-import de.hs_augsburg.nlp.three.radix.SequentialRadixSort;
+import de.hs_augsburg.nlp.three.radix.*;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Blackhole;
 import org.openjdk.jmh.runner.Runner;
@@ -20,7 +17,7 @@ public class BenchSorting {
         // this is the config, you can play around with this
         Options opt = new OptionsBuilder()
                 .include(BenchSorting.class.getSimpleName() + "")
-                .param("implName", "Sequential", "PHist")
+                .param("implName", "Sequential", "PHist", "FutureHist")
                 .param("arraySize", "2000")
                 .forks(1)
                 .warmupIterations(5)
@@ -45,7 +42,7 @@ public class BenchSorting {
 
     @State(Scope.Benchmark)
     public static class BenchmarkState {
-        @Param({"Sequential", "JDK", "PHist"})
+        @Param({"Sequential", "JDK", "PHist", "FutureHist"})
         volatile String implName;
         @Param({"500", "5000"})
         volatile int arraySize;
@@ -65,11 +62,19 @@ public class BenchSorting {
                 case "PHist":
                     impl = new PHistRadixSort();
                     break;
+                case "FutureHist":
+                    impl = new FutureHistRadixSort();
+                    break;
                 default:
                     throw new IllegalArgumentException("impl '" + implName + "' not supported");
             }
             Random random = new Random();
             data = random.ints(arraySize, 0, Integer.MAX_VALUE).toArray();
+        }
+
+        @TearDown
+        public void teardown() {
+            impl.close();
         }
     }
 }
