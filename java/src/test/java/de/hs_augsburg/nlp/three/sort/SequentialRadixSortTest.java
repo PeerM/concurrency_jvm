@@ -14,8 +14,8 @@ public class SequentialRadixSortTest {
     @Test
     public void histogram_test() throws Exception {
         int[] ints = {0b0000, 0b1000, 0b0001};
-        Assert.assertArrayEquals(new int[]{2, 1, 0, 0}, histogram(ints, 1 << 2, 0));
-        Assert.assertArrayEquals(new int[]{2, 0, 1, 0}, histogram(ints, 1 << 2, 2));
+        Assert.assertArrayEquals(new int[]{2, 1, 0, 0}, histogram(ints, 1 << 2, 0, (1 << 3) - 1));
+        Assert.assertArrayEquals(new int[]{2, 0, 1, 0}, histogram(ints, 1 << 2, 2, (1 << 3) - 1));
     }
 
     @Test

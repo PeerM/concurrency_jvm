@@ -3,16 +3,15 @@ package de.hs_augsburg.nlp.three.radix;
 
 import java.util.Random;
 
-public class SequentialRadixSort implements ISort {
+public class PHistRadixSort implements ISort {
     @Override
     public int[] sort(int[] a) {
         int RADIX = 8;
         int RADICES = 1 << RADIX;
-        int mask = (1 << RADIX) - 1;
         for (int bits = 0; bits < 32; bits += RADIX) {
             int[] sortedData = new int[a.length];
             // 1st step: Calculate histogram with RADICES entries (RADICES = 1<<RADIX)
-            int[] histogram = histogram(a, RADICES, bits, mask);
+            int[] histogram = histogram(a, RADICES, bits);
 
             // 2nd step: Prescan the histogram bucket */
             stepTwo(RADICES, histogram);
@@ -39,10 +38,10 @@ public class SequentialRadixSort implements ISort {
         }
     }
 
-    public static int[] histogram(int[] a, int RADICES, int bit, int mask) {
+    public static int[] histogram(int[] a, int RADICES, int bit) {
         int[] result = new int[RADICES];
         for (int i = 0; i < a.length; i++) {
-            result[(a[i] >> bit) & mask]++;
+            result[(a[i] >> bit) % RADICES]++;
         }
         return result;
     }
@@ -56,11 +55,11 @@ public class SequentialRadixSort implements ISort {
         for (int i = 0; i < 100000; i++) {
             sum += random.nextInt();
         }
-        SequentialRadixSort radixSort = new SequentialRadixSort();
+        PHistRadixSort radixSort = new PHistRadixSort();
         doWork(random, radixSort);
     }
 
-    private static void doWork(Random random, SequentialRadixSort radixSort) {
+    private static void doWork(Random random, PHistRadixSort radixSort) {
         System.out.println("starting");
         for (int i = 0; i < 50; i++) {
             int[] ints = random.ints(10000000, 0, Integer.MAX_VALUE).toArray();
