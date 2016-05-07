@@ -2,9 +2,10 @@ package de.hs_augsburg.nlp.three.radix;
 
 
 import de.hs_augsburg.nlp.three.histogram.ClojureHelpers;
-import one.util.streamex.StreamEx;
+import one.util.streamex.IntStreamEx;
 
 import java.util.Random;
+import java.util.stream.IntStream;
 
 
 @SuppressWarnings("Duplicates")
@@ -13,7 +14,7 @@ public class PHistRadixSort implements ISort {
     private float numSegments;
 
     public PHistRadixSort() {
-        this(Runtime.getRuntime().availableProcessors()*4);
+        this(Runtime.getRuntime().availableProcessors() * 4);
     }
 
     public PHistRadixSort(float numSegments) {
@@ -58,16 +59,24 @@ public class PHistRadixSort implements ISort {
     public int[] histogram(int[] a, int RADICES, int bit, int mask) {
         final int absoluteSize = a.length;
         final int segmentSize = (int) Math.ceil(a.length / numSegments);
-        return StreamEx
-                .iterate(new int[]{0, segmentSize}
-                        , prev -> new int[]{
-                                prev[1],
-                                Math.min(prev[1] + segmentSize, absoluteSize)})
-                .takeWhile(segment -> segment[0] < absoluteSize)
+        int[] ends = new int[absoluteSize / segmentSize];
+//        int i = 0;
+        int end = segmentSize;
+        for (int i = 0; i < ends.length; i++) {
+            ends[i] = end;
+            end += segmentSize;
+        }
+        int[] most = IntStream.of(ends)
 //                .peek(ints -> {System.out.println(ints[0]+", "+ints[1]);})
                 .parallel()
-                .map(segment -> partialHistogram(a, segment[0], segment[1], RADICES, bit, mask))
+                .boxed()
+                .map(segment -> partialHistogram(a, segment - segmentSize, segment, RADICES, bit, mask))
                 .reduce(ClojureHelpers::arrayElementBasedAdd).orElseThrow(() -> new RuntimeException("failed to calculate histogram"));
+        if (end - segmentSize == absoluteSize) {
+            return most;
+        }
+        int[] rest = partialHistogram(a, end - segmentSize, absoluteSize, RADICES, bit, mask);
+        return ClojureHelpers.arrayElementBasedAdd(most, rest);
     }
 
     public int[] partialHistogram(int[] a, int start, int end, int RADICES, int bit, int mask) {
