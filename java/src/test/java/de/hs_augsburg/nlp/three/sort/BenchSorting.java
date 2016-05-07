@@ -2,6 +2,7 @@ package de.hs_augsburg.nlp.three.sort;
 
 import de.hs_augsburg.nlp.three.radix.ISort;
 import de.hs_augsburg.nlp.three.radix.JdkSort;
+import de.hs_augsburg.nlp.three.radix.PHistRadixSort;
 import de.hs_augsburg.nlp.three.radix.SequentialRadixSort;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Blackhole;
@@ -19,7 +20,7 @@ public class BenchSorting {
         // this is the config, you can play around with this
         Options opt = new OptionsBuilder()
                 .include(BenchSorting.class.getSimpleName() + "")
-                .param("implName", "Sequential")
+                .param("implName", "Sequential", "PHist")
                 .param("arraySize", "2000")
                 .forks(1)
                 .warmupIterations(5)
@@ -44,7 +45,7 @@ public class BenchSorting {
 
     @State(Scope.Benchmark)
     public static class BenchmarkState {
-        @Param({"Sequential", "JDK"})
+        @Param({"Sequential", "JDK", "PHist"})
         volatile String implName;
         @Param({"500", "5000"})
         volatile int arraySize;
@@ -60,6 +61,9 @@ public class BenchSorting {
                     break;
                 case "JDK":
                     impl = new JdkSort();
+                    break;
+                case "PHist":
+                    impl = new PHistRadixSort();
                     break;
                 default:
                     throw new IllegalArgumentException("impl '" + implName + "' not supported");

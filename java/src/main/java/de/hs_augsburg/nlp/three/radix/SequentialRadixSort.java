@@ -3,6 +3,7 @@ package de.hs_augsburg.nlp.three.radix;
 
 import java.util.Random;
 
+@SuppressWarnings("Duplicates")
 public class SequentialRadixSort implements ISort {
     @Override
     public int[] sort(int[] a) {
@@ -67,4 +68,6 @@ public class SequentialRadixSort implements ISort {
             int[] subject = radixSort.sort(ints);
         }
     }
+
+
 }

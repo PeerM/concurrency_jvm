@@ -1,11 +1,25 @@
 package de.hs_augsburg.nlp.three.radix;
 
 
+import de.hs_augsburg.nlp.three.histogram.ClojureHelpers;
+import one.util.streamex.StreamEx;
+
 import java.util.Random;
 
 
 @SuppressWarnings("Duplicates")
 public class PHistRadixSort implements ISort {
+
+    private float numSegments;
+
+    public PHistRadixSort() {
+        this(Runtime.getRuntime().availableProcessors()*4);
+    }
+
+    public PHistRadixSort(float numSegments) {
+        this.numSegments = numSegments;
+    }
+
     @Override
     public int[] sort(int[] a) {
         int RADIX = 8;
@@ -41,13 +55,29 @@ public class PHistRadixSort implements ISort {
         }
     }
 
-    public static int[] histogram(int[] a, int RADICES, int bit, int mask) {
+    public int[] histogram(int[] a, int RADICES, int bit, int mask) {
+        final int absoluteSize = a.length;
+        final int segmentSize = (int) Math.ceil(a.length / numSegments);
+        return StreamEx
+                .iterate(new int[]{0, segmentSize}
+                        , prev -> new int[]{
+                                prev[1],
+                                Math.min(prev[1] + segmentSize, absoluteSize)})
+                .takeWhile(segment -> segment[0] < absoluteSize)
+//                .peek(ints -> {System.out.println(ints[0]+", "+ints[1]);})
+                .parallel()
+                .map(segment -> partialHistogram(a, segment[0], segment[1], RADICES, bit, mask))
+                .reduce(ClojureHelpers::arrayElementBasedAdd).orElseThrow(() -> new RuntimeException("failed to calculate histogram"));
+    }
+
+    public int[] partialHistogram(int[] a, int start, int end, int RADICES, int bit, int mask) {
         int[] result = new int[RADICES];
-        for (int i = 0; i < a.length; i++) {
+        for (int i = start; i < end; i++) {
             result[(a[i] >> bit) & mask]++;
         }
         return result;
     }
+
 
     public static void main(String[] args) throws InterruptedException {
         Random random = new Random();
