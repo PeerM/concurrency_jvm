@@ -17,7 +17,7 @@ public class BenchSorting {
         // this is the config, you can play around with this
         Options opt = new OptionsBuilder()
                 .include(BenchSorting.class.getSimpleName() + "")
-                .param("implName", "Sequential", "PHist", "FutureHist")
+                .param("implName", "Sequential", "FutureHist")
                 .param("arraySize", "2000")
                 .forks(1)
                 .warmupIterations(5)

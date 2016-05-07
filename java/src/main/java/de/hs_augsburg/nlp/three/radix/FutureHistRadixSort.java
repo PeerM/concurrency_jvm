@@ -24,16 +24,16 @@ public class FutureHistRadixSort implements ISort {
 
         try {
             final int[] initData = a;
-            Future<int[]>[] hists = new Future[32 / RADIX];
+            Future<int[]>[] hists = new Future[32];
             for (int bits = 0; bits < 32; bits += RADIX) {
                 final int closureHack = bits;
-                hists[bits / RADIX] = pool.submit(() -> histogram(initData, RADICES, closureHack, mask));
+                hists[bits] = pool.submit(() -> histogram(initData, RADICES, closureHack, mask));
             }
 
             for (int bits = 0; bits < 32; bits += RADIX) {
                 int[] sortedData = new int[a.length];
                 // 1st step: Calculate histogram with RADICES entries (RADICES = 1<<RADIX)
-                int[] histogram = hists[bits / RADIX].get();
+                int[] histogram = hists[bits].get();
 
                 // 2nd step: Prescan the histogram bucket */
                 stepTwo(RADICES, histogram);
