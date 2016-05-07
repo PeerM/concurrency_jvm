@@ -17,8 +17,8 @@ public class BenchSorting {
         // this is the config, you can play around with this
         Options opt = new OptionsBuilder()
                 .include(BenchSorting.class.getSimpleName() + "")
-                .param("implName", "Sequential", "FutureHist")
-                .param("arraySize", "2000")
+                .param("implName", "Sequential", "FutureHist", "ForkHist")
+                .param("arraySize", "20000")
                 .forks(1)
                 .warmupIterations(5)
                 .measurementIterations(6)
@@ -36,7 +36,7 @@ public class BenchSorting {
 
     @Benchmark
     public void main(BenchmarkState state) {
-        ArrayUtils.shuffleArray(state.data);
+//        ArrayUtils.shuffleArray(state.data);
         state.hole.consume(state.impl.sort(state.data));
     }
 
@@ -64,6 +64,9 @@ public class BenchSorting {
                     break;
                 case "FutureHist":
                     impl = new FutureHistRadixSort();
+                    break;
+                case "ForkHist":
+                    impl = new ForkHistRadixSort();
                     break;
                 default:
                     throw new IllegalArgumentException("impl '" + implName + "' not supported");
