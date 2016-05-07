@@ -18,7 +18,7 @@ public class SequentialRadixSort implements ISort {
             stepTwo(RADICES, histogram);
 
             // 3rd step: Rearrange the elements based on prescaned histogram */
-            stepThree(a, RADICES, bits, sortedData, histogram);
+            stepThree(a, bits, sortedData, histogram, mask);
             a = sortedData;
         }
         return a;
@@ -33,9 +33,9 @@ public class SequentialRadixSort implements ISort {
         }
     }
 
-    private void stepThree(int[] a, int RADICES, int bits, int[] sortedData, int[] histogram) {
+    private void stepThree(int[] a, int bits, int[] sortedData, int[] histogram, int mask) {
         for (int i = 0; i < a.length; ++i) {
-            sortedData[histogram[(a[i] >> bits) % RADICES]++] = a[i];
+            sortedData[histogram[(a[i] >> bits) & mask]++] = a[i];
         }
     }
 
