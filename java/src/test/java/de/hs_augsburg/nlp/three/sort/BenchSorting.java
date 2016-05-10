@@ -17,7 +17,7 @@ public class BenchSorting {
         // this is the config, you can play around with this
         Options opt = new OptionsBuilder()
                 .include(BenchSorting.class.getSimpleName() + "")
-                .param("implName", "Sequential", "FutureHist", "ForkHist")
+                .param("implName", "FutureHist", "JdkParallel")
                 .param("arraySize", "20000")
                 .forks(1)
                 .warmupIterations(5)
@@ -42,7 +42,7 @@ public class BenchSorting {
 
     @State(Scope.Benchmark)
     public static class BenchmarkState {
-        @Param({"Sequential", "JDK", "PHist", "FutureHist"})
+        @Param({"Sequential", "JDK", "PHist", "FutureHist", "JdkParallel"})
         volatile String implName;
         @Param({"500", "5000"})
         volatile int arraySize;
@@ -67,6 +67,9 @@ public class BenchSorting {
                     break;
                 case "ForkHist":
                     impl = new ForkHistRadixSort();
+                    break;
+                case "JdkParallel":
+                    impl = new JdkParallelSort();
                     break;
                 default:
                     throw new IllegalArgumentException("impl '" + implName + "' not supported");
