@@ -73,6 +73,7 @@ public class DecompositionHistogram implements IHistogram {
     @Override
     public Map<ColorMask, int[]> histogram(int[] pixels) {
         Map<ColorMask, int[]> hist = new ConcurrentHashMap<>(3);
+        // TODO don't create a new pool each time
         ExecutorService executor = Executors.newFixedThreadPool(this.concurrency);
         CountDownLatch latch = new CountDownLatch((this.concurrency + 1) * 3);
         for (ColorMask mask : ColorMask.values()) {
@@ -87,7 +88,7 @@ public class DecompositionHistogram implements IHistogram {
                 end += pixels.length / concurrency;
             }
             int remainder = pixels.length % concurrency;
-            makeHistogram(pixels, mask, partial, pixels.length - remainder, pixels.length, latch);
+            executor.execute(()->makeHistogram(pixels, mask, partial, pixels.length - remainder, pixels.length, latch));
             hist.put(mask, partial);
         }
         try {
