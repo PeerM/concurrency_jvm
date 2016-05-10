@@ -4,3 +4,4 @@
 "de.hs_augsburg.nlp.three.sort.BenchSorting.main","thrpt",1,7,"989,679830","1237,585866","ops/s",1000,PHist
 "de.hs_augsburg.nlp.three.sort.BenchSorting.main","thrpt",1,7,"14464,632720","145,245534","ops/s",1000,FutureHist
 "de.hs_augsburg.nlp.three.sort.BenchSorting.main","thrpt",1,7,"11990,996997","1291,247280","ops/s",1000,JdkParallel
+"de.hs_augsburg.nlp.three.sort.BenchSorting.main","thrpt",1,7,"2472,784183","387,254158","ops/s",1000,Three
