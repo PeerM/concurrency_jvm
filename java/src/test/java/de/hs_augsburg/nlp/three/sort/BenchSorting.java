@@ -3,6 +3,7 @@ package de.hs_augsburg.nlp.three.sort;
 import de.hs_augsburg.nlp.three.radix.*;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Blackhole;
+import org.openjdk.jmh.results.format.ResultFormatType;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
@@ -17,17 +18,17 @@ public class BenchSorting {
         // this is the config, you can play around with this
         Options opt = new OptionsBuilder()
                 .include(BenchSorting.class.getSimpleName() + "")
-                .param("implName", "FutureHist", "JdkParallel")
-                .param("arraySize", "20000")
+//                .param("implName", "FutureHist", "JdkParallel")
+                .param("arraySize", "1000")
                 .forks(1)
-                .warmupIterations(5)
-                .measurementIterations(6)
+                .warmupIterations(6)
+                .measurementIterations(7)
                 .mode(Mode.Throughput)
                 .threads(1)
 //                .addProfiler("stack")
 //                .jvmArgsAppend("-Xms3g")
 //                .output("jmh_out.txt")
-//                .resultFormat(ResultFormatType.CSV)
+                .resultFormat(ResultFormatType.CSV)
                 .build();
 
         new Runner(opt).run();

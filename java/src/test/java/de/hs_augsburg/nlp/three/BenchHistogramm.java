@@ -3,6 +3,7 @@ package de.hs_augsburg.nlp.three;
 import de.hs_augsburg.nlp.three.histogram.*;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Blackhole;
+import org.openjdk.jmh.results.format.ResultFormatType;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
@@ -28,13 +29,13 @@ public class BenchHistogramm {
 //                .param("implName", "CljPerColor", "Reducing")
 //                .param("persistentThreads", "false")
                 .forks(1)
-                .warmupIterations(4)
-                .measurementIterations(3)
+                .warmupIterations(6)
+                .measurementIterations(7)
                 .mode(Mode.Throughput)
                 .threads(1)
 //                .jvmArgsAppend("-Xms3g")
 //                .output("jmh_out.txt")
-//                .resultFormat(ResultFormatType.CSV)
+                .resultFormat(ResultFormatType.CSV)
                 .build();
 
         new Runner(opt).run();
