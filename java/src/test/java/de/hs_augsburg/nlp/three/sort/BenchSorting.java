@@ -3,7 +3,6 @@ package de.hs_augsburg.nlp.three.sort;
 import de.hs_augsburg.nlp.three.radix.*;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Blackhole;
-import org.openjdk.jmh.results.format.ResultFormatType;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
 import org.openjdk.jmh.runner.options.Options;
@@ -18,17 +17,17 @@ public class BenchSorting {
         // this is the config, you can play around with this
         Options opt = new OptionsBuilder()
                 .include(BenchSorting.class.getSimpleName() + "")
-//                .param("implName", "FutureHist", "JdkParallel")
-                .param("arraySize", "1000")
+                .param("implName","FutureHist","Three")
+                .param("arraySize", "50000")
                 .forks(1)
-                .warmupIterations(6)
-                .measurementIterations(7)
+                .warmupIterations(5)
+                .measurementIterations(6)
                 .mode(Mode.Throughput)
                 .threads(1)
 //                .addProfiler("stack")
 //                .jvmArgsAppend("-Xms3g")
 //                .output("jmh_out.txt")
-                .resultFormat(ResultFormatType.CSV)
+//                .resultFormat(ResultFormatType.CSV)
                 .build();
 
         new Runner(opt).run();
@@ -43,7 +42,7 @@ public class BenchSorting {
 
     @State(Scope.Benchmark)
     public static class BenchmarkState {
-        @Param({"Sequential", "JDK", "PHist", "FutureHist", "JdkParallel"})
+        @Param({"Sequential", "JDK", "PHist", "FutureHist","ForkHist"})
         volatile String implName;
         @Param({"500", "5000"})
         volatile int arraySize;
@@ -69,8 +68,8 @@ public class BenchSorting {
                 case "ForkHist":
                     impl = new ForkHistRadixSort();
                     break;
-                case "JdkParallel":
-                    impl = new JdkParallelSort();
+                case "Three":
+                    impl = new ThreeRadixSort();
                     break;
                 default:
                     throw new IllegalArgumentException("impl '" + implName + "' not supported");
