@@ -1,4 +1,4 @@
-(defproject dvap_gruppe11 "1.0.0"
+(defproject nlp_frp "1.0.0"
   :description "FIXME: write description"
   :url "http://example.com/FIXME"
   :license {:name "Eclipse Public License"
@@ -18,8 +18,8 @@
   :plugins [[lein-figwheel "0.5.2"]
             [lein-cljsbuild "1.1.3" :exclusions [org.clojure/clojure]]]
 
-  :aot  [dvap-gruppe11.seesaw.counter]
-  :main dvap-gruppe11.seesaw.counter
+  ;:aot  [dvap-gruppe11.seesaw.counter]
+  ;:main dvap-gruppe11.seesaw.counter
 
   :clean-targets ^{:protect false} ["resources/public/js/compiled"
                                     "target"]
