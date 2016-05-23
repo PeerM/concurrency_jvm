@@ -31,22 +31,36 @@
             {:inspect-data true :history true})
 
 ; robust calculator
-(defonce robust-calculator-state (reagent/atom {:text "1+1" :result "2" :error ""}))
+(defonce robust-calculator-state (reagent/atom {:text "1+1" :result "2" :error "" :live_update true}))
 (defonce calc-chan (chan))
+
+(defn evaluate [new_input] (try [true (js/eval (str new_input ";"))] (catch js/Error e [false (str e)])))
 (go (while true
-      (let [new_input (<! calc-chan) res (try [true (js/eval (str new_input ";"))] (catch js/Error e [false (str e)]))]
-        (if (res 0)
-          (reset! robust-calculator-state {:text new_input :result (res 1) :error ""})
-          (swap! robust-calculator-state (fn [old] (assoc old :error (res 1) :text new_input)))))))
+      (let [message (<! calc-chan) new_input (:value message)]
+        (if (or (:live_update @robust-calculator-state) (:submited message))
+          (let [res (evaluate new_input)]
+            (if (get res 0)
+              (reset! robust-calculator-state {:text new_input :result (res 1) :error ""})
+              (swap! robust-calculator-state (fn [old] (assoc old :error (res 1) :text new_input)))))
+          (swap! robust-calculator-state (fn [old] (assoc old :text new_input)))))))
 
 
 (defn robust-calculator [ratom]
   [:div {:class "full-width robust-calculator"}
    [:div
-    [:input {:type      "text"
-             :value     (:text @ratom)
-             :on-change (fn [ev] (put! calc-chan (-> ev .-target .-value)))}]]
-   [:div [:input {:type "text" :read-only true :value (str "=" (:result @ratom))}]]
+    [:form
+     [:label {:for "live_update"} "Live update?"]
+     [:input {:name      "live_update"
+              :type      "checkbox"
+              :checked   (:live_update @robust-calculator-state)
+              :on-change (fn [ev] (swap! robust-calculator-state (fn [state] (assoc state :live_update (-> ev .-target .-checked)))))}]] ;(fn [ev] (swap! robust-calculator-state ((fn [state] (assoc state :live_update false)))))}]]
+    [:from
+     [:input {:type      "text"
+              :class     "text_input"
+              :value     (:text @ratom)
+              :on-change (fn [ev] (put! calc-chan {:value (-> ev .-target .-value) :submited false}))
+              :on-submit (fn [ev] (put! calc-chan {:value (-> ev .-target .-value) :submited true}))}]]]
+   [:div [:input {:type "text" :class "text_input" :read-only true :value (str "=" (:result @ratom))}]]
    [:div {:class "error" :hidden (empty? (:error @ratom))} [:span (:error @ratom)]]])
 
 (defcard-rg :robust-calculator-card
