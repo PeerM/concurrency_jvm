@@ -37,14 +37,15 @@
 (defn evaluate [new_input] (try [true (js/eval (str new_input ";"))] (catch js/Error e [false (str e)])))
 (go (while true
       (let [message (<! calc-chan) new_input (:value message)]
+        (print message)
         (if (or (:live_update @robust-calculator-state) (:submited message))
           (let [res (evaluate new_input)]
             (if (get res 0)
-              (reset! robust-calculator-state {:text new_input :result (res 1) :error ""})
+              (swap! robust-calculator-state (fn [old] (assoc old :text new_input :result (res 1) :error "")))
               (swap! robust-calculator-state (fn [old] (assoc old :error (res 1) :text new_input)))))
           (swap! robust-calculator-state (fn [old] (assoc old :text new_input)))))))
 
-
+(defn put-change-message [ev submited] (put! calc-chan {:value (-> ev .-target .-value) :submited submited}))
 (defn robust-calculator [ratom]
   [:div {:class "full-width robust-calculator"}
    [:div
@@ -54,12 +55,15 @@
               :type      "checkbox"
               :checked   (:live_update @robust-calculator-state)
               :on-change (fn [ev] (swap! robust-calculator-state (fn [state] (assoc state :live_update (-> ev .-target .-checked)))))}]] ;(fn [ev] (swap! robust-calculator-state ((fn [state] (assoc state :live_update false)))))}]]
-    [:from
-     [:input {:type      "text"
-              :class     "text_input"
-              :value     (:text @ratom)
-              :on-change (fn [ev] (put! calc-chan {:value (-> ev .-target .-value) :submited false}))
-              :on-submit (fn [ev] (put! calc-chan {:value (-> ev .-target .-value) :submited true}))}]]]
+    [:from {:action print}
+     [:input {:type           "text"
+              :class          "text_input"
+              :value          (:text @ratom)
+              :on-click #(print "click")
+              :on-submit #(print "submit")
+              :on-key-pressed #(print "key pressed")
+              :on-change      (fn [ev] (put-change-message ev false))}]
+     [:input {:type "submit"}]]]
    [:div [:input {:type "text" :class "text_input" :read-only true :value (str "=" (:result @ratom))}]]
    [:div {:class "error" :hidden (empty? (:error @ratom))} [:span (:error @ratom)]]])
 
