@@ -1,0 +1,14 @@
+.full-width input{
+    width: 100%;
+}
+.error{
+    font-weight: bold;
+    color: crimson;
+    border: 2px solid crimson;
+    border-radius: 8px;
+    margin: 5px;
+}
+
+.robust-calculator{
+    height:70px;
+}

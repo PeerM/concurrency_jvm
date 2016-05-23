@@ -1,7 +1,0 @@
-"Benchmark","Mode","Threads","Samples","Score","Score Error (99,9%)","Unit","Param: implName"
-"de.hs_augsburg.nlp.two.BenchList.main","thrpt",32,6,"1947402,880959","230598,543982","ops/s",ConcurrentLinkedQueue
-"de.hs_augsburg.nlp.two.BenchList.main:add","thrpt",32,6,"307367,736340","11511,442435","ops/s",ConcurrentLinkedQueue
-"de.hs_augsburg.nlp.two.BenchList.main:poll","thrpt",32,6,"1640035,144618","234600,290407","ops/s",ConcurrentLinkedQueue
-"de.hs_augsburg.nlp.two.BenchList.main","thrpt",32,6,"1743761,465636","120579,393061","ops/s",VectorQueue
-"de.hs_augsburg.nlp.two.BenchList.main:add","thrpt",32,6,"897619,924763","91332,224541","ops/s",VectorQueue
-"de.hs_augsburg.nlp.two.BenchList.main:poll","thrpt",32,6,"846141,540873","42326,335465","ops/s",VectorQueue

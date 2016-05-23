@@ -1,7 +1,0 @@
-"Benchmark","Mode","Threads","Samples","Score","Score Error (99,9%)","Unit","Param: implName"
-"de.hs_augsburg.nlp.three.BenchHistogramm.main","thrpt",1,7,"22,762737","0,385359","ops/s",Sequential
-"de.hs_augsburg.nlp.three.BenchHistogramm.main","thrpt",1,7,"42,356368","1,338866","ops/s",Threaded
-"de.hs_augsburg.nlp.three.BenchHistogramm.main","thrpt",1,7,"1,302011","0,265208","ops/s",Decomposition
-"de.hs_augsburg.nlp.three.BenchHistogramm.main","thrpt",1,7,"3,428487","0,319459","ops/s",AtomicDecomposition
-"de.hs_augsburg.nlp.three.BenchHistogramm.main","thrpt",1,7,"43,416648","1,862850","ops/s",CljPerColor
-"de.hs_augsburg.nlp.three.BenchHistogramm.main","thrpt",1,7,"47,277689","2,155412","ops/s",Reducing
