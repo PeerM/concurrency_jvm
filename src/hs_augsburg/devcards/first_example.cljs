@@ -55,15 +55,12 @@
               :type      "checkbox"
               :checked   (:live_update @robust-calculator-state)
               :on-change (fn [ev] (swap! robust-calculator-state (fn [state] (assoc state :live_update (-> ev .-target .-checked)))))}]] ;(fn [ev] (swap! robust-calculator-state ((fn [state] (assoc state :live_update false)))))}]]
-    [:from {:action print}
+    [:form
      [:input {:type           "text"
               :class          "text_input"
               :value          (:text @ratom)
-              :on-click #(print "click")
-              :on-submit #(print "submit")
-              :on-key-pressed #(print "key pressed")
-              :on-change      (fn [ev] (put-change-message ev false))}]
-     [:input {:type "submit"}]]]
+              :on-change      (fn [ev] (put-change-message ev false))}]]]
+    ;[:a {:on-click (put! calc-chan {:value (:text @ratom) :submited true})} "Update"]]
    [:div [:input {:type "text" :class "text_input" :read-only true :value (str "=" (:result @ratom))}]]
    [:div {:class "error" :hidden (empty? (:error @ratom))} [:span (:error @ratom)]]])
 
