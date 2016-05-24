@@ -4,6 +4,7 @@ import de.hs_augsburg.nlp.three.radix.ISort;
 import de.hs_augsburg.nlp.three.radix.SequentialRadixSort;
 import de.hs_augsburg.nlp.three.radix.ThreeRadixSort;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -12,6 +13,7 @@ import java.util.Random;
 import static de.hs_augsburg.nlp.three.radix.SequentialRadixSort.histogram;
 
 @SuppressWarnings("Duplicates")
+@Ignore
 public class ThreeRadixSortTest {
 
     @Test

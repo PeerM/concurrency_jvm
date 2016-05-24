@@ -4,12 +4,14 @@ import de.hs_augsburg.nlp.three.radix.ForkHistRadixSort;
 import de.hs_augsburg.nlp.three.radix.FutureHistRadixSort;
 import de.hs_augsburg.nlp.three.radix.ISort;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Arrays;
 import java.util.Random;
 
 @SuppressWarnings("Duplicates")
+@Ignore
 public class ForkHistRadixSortTest {
 
     @Test

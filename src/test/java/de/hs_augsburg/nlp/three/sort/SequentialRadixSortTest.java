@@ -2,6 +2,7 @@ package de.hs_augsburg.nlp.three.sort;
 
 import de.hs_augsburg.nlp.three.radix.SequentialRadixSort;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import java.util.Arrays;
@@ -9,6 +10,7 @@ import java.util.Random;
 
 import static de.hs_augsburg.nlp.three.radix.SequentialRadixSort.histogram;
 
+@Ignore
 public class SequentialRadixSortTest {
 
     @Test

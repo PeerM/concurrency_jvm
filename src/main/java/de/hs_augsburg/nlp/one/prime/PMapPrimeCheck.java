@@ -9,7 +9,6 @@ import java.util.concurrent.ForkJoinTask;
 import static java.lang.Math.sqrt;
 
 @SuppressWarnings("Duplicates")
-@Deprecated
 public class PMapPrimeCheck implements PrimeCheck {
 
     @Override

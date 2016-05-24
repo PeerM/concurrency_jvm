@@ -1,6 +1,7 @@
 package de.hs_augsburg.nlp.three.sort;
 
 import de.hs_augsburg.nlp.three.radix.*;
+import org.junit.Ignore;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Blackhole;
 import org.openjdk.jmh.results.format.ResultFormatType;
@@ -12,6 +13,7 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 import java.util.Random;
 
 @SuppressWarnings("WeakerAccess")
+@Ignore
 public class BenchSorting {
     // to play with JMH without plugins or custom runners
     public static void main(String[] args) throws RunnerException {

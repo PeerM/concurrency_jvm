@@ -6,6 +6,7 @@ import de.hs_augsburg.nlp.three.ReducingHistogram;
 import de.hs_augsburg.nlp.three.histogram.*;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 import javax.imageio.ImageIO;
@@ -13,7 +14,7 @@ import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.Map;
 
-
+@Ignore
 public class HistogramTest {
 
     private SequentialHistogram sequentialHistogram;
