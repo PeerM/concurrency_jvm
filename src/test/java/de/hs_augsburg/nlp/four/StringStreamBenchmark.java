@@ -1,7 +1,6 @@
 package de.hs_augsburg.nlp.four;
 
 
-import de.hs_augsburg.nlp.three.BenchHistogramm;
 import de.hs_augsburg.nlp.three.histogram.*;
 import org.apache.commons.io.IOUtils;
 import org.openjdk.jmh.annotations.*;
@@ -23,8 +22,8 @@ public class StringStreamBenchmark {
     public static void main(String[] args) throws RunnerException {
         // this is the config, you can play around with this
         Options opt = new OptionsBuilder()
-                .include(BenchHistogramm.class.getSimpleName() + "")
-//                .param("implName", "CljPerColor", "Reducing")
+                .include(StringStreamBenchmark.class.getSimpleName() + "")
+//                .param("implName", "Sequential", "Parallel")
 //                .param("persistentThreads", "false")
                 .forks(1)
                 .warmupIterations(6)
@@ -40,41 +39,41 @@ public class StringStreamBenchmark {
 
     }
 
-    public Stream<String> loadText(String path) {
+    public static Stream<String> loadText(String path) {
         Stream<String> res;
         try {
-            res = IOUtils.readLines(getClass().getClassLoader().getResourceAsStream(path), StandardCharsets.UTF_8).stream();
+            res = IOUtils.readLines(StringStreamBenchmark.class.getClassLoader().getResourceAsStream(path), StandardCharsets.UTF_8).stream();
         } catch (IOException e) {
             throw new RuntimeException();
         }
         return res;
     }
 
-    private int[] randomImage(BenchHistogramm.BenchmarkState state) {
-        int index = (int) (System.nanoTime() % state.images.size());
-        return state.images.get(index);
-    }
+
 
 
     @Benchmark
-    public void main(BenchHistogramm.BenchmarkState state) {
-        state.hole.consume(state.impl.histogram(randomImage(state)));
+    public void main(StringStreamBenchmark.BenchmarkState state) {
+        state.hole.consume(state.impl.makeHistogram(state.words));
     }
 
     @State(Scope.Benchmark)
     public static class BenchmarkState {
-        @Param({"Sequential"})
+        @Param({"Sequential", "Parallel"})
         volatile String implName;
+        volatile IStringStream impl;
         volatile Blackhole hole = new Blackhole();
+        volatile Stream<String> words;
 
         @Setup
         public void setup() {
-            for (int i = 1; i < 5; i++) {
-                images.add(loadText("benchdata/4160x2340/" + i + ".jpg"));
-            }
+            words = loadText("pride.txt");
             switch (implName) {
                 case "Sequential":
-                    impl = new SequentialHistogram();
+                    impl = new StringStream();
+                    break;
+                case "Parallel":
+                    impl = new StringStreamParallel();
                     break;
                 default:
                     throw new IllegalArgumentException("impl '" + implName + "' not supported");

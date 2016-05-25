@@ -9,7 +9,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.stream.Stream;
 
-public class StringStreamParallel {
+public class StringStreamParallel implements IStringStream {
     public Collection<String> strings;
     public Stream stream;
 
@@ -18,6 +18,7 @@ public class StringStreamParallel {
         Stream<String> words = stringStream.getWords("pride.txt");
         stringStream.makeHistogram(words);
     }
+
 
     public Stream<String> getWords(String filePath)
     {
@@ -30,6 +31,7 @@ public class StringStreamParallel {
         return res;
     }
 
+    @Override
     public int[] makeHistogram(Stream<String> words){
         int[] hist = words
                 .flatMap(word -> word.chars().boxed())
