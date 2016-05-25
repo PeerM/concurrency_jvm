@@ -1,6 +1,9 @@
 package de.hs_augsburg.nlp.four;
 
 
+import de.hs_augsburg.nlp.four.streams.IStringStream;
+import de.hs_augsburg.nlp.four.streams.StringStream;
+import de.hs_augsburg.nlp.four.streams.StringStreamParallel;
 import org.apache.commons.io.IOUtils;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Blackhole;
@@ -14,7 +17,6 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
-import java.util.stream.Stream;
 
 public class StringStreamBenchmark {
 

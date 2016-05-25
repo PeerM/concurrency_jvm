@@ -1,6 +1,4 @@
-package de.hs_augsburg.nlp.four;
-
-import de.hs_augsburg.nlp.three.histogram.ClojureHelpers;
+package de.hs_augsburg.nlp.four.streams;
 
 import java.util.stream.Stream;
 

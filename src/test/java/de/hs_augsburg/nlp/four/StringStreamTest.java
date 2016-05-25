@@ -1,6 +1,7 @@
 package de.hs_augsburg.nlp.four;
 
 
+import de.hs_augsburg.nlp.four.streams.StringStream;
 import org.junit.Before;
 import org.junit.Test;
 
