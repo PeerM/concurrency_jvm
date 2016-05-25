@@ -13,6 +13,7 @@ import org.openjdk.jmh.runner.options.OptionsBuilder;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 import java.util.stream.Stream;
 
 public class StringStreamBenchmark {
@@ -38,10 +39,10 @@ public class StringStreamBenchmark {
 
     }
 
-    public static Stream<String> loadText(String path) {
-        Stream<String> res;
+    public static List loadText(String path) {
+        List res;
         try {
-            res = IOUtils.readLines(StringStreamBenchmark.class.getClassLoader().getResourceAsStream(path), StandardCharsets.UTF_8).stream();
+            res = IOUtils.readLines(StringStreamBenchmark.class.getClassLoader().getResourceAsStream(path), StandardCharsets.UTF_8);
         } catch (IOException e) {
             throw new RuntimeException();
         }
@@ -53,7 +54,7 @@ public class StringStreamBenchmark {
 
     @Benchmark
     public void main(StringStreamBenchmark.BenchmarkState state) {
-        state.hole.consume(state.impl.makeHistogram(loadText("pride.txt")));
+        state.hole.consume(state.impl.makeHistogram(state.wordList.stream()));
     }
 
     @State(Scope.Benchmark)
@@ -62,11 +63,11 @@ public class StringStreamBenchmark {
         volatile String implName;
         volatile IStringStream impl;
         volatile Blackhole hole = new Blackhole();
-        volatile Stream<String> words;
+        volatile List wordList;
 
         @Setup
         public void setup() {
-            words = loadText("pride.txt");
+            wordList = loadText("pride.txt");
             switch (implName) {
                 case "Sequential":
                     impl = new StringStream();
