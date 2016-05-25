@@ -42,7 +42,7 @@ public class StringStreamParallel implements IStringStream {
                             ints[integer]++;
                         },
                         ClojureHelpers::arrayElementBasedAddImperativ);
-        System.out.println(hist);
+//        System.out.println(hist);
         return hist;
     }
 }

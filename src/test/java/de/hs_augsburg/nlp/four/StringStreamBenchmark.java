@@ -1,7 +1,6 @@
 package de.hs_augsburg.nlp.four;
 
 
-import de.hs_augsburg.nlp.three.histogram.*;
 import org.apache.commons.io.IOUtils;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Blackhole;
@@ -54,7 +53,7 @@ public class StringStreamBenchmark {
 
     @Benchmark
     public void main(StringStreamBenchmark.BenchmarkState state) {
-        state.hole.consume(state.impl.makeHistogram(state.words));
+        state.hole.consume(state.impl.makeHistogram(loadText("pride.txt")));
     }
 
     @State(Scope.Benchmark)
