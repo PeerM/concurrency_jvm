@@ -31,4 +31,11 @@ public class ClojureHelpers {
         }
         return result;
     }
+    public static void arrayElementBasedAddImperativ(int[] a, int[] b) {
+        for (int i = 0; i < a.length; i++) {
+            a[i] += b[i];
+        }
+    }
+
+
 }

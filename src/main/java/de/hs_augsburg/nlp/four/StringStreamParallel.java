@@ -1,17 +1,15 @@
 package de.hs_augsburg.nlp.four;
 
+
 import de.hs_augsburg.nlp.three.histogram.ClojureHelpers;
 import org.apache.commons.io.IOUtils;
-
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.stream.Stream;
 
-
-
-public class StringStream {
+public class StringStreamParallel {
     public Collection<String> strings;
     public Stream stream;
 
@@ -35,6 +33,7 @@ public class StringStream {
     public int[] makeHistogram(Stream<String> words){
         int[] hist = words
                 .flatMap(word -> word.chars().boxed())
+                .parallel()
                 .collect(
                         () -> new int[256],
                         (int[] ints, Integer integer) -> {
