@@ -1,8 +1,6 @@
 package de.hs_augsburg.nlp.two.BasicMonitor;
 
 import de.hs_augsburg.nlp.two.IBank;
-import de.hs_augsburg.nlp.two.cl.RefBankFactory;
-import de.hs_augsburg.nlp.two.reduced.AccumulatorBank;
 import one.util.streamex.StreamEx;
 import org.junit.After;
 import org.junit.Before;

@@ -1,0 +1,12 @@
+apply plugin: 'java'
+
+
+repositories {
+    // Use 'jcenter' for resolving your dependencies.
+    // You can declare any Maven/Ivy/file repository here.
+    jcenter()
+}
+dependencies {
+    compile 'org.apache.commons:commons-lang3:3.0'
+    compile 'org.pcollections:pcollections:2.1.2'
+}
