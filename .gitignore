@@ -74,3 +74,4 @@ gradle-app.setting
 
 .~lock.*
 /common/build/
+/scala/build/

@@ -17,6 +17,7 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 
+@SuppressWarnings("Duplicates")
 @RunWith(Parameterized.class)
 public class BankTestSecondRound {
     private final Logger logger = LoggerFactory.getLogger(this.getClass());
