@@ -1,9 +1,10 @@
 package de.hs_augsburg.nlp.two.BasicMonitor;
 
+import de.hs_augsburg.nlp.four.ScalaBankAdapter;
+import de.hs_augsburg.nlp.four.ValBankIdentity;
 import de.hs_augsburg.nlp.two.Functional.CasBank;
 import de.hs_augsburg.nlp.two.IBank;
 import de.hs_augsburg.nlp.two.SmallLock.SmallLockBank;
-import de.hs_augsburg.nlp.two.cl.RefBankFactory;
 import de.hs_augsburg.nlp.two.reduced.AccumulatorBank;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Blackhole;
@@ -29,7 +30,7 @@ public class BenchBank {
         // this is the config, you can play around with this
         Options opt = new OptionsBuilder()
                 .include(BenchBank.class.getSimpleName() + ".mixed")
-                .param("implName","Monitor", "SmallLock",  "Cas", "Accumulator")
+                .param("implName", "SmallLock", "Cas", "STM")
 //                .param("implName","Ref")
 //                .param("implName", "Accumulator")
                 .param("numberOfAccounts", "30")
@@ -37,8 +38,8 @@ public class BenchBank {
 //                .param("implName", "Unsafe", "Monitor", "Cas", "SmallLock")
 //                .param("numberOfAccounts", "10", "32", "200", "1000")
                 .forks(1)
-                .warmupIterations(8)
-                .measurementIterations(15)
+                .warmupIterations(4)
+                .measurementIterations(6)
                 .mode(Mode.Throughput)
                 .threads(threadCount)
 //                .addProfiler("gc")
@@ -139,14 +140,14 @@ public class BenchBank {
 
     @State(Scope.Benchmark)
     public static class BenchmarkState {
-        @Param({"Monitor", "SmallLock", "Unsafe", "Cas", "Accumulator"})
+        private final Logger logger = LoggerFactory.getLogger(this.getClass());
+        @Param({"Monitor", "SmallLock", "Unsafe", "Cas", "Accumulator", "Scala", "Val", "STM"})
         volatile String implName;
         @Param({"2", "10", "30", "100"})
         volatile int numberOfAccounts;
         volatile IBank bankImpl;
         volatile List<Long> accNos = new ArrayList<>(numberOfAccounts);
         volatile Blackhole hole = new Blackhole();
-        private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
         @Setup
         public void setup() {
@@ -166,6 +167,15 @@ public class BenchBank {
                     break;
                 case "Accumulator":
                     bankImpl = new AccumulatorBank((int) (threadCount * 1.5f));
+                    break;
+                case "Scala":
+                    bankImpl = new ScalaBankAdapter();
+                    break;
+                case "Val":
+                    bankImpl = new ValBankIdentity();
+                    break;
+                case "STM":
+                    bankImpl = new ValBankIdentity();
                     break;
 //                case "Ref":
 //                    bankImpl = RefBankFactory.makeRefBank();

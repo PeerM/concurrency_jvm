@@ -30,7 +30,8 @@ public class BankTestSecondRound {
     public static List<IBank> data() {
         return Arrays.asList(
                 new ScalaBankAdapter(),
-                new ValBankIdentity()
+                new ValBankIdentity(),
+                new ScalaSTMBank()
         );
     }
 
