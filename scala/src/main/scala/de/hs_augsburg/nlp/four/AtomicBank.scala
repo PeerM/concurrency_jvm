@@ -4,8 +4,7 @@ import java.lang.Long
 import java.util
 import java.util.concurrent.atomic.{AtomicLong, AtomicReference}
 
-//implicit class for conversion of scala function to java UnaryOperator
-import de.hs_augsburg.nlp.four.UnaryOpScala.UnaryOpScala
+import de.hs_augsburg.nlp.four.implicitConversions.UnaryOpScala
 import de.hs_augsburg.nlp.two.BasicMonitor.Entry
 
 import scala.collection.JavaConverters._

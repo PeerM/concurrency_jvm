@@ -29,7 +29,8 @@ public class BankTestSecondRound {
     @Parameterized.Parameters(name = "{index}: {0}")
     public static List<IBank> data() {
         return Arrays.asList(
-                new ScalaBankAdapter()
+                new ScalaBankAdapter(),
+                new ValBankIdentity()
         );
     }
 

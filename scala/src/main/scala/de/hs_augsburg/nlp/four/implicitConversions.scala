@@ -3,7 +3,7 @@ package de.hs_augsburg.nlp.four
 import java.util.function.UnaryOperator
 
 
-object UnaryOpScala {
+object implicitConversions {
 
   /***
     * implicit class for conversion of scala function to java UnaryOperator
