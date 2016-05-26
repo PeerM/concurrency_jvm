@@ -1,24 +1,24 @@
-package de.hs_augsburg.nlp.four;
+package de.hs_augsburg.nlp.four.streams;
+
 
 import de.hs_augsburg.nlp.three.histogram.ClojureHelpers;
 import org.apache.commons.io.IOUtils;
-
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
 import java.util.stream.Stream;
 
-
-
-public class StringStream {
+public class StringStreamParallel implements IStringStream {
     public Collection<String> strings;
     public Stream stream;
 
     public static void main(String[] args) {
         StringStream stringStream = new StringStream();
         Stream<String> words = stringStream.getWords("pride.txt");
+        stringStream.makeHistogram(words);
     }
+
 
     public Stream<String> getWords(String filePath)
     {
@@ -31,15 +31,17 @@ public class StringStream {
         return res;
     }
 
+    @Override
     public int[] makeHistogram(Stream<String> words){
         int[] hist = words
-                .flatMap(word -> word.chars().boxed()).parallel()
+                .flatMap(word -> word.chars().boxed())
+                .parallel()
                 .collect(
                         () -> new int[256],
                         (int[] ints, Integer integer) -> {
                             ints[integer]++;
                         },
-                        ClojureHelpers::arrayElementBasedAdd);
+                        ClojureHelpers::arrayElementBasedAddImperativ);
 //        System.out.println(hist);
         return hist;
     }

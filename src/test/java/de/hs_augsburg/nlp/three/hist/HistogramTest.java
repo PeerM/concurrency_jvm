@@ -1,6 +1,7 @@
 package de.hs_augsburg.nlp.three.hist;
 
 
+import de.hs_augsburg.nlp.four.histogram.StreamedHistogram;
 import de.hs_augsburg.nlp.three.CljPerColorHistogram;
 import de.hs_augsburg.nlp.three.ReducingHistogram;
 import de.hs_augsburg.nlp.three.histogram.*;
@@ -23,6 +24,7 @@ public class HistogramTest {
     private AtomicDecompositionHistogram atomicDecompositionHistogram;
     private CljPerColorHistogram cljPerColorHistogram;
     private ReducingHistogram reducingHistogram;
+    private StreamedHistogram streamedHistogram;
 
     private int[] imagePixels;
 
@@ -35,6 +37,7 @@ public class HistogramTest {
         this.atomicDecompositionHistogram = new AtomicDecompositionHistogram(Runtime.getRuntime().availableProcessors());
         this.cljPerColorHistogram = new CljPerColorHistogram();
         this.reducingHistogram = new ReducingHistogram();
+        this.streamedHistogram = new StreamedHistogram();
 
         this.imagePixels = getPixels("benchdata/4160x2340/1.jpg");
     }
@@ -48,7 +51,7 @@ public class HistogramTest {
         Map<ColorMask, int[]> atomicDecomAnalyzedPixels = atomicDecompositionHistogram.histogram(imagePixels);
         Map<ColorMask, int[]> cljPerColorAnalyzedPixels = ((IHistogram) cljPerColorHistogram).histogram(imagePixels);
         Map<ColorMask, int[]> reducingAnalyzedPixels = ((IHistogram) reducingHistogram).histogram(imagePixels);
-
+        Map<ColorMask, int[]> streamedAnalyzedPixels = streamedHistogram.histogram(imagePixels);
 
         for (ColorMask cm : ColorMask.values()) {
             Assert.assertArrayEquals("threaded", correctAnalyzedPixels.get(cm), threadedAnalyzedPixels.get(cm));
@@ -56,6 +59,7 @@ public class HistogramTest {
             Assert.assertArrayEquals("atomicDecom", correctAnalyzedPixels.get(cm), atomicDecomAnalyzedPixels.get(cm));
             Assert.assertArrayEquals("cljPerColor", correctAnalyzedPixels.get(cm), cljPerColorAnalyzedPixels.get(cm));
             Assert.assertArrayEquals("reduced", correctAnalyzedPixels.get(cm), reducingAnalyzedPixels.get(cm));
+            Assert.assertArrayEquals("reduced", correctAnalyzedPixels.get(cm), streamedAnalyzedPixels.get(cm));
         }
     }
 
