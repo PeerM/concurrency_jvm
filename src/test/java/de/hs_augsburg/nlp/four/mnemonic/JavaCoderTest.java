@@ -10,6 +10,7 @@ import org.pcollections.PStack;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
 
 public class JavaCoderTest {
 
@@ -30,7 +31,7 @@ public class JavaCoderTest {
 //        Set<String> res = scala.translate("843");
 //        Set<List<String>> res2 = scala.encode("843843");
 //        String n = java.wordCode("The");
-        PSet<PStack<String>> encode = java.encode("8434");
+        Set<PStack<String>> encode = java.encode("8434");
 //        Set<List<String>> encode = scala.encode("843");
     }
 

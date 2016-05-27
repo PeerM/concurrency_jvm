@@ -1,16 +1,14 @@
 package de.hs_augsburg.nlp.four.mnemonic;
 
 import com.google.common.base.Joiner;
+import one.util.streamex.IntStreamEx;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.pcollections.ConsPStack;
 import org.pcollections.HashTreePSet;
 import org.pcollections.PSet;
 import org.pcollections.PStack;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class JavaCoder {
@@ -47,33 +45,34 @@ public class JavaCoder {
         return encode(number).stream().map(strings -> Joiner.on(" ").join(strings)).collect(Collectors.toSet());
     }
 
-    public PSet<PStack<String>> encode(String number) {
+    public Set<PStack<String>> encode(String number) {
         if (number.isEmpty()) {
             return HashTreePSet.singleton(ConsPStack.empty());
         }
-//        return IntStreamEx.range(1, number.length() + 1).mapToObj(i -> {
+        return IntStreamEx
+                .range(1, number.length() + 1)
+                .flatMapToObj(i -> {
+                    String first = number.substring(0, i);
+                    String second = number.substring(i, number.length());
+                    List<String> possible_words = wordsForNum.getOrDefault(first, ConsPStack.empty());
+                    return possible_words
+                            .stream()
+                            .flatMap(word -> encode(second)
+                                    .stream()
+                                    .map((PStack<String> rest) -> rest.plus(word)));
+                }).collect(Collectors.toSet());
+//        PSet<PStack<String>> accumulator = HashTreePSet.empty();
+//        for (int i = 1; i < number.length() + 1; i++) {
 //            String first = number.substring(0, i);
 //            String second = number.substring(i, number.length());
 //            List<String> possible_words = wordsForNum.getOrDefault(first, ConsPStack.empty());
-//            PSet<PStack<String>> pSet = possible_words
-//                    .stream()
-//                    .map(word -> encode(second).stream().map(strings -> strings.plus(word)).re)
-//                    .reduce(ConsPStack.empty(),PStack::plusAll);
-//            //                    .reduce(HashTreePSet.empty(), PSet::plusAll);
-//            return pSet.plus(possible_words);
-//        }).reduce(HashTreePSet.empty(), (right, left) -> right.plusAll(left));
-        PSet<PStack<String>> accumulator = HashTreePSet.empty();
-        for (int i = 1; i < number.length() + 1; i++) {
-            String first = number.substring(0, i);
-            String second = number.substring(i, number.length());
-            List<String> possible_words = wordsForNum.getOrDefault(first, ConsPStack.empty());
-            for (String word : possible_words) {
-                for (PStack<String> rest : encode(second)) {
-                    accumulator = accumulator.plus(rest.plus(word));
-                }
-            }
-        }
-        return accumulator;
+//            for (String word : possible_words) {
+//                for (PStack<String> rest : encode(second)) {
+//                    accumulator = accumulator.plus(rest.plus(word));
+//                }
+//            }
+//        }
+//        return accumulator;
     }
 
 }
