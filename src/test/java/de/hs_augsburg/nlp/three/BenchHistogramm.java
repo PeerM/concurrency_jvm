@@ -34,7 +34,7 @@ public class BenchHistogramm {
                 .param("implName", "Threaded", "Streamed","SharedMutableStream")
 //                .param("persistentThreads", "false")
                 .forks(1)
-                .warmupIterations(2)
+                .warmupIterations(6)
                 .measurementIterations(7)
                 .mode(Mode.Throughput)
                 //.threads(1)

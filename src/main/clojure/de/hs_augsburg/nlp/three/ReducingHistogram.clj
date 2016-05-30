@@ -29,7 +29,7 @@
 (defn -histogram [this ^ints pixels]
   (into {}
         (pmap
-          (fn [mask] [mask (color-hist mask pixels (.. Runtime getRuntime availableProcessors))])
+          (fn [mask] [mask (color-hist mask pixels (* 4 (.. Runtime getRuntime availableProcessors)))])
           [ColorMask/BLUE ColorMask/RED ColorMask/GREEN])))
 
 
