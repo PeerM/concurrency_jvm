@@ -1,0 +1,12 @@
+apply plugin: 'scala'
+
+repositories {
+    // Use 'jcenter' for resolving your dependencies.
+    // You can declare any Maven/Ivy/file repository here.
+    jcenter()
+}
+dependencies {
+    compile project(':common')
+    compile group: 'org.scala-lang', name: 'scala-library', version: '2.11.8'
+    compile 'org.scala-stm:scala-stm_2.11:0.7'
+}

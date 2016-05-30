@@ -1,6 +1,0 @@
-"Benchmark","Mode","Threads","Samples","Score","Score Error (99,9%)","Unit","Param: arraySize","Param: implName"
-"de.hs_augsburg.nlp.three.sort.BenchSorting.main","thrpt",1,7,"204,848340","61,087510","ops/s",100000,Sequential
-"de.hs_augsburg.nlp.three.sort.BenchSorting.main","thrpt",1,7,"64,888054","21,599156","ops/s",100000,JDK
-"de.hs_augsburg.nlp.three.sort.BenchSorting.main","thrpt",1,7,"128,643656","82,738174","ops/s",100000,PHist
-"de.hs_augsburg.nlp.three.sort.BenchSorting.main","thrpt",1,7,"216,994640","47,675055","ops/s",100000,FutureHist
-"de.hs_augsburg.nlp.three.sort.BenchSorting.main","thrpt",1,7,"372,784708","62,092277","ops/s",100000,JdkParallel
