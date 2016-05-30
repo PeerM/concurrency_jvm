@@ -1,5 +1,7 @@
 package de.hs_augsburg.nlp.three;
 
+import de.hs_augsburg.nlp.four.histogram.PerColorStreamHistogram;
+import de.hs_augsburg.nlp.four.histogram.SharedMutableHistogram;
 import de.hs_augsburg.nlp.four.histogram.StreamedHistogram;
 import de.hs_augsburg.nlp.three.histogram.*;
 import org.openjdk.jmh.annotations.*;
@@ -29,7 +31,7 @@ public class BenchHistogramm {
         // this is the config, you can play around with this
         Options opt = new OptionsBuilder()
                 .include(BenchHistogramm.class.getSimpleName() + "")
-                .param("implName", "Threaded", "Streamed", "Reducing")
+                .param("implName", "Threaded", "Streamed","SharedMutableStream")
 //                .param("persistentThreads", "false")
                 .forks(1)
                 .warmupIterations(2)
@@ -73,7 +75,7 @@ public class BenchHistogramm {
 
     @State(Scope.Benchmark)
     public static class BenchmarkState {
-        @Param({"Sequential", "Threaded", "Decomposition", "AtomicDecomposition", "CljPerColor", "Reducing", "Streamed"})
+        @Param({"Sequential", "Threaded", "Decomposition", "AtomicDecomposition", "CljPerColor", "Reducing", "Streamed","PerColorStream","SharedMutableStream"})
         volatile String implName;
         //        @Param({"false", "true"})
 //        volatile boolean persistentThreads;
@@ -110,6 +112,12 @@ public class BenchHistogramm {
                     break;
                 case "Streamed":
                     impl = new StreamedHistogram();
+                    break;
+                case "PerColorStream":
+                    impl = new PerColorStreamHistogram();
+                    break;
+                case "SharedMutableStream":
+                    impl = new SharedMutableHistogram();
                     break;
                 default:
                     throw new IllegalArgumentException("impl '" + implName + "' not supported");
