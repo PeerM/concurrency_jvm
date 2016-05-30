@@ -30,11 +30,9 @@ public class JavaCoder {
                 .put("9", "WXYZ")
                 .build();
         charCode = mnemonics.entrySet().stream()
-                .flatMap(
-                        entry -> entry.getValue()
-                                .chars()
-                                .mapToObj(
-                                        value -> new ImmutablePair<>(String.valueOf(value), entry.getKey())))
+                .flatMap(entry -> entry.getValue()
+                        .chars()
+                        .mapToObj(value -> new ImmutablePair<>(String.valueOf(value), entry.getKey())))
                 .collect(Collectors.toMap(ImmutablePair::getLeft, ImmutablePair::getRight));
 
         wordsForNum = dictionary.stream().collect(Collectors.groupingBy(this::wordCode));
