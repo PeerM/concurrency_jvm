@@ -32,6 +32,14 @@
                                        :asset-path           "js/compiled/devcards_out"
                                        :output-to            "resources/public/js/compiled/devcards_trail_devcards.js"
                                        :output-dir           "resources/public/js/compiled/devcards_out"
+                                       :source-map-timestamp true}}
+                       {:id           "prod"
+                        :source-paths ["src"]
+                        :compiler     {:main                 "hs_augsburg.devcards.cards-root"
+                                       :devcards true
+                                       :asset-path           "js/compiled/devcards_out"
+                                       :output-to            "resources/public/js/compiled/devcards_trail_devcards.js"
+                                       :optimizations        :advanced
                                        :source-map-timestamp true}}]}
   ;{:id "dev"
   ; :source-paths ["src"]
