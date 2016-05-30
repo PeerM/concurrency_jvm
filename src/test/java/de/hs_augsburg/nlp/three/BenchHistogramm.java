@@ -1,8 +1,11 @@
 package de.hs_augsburg.nlp.three;
 
+import de.hs_augsburg.nlp.four.histogram.StreamedHistogram;
 import de.hs_augsburg.nlp.three.histogram.*;
 import org.openjdk.jmh.annotations.*;
 import org.openjdk.jmh.infra.Blackhole;
+import org.openjdk.jmh.profile.CompilerProfiler;
+import org.openjdk.jmh.profile.StackProfiler;
 import org.openjdk.jmh.results.format.ResultFormatType;
 import org.openjdk.jmh.runner.Runner;
 import org.openjdk.jmh.runner.RunnerException;
@@ -26,13 +29,14 @@ public class BenchHistogramm {
         // this is the config, you can play around with this
         Options opt = new OptionsBuilder()
                 .include(BenchHistogramm.class.getSimpleName() + "")
-//                .param("implName", "CljPerColor", "Reducing")
+                .param("implName", "Threaded", "Streamed", "Reducing")
 //                .param("persistentThreads", "false")
                 .forks(1)
-                .warmupIterations(6)
+                .warmupIterations(2)
                 .measurementIterations(7)
                 .mode(Mode.Throughput)
-                .threads(1)
+                //.threads(1)
+                //.addProfiler(CompilerProfiler.class)
 //                .jvmArgsAppend("-Xms3g")
 //                .output("jmh_out.txt")
                 .resultFormat(ResultFormatType.CSV)
@@ -69,7 +73,7 @@ public class BenchHistogramm {
 
     @State(Scope.Benchmark)
     public static class BenchmarkState {
-        @Param({"Sequential", "Threaded", "Decomposition", "AtomicDecomposition", "CljPerColor", "Reducing"})
+        @Param({"Sequential", "Threaded", "Decomposition", "AtomicDecomposition", "CljPerColor", "Reducing", "Streamed"})
         volatile String implName;
         //        @Param({"false", "true"})
 //        volatile boolean persistentThreads;
@@ -103,6 +107,9 @@ public class BenchHistogramm {
                     break;
                 case "Reducing":
                     impl = new ReducingHistogram();
+                    break;
+                case "Streamed":
+                    impl = new StreamedHistogram();
                     break;
                 default:
                     throw new IllegalArgumentException("impl '" + implName + "' not supported");

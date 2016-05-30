@@ -7,6 +7,7 @@ import de.hs_augsburg.nlp.three.histogram.ClojureHelpers;
 import de.hs_augsburg.nlp.three.histogram.ColorMask;
 import de.hs_augsburg.nlp.three.histogram.IHistogram;
 import de.hs_augsburg.nlp.three.histogram.SequentialHistogram;
+import one.util.streamex.IntStreamEx;
 import org.math.plot.Plot2DPanel;
 
 import javax.imageio.ImageIO;
@@ -16,6 +17,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class StreamedHistogram implements IHistogram {
 
@@ -44,13 +46,12 @@ public class StreamedHistogram implements IHistogram {
     }
 
     private int[] makeHistogram(int[] data, ColorMask mask) {
-        int[] histogram = Arrays.stream(data)
-                .map(value -> mask.apply(value))
+        return Arrays.stream(data)
                 .parallel()
+                .map(mask::apply)
                 .collect(() -> new int[256],
                         (ints, value) -> ints[value]++,
                         ClojureHelpers::arrayElementBasedAddImperativ);
-        return histogram;
     }
 
     Map<ColorMask, int[]> analyseImage(String path) {
