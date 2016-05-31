@@ -17,8 +17,14 @@
 (defcard-rg :dsl [first_card])
 (defcard-doc "source code:" (mkdn-pprint-source first_card))
 
-(defn list-example [] [:ul (map (fn [i] [:li {:key i} i]) (filter even? (range 5 15)))])
+(defn list-example [start end] [:ul (map (fn [i] [:li {:key i} i]) (filter even? (range start end)))])
 
-(defcard-rg :dsl2 "Die dsl besteht aus normalen Clojure maps, also kann man dinge wie map verwenden" [list-example])
+(defcard-rg :dsl2 "Die dsl besteht aus normalen Clojure maps, also kann man dinge wie map verwenden" [list-example 5 15])
 
 (defcard-doc "source code:" (mkdn-pprint-source list-example))
+
+(defn compose-example [] [:div "componenten wie functionen kombinieren" [list-example 2 9]])
+
+(defcard-rg :dsl3 "" [compose-example])
+
+(defcard-doc "source code:" (mkdn-pprint-source compose-example))
