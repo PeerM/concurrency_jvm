@@ -10,6 +10,10 @@
 
 (enable-console-print!)
 
+
+
+
+
 ; basic counter
 (defonce basic-counter-state (reagent/atom 0))
 
@@ -18,6 +22,10 @@
 (defcard-rg :basic-counter
             ; function and state
             [basic-counter basic-counter-state])
+
+
+
+
 
 ; color counter
 (defonce color-counter-state (reagent/atom 0))
@@ -38,6 +46,27 @@
             ; state to inspect
             color-counter-state
             {:inspect-data true :history true})
+
+
+
+
+
+(defonce seconds-past (reagent/atom 0))
+
+(defonce timer-channel (let [channel (chan 4)]
+                         (js/setInterval #(put! channel :tick) 1000)
+                         channel))
+(go (loop [i 0]
+      (<! timer-channel)
+      (swap! seconds-past inc)
+      ;(reset! seconds-past i)
+      (recur (+ i 1))))
+
+(defn timer-view [atom] [:p "Vergangen Zeit " [:em @atom]])
+
+(defcard-rg :timer
+            [timer-view seconds-past])
+
 
 ; robust calculator
 (defonce robust-calculator-state (reagent/atom {:text "1+1" :result "2" :error "" :live_update true}))
