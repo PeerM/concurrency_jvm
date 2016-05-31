@@ -1,8 +1,8 @@
 # Ideen
 - DSL/hiccup
-- Channels
 - Reactive Atoms
 - Reactive Function
+- Channels
 
 - FRP
 - Static Signal Graph
