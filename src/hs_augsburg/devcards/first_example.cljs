@@ -2,7 +2,8 @@
   (:require
     [reagent.core :as reagent]
     [cljs.core.async :as coreasync :refer [put! chan <! take!]]
-    [devcards.core :as dc])
+    [devcards.core :as dc]
+    [cljs-http.client :as http])
   (:require-macros
     [devcards.core :refer [defcard defcard-rg defcard-doc deftest]]
     [cljs.core.async.macros
@@ -66,6 +67,49 @@
 
 (defcard-rg :timer
             [timer-view seconds-past])
+
+;request
+
+(defonce git-state (reagent/atom {:search-term "" :state :inital :response {}}))
+(defonce search-term-changes (chan))
+(defonce send-actions (chan))
+
+(go (loop [i 0]
+      (let [username (<! search-term-changes)]
+        (swap! git-state (fn [old] (assoc old :search-term username))))
+      (recur (+ 1 i))))
+
+(go (loop [i 0]
+      (<! send-actions)
+      (let [response-chan (http/get "https://api.github.com/search/repositories"
+                                    {:with-credentials? false,
+                                     :query-params      {"q" (:search-term @git-state)}})]
+        (swap! git-state (fn [old] (assoc old :state :loading)))
+        (let [response (<! response-chan)]
+          (swap! git-state (fn [old] (assoc old :response response :state :finished)))))
+      (recur (+ 1 i))))
+
+
+(defn git-view [atom] [:div [:input {
+                                     :type      "text", :placeholder "github search term", :value (:search-term @atom),
+                                     :on-change (fn [ev] (put! search-term-changes (-> ev .-target .-value)))}]
+                       [:button {:on-click #(put! send-actions :send)} "send"]
+                       [:div
+                        (let [state (:state @git-state)]
+                          (cond
+                            (= state :inital) "no data avalible"
+                            (= state :loading) "loading"
+                            (= state :finished) [:ul
+                                                 (map
+                                                   (fn [i] [:li {:key i} i])
+                                                   (map
+                                                     #(:html_url %)
+                                                     (take 5 (:items (:body (:response @git-state))))))]))]])
+
+
+(defcard-rg :git-card
+            [git-view git-state]
+            git-state {:history true})
 
 
 ; robust calculator
