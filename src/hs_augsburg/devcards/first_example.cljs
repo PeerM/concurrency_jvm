@@ -10,9 +10,18 @@
 
 (enable-console-print!)
 
-(defonce color-counter-state (reagent/atom 0))
+; basic counter
+(defonce basic-counter-state (reagent/atom 0))
+
+(defn basic-counter [ratom] [:button {:on-click #((fn [_] (swap! ratom inc)))} (str "Wert = " @ratom)])
+
+(defcard-rg :basic-counter
+            ; function and state
+            [basic-counter basic-counter-state])
 
 ; color counter
+(defonce color-counter-state (reagent/atom 0))
+
 (defn color-counter [ratom]
   [:div {:style {:color (cond
                           (< @ratom 3) "green"
@@ -56,11 +65,11 @@
               :checked   (:live_update @robust-calculator-state)
               :on-change (fn [ev] (swap! robust-calculator-state (fn [state] (assoc state :live_update (-> ev .-target .-checked)))))}]] ;(fn [ev] (swap! robust-calculator-state ((fn [state] (assoc state :live_update false)))))}]]
     [:form
-     [:input {:type           "text"
-              :class          "text_input"
-              :value          (:text @ratom)
-              :on-change      (fn [ev] (put-change-message ev false))}]]]
-    ;[:a {:on-click (put! calc-chan {:value (:text @ratom) :submited true})} "Update"]]
+     [:input {:type      "text"
+              :class     "text_input"
+              :value     (:text @ratom)
+              :on-change (fn [ev] (put-change-message ev false))}]]]
+   ;[:a {:on-click (put! calc-chan {:value (:text @ratom) :submited true})} "Update"]]
    [:div [:input {:type "text" :class "text_input" :read-only true :value (str "=" (:result @ratom))}]]
    [:div {:class "error" :hidden (empty? (:error @ratom))} [:span (:error @ratom)]]])
 
