@@ -11,7 +11,7 @@
 
 
 (defcard-doc "
-## Einfache Nebenläufigkeit
+## Nebenläufigkeit
 - core.async channels:
   - queues
   - green threads oder echte threads

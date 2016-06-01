@@ -7,23 +7,27 @@
     [devcards.core :refer [defcard defcard-rg defcard-doc deftest mkdn-pprint-source]]))
 
 (defn first_card [] [:div
-                     [:p "DSL für hmtl"]
-                     [:div [:button
-                            {:on-click (fn [ev] (js/alert "Der Button wurde gedrückt"))}
-                            "Ein Button"]]
-                     [:p "Clojurescript wird javascript kompiliert (serperater dialekt wie jsx wird vermiden)"]
-                     [:p {:style {:text-decoration "underline"}} "Inline CSS und andere attribute"]])
+                     [:ul
+                      [:li "Domain Specific Language für hmtl"]
+                      [:li [:button
+                             {:on-click (fn [ev] (js/alert "Der Button wurde gedrückt"))}
+                             "Ein Button"]]
+                      [:li "separater Dialekt wie jsx wird vermieden"]
+                      [:li {:style {:text-decoration "underline"}} "Inline CSS und andere attribute"]]])
 
 (defcard-rg :dsl [first_card])
 (defcard-doc "source code:" (mkdn-pprint-source first_card))
 
-(defn list-example [start end] [:ul (map (fn [i] [:li {:key i} i]) (range start end))])
+(defn list-example [start end] [:ul
+                                (map
+                                  (fn [zahl] [:li {:key zahl} zahl])
+                                  (range start end))])
 
-(defcard-rg :dsl2 "Die dsl besteht aus normalen Clojure maps, also kann man dinge wie map verwenden" [list-example 5 10])
+(defcard-rg :dsl2 "Die DSL besteht aus normalen Clojure Maps, also kann man Funktionen wie map verwenden" [list-example 5 10])
 
 (defcard-doc "source code:" (mkdn-pprint-source list-example))
 
-(defn compose-example [] [:div "componenten wie functionen kombinieren" [list-example 2 6]])
+(defn compose-example [] [:div "Componenten lassen sich wie Funktionen kombinieren" [list-example 2 6]])
 
 (defcard-rg :dsl3 "" [compose-example])
 
