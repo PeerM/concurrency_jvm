@@ -43,11 +43,13 @@
 
 (defn color-value-render [number]
   [:span
-   {:style {:color (cond
-                     (< number 3) "green"
-                     (< number 6) "#D8D100"
-                     (< number 200) "red"
-                     :else "Grey")}}
+   {:style {:color
+            ; Die richtige Farbe auswählen
+            (cond
+              (< number 3) "green"
+              (< number 6) "#D8D100"
+              (< number 200) "red"
+              :else "Grey")}}
    "Current count: " number])
 
 (defn color-counter [ratom]
@@ -86,15 +88,24 @@
 
 (defonce seconds-past (reagent/atom 0))
 
-(defonce timer-channel (let [channel (chan 4)]
-                         (js/setInterval #(put! channel :tick) 1000)
-                         channel))
+(defonce timer-channel
+         ; channel erstellen
+         (let [channel (chan 4)]
+           ; js callback das jede Sekunde aufgerufen wird registrieren
+           (js/setInterval #(put! channel :tick) 1000)
+           channel))
 
 (defn listen-to-channel! []
-  (go (loop [i 0]
-        (<! timer-channel)
-        (swap! seconds-past inc)
-        (recur (+ i 1)))))
+  ; go block
+  (go
+    ; endloss schleife
+    (loop [i 0]
+      ; auf das näschste :tick warten
+      (<! timer-channel)
+      ; die zahl um eins erhöhen
+      (swap! seconds-past inc)
+      ; wieder von loop anfangen
+      (recur (+ i 1)))))
 
 (listen-to-channel!)
 
@@ -117,16 +128,22 @@
         (swap! git-state (fn [old] (assoc old :search-term username))))
       (recur (+ 1 i))))
 
-(go (loop [i 0]
-      (<! send-actions)
-      (let [response-chan (http/get "https://api.github.com/search/repositories"
-                                    {:with-credentials? false,
-                                     :query-params      {"q" (:search-term @git-state)}})]
-        (swap! git-state (fn [old] (assoc old :state :loading)))
-        (let [response (<! response-chan)]
-          (swap! git-state (fn [old] (assoc old :response response :state :finished)))))
-      (recur (+ 1 i))))
-
+(defn git-statemachine! []
+  (go (loop [i 0]
+        ; Auf Button warten
+        (<! send-actions)
+        ; Request starten
+        (let [response-chan (http/get "https://api.github.com/search/repositories"
+                                      {:with-credentials? false,
+                                       :query-params      {"q" (:search-term @git-state)}})]
+          ; Zustand auf :loading stellen
+          (swap! git-state (fn [old] (assoc old :state :loading)))
+          ; Auf antwort warten
+          (let [response (<! response-chan)]
+            ; Zustand auf :finished stellen und antwort speichern
+            (swap! git-state (fn [old] (assoc old, :response response, :state :finished)))))
+        (recur (+ 1 i)))))
+(git-statemachine!)
 
 (defn git-view [atom] [:div [:input {
                                      :type      "text", :placeholder "github search term", :value (:search-term @atom),
@@ -145,10 +162,26 @@
                                                      (take 5 (:items (:body (:response @git-state))))))]))]])
 
 
+(defcard-doc "
+             ## Channels für Automaten
+             - Viele Quellen für Ereignisse
+             - Modelirung von Prozeduren mit Endlichen Automaten
+             - Beispiel durchsuchen von GitHub
+               - Zustand :inital
+               - 'Send' Button löst suche aus
+               - Request wird gemacht
+               - Zustand :loading
+               - Request ist fertig
+               - Zustand :finished und daten von api sind vorhanden
+               - Button kann die nächste suche auslösen")
+
 (defcard-rg :git-card
             [git-view git-state]
-            git-state {:history true})
+            git-state {:inspect-data false :history true})
 
+(defcard-doc (mkdn-pprint-source git-state))
+(defcard-doc (mkdn-pprint-source git-statemachine!))
+(defcard-doc (mkdn-pprint-source git-view))
 
 ; robust calculator
 (defonce robust-calculator-state (reagent/atom {:text "1+1" :result "2" :error "" :live_update true}))
