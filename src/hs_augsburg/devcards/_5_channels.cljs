@@ -13,9 +13,9 @@
 (defcard-doc "
 ## Nebenläufigkeit
 - core.async channels:
-  - queues
-  - green threads oder echte threads
-  - async await style
+  - Queues
+  - green Threads oder echte Threads
+  - Sequentieller Asynchroner Ablauf
 - Channels verwenden um Zustands änderungen zu managen
   - sequentielle abarbeitung wie bei blocken
   - übersetztung zu javascript nebenläufigkeit

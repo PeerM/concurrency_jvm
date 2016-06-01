@@ -10,15 +10,11 @@
 - Javascript hat 'nur' Callbacks und bald Futures
 - DOM ist shared mutable State
 ## Grundbausteine aus Clojure
-- Atoms mit Watches
-- core.async channels:
-  - queues
-  - green threads oder echte threads
-  - async await style
-  - Compatible mit Clojure script
+- Atoms mit Watchers
+- core.async channels
 - Funktionen mit und ohne Nebenwirkungen")
 
-(defcard-doc "## Ansatz: wir benutzen die werkzeuge von Clojure um Web GUIs zu bauen
+(defcard-doc "## Ansatz: Wir benutzen die Werkzeuge von Clojure um Web GUIs zu bauen
 => Clojure wird zu Javascript compiliert")
 
 (defcard-doc "
