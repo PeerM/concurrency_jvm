@@ -19,6 +19,11 @@
   - async await style
 - Pure functions")
 
-(defcard-doc "## Ansatz wir benutzen die werkzeuge von Clojure um Web GUIs zu bauen")
+(defcard-doc "## Ansatz: wir benutzen die werkzeuge von Clojure um Web GUIs zu bauen")
 
-(defcard-doc "[Nächste Folie](#!/hs_augsburg.devcards._2_html)")
+(defcard-doc "
+Die präsentation ist auch auf [http://www.hs-augsburg.de/~mathiaf/nlp-frp/](http://www.hs-augsburg.de/~mathiaf/nlp-frp/)
+
+Sourcecode [https://r-n-d.informatik.hs-augsburg.de:8080/ferdinandpeer.mathia/nlp_mathia_reichinger/tree/frp-present](https://r-n-d.informatik.hs-augsburg.de:8080/ferdinandpeer.mathia/nlp_mathia_reichinger/tree/frp-present)
+
+[Nächste Folie](#!/hs_augsburg.devcards._2_html)")
