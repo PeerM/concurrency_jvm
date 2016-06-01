@@ -31,10 +31,10 @@ public class BenchHistogramm {
         // this is the config, you can play around with this
         Options opt = new OptionsBuilder()
                 .include(BenchHistogramm.class.getSimpleName() + "")
-                .param("implName", "Threaded", "Streamed","SharedMutableStream")
+                .param("implName", "Sequential", "Threaded", "Decomposition", "AtomicDecomposition", "CljPerColor", "Reducing", "Streamed","PerColorStream","SharedMutableStream")
 //                .param("persistentThreads", "false")
                 .forks(1)
-                .warmupIterations(2)
+                .warmupIterations(6)
                 .measurementIterations(7)
                 .mode(Mode.Throughput)
                 //.threads(1)

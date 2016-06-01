@@ -1,0 +1,3 @@
+"Benchmark","Mode","Threads","Samples","Score","Score Error (99,9%)","Unit","Param: implName"
+"de.hs_augsburg.nlp.four.StringStreamBenchmark.main","thrpt",1,7,"101,563899","7,936307","ops/s",Sequential
+"de.hs_augsburg.nlp.four.StringStreamBenchmark.main","thrpt",1,7,"168,976802","23,594462","ops/s",Parallel

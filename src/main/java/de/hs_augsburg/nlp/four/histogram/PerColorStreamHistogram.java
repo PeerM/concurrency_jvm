@@ -23,25 +23,7 @@ public class PerColorStreamHistogram implements IHistogram {
     public static void main(String[] args) {
 
         PerColorStreamHistogram histogram = new PerColorStreamHistogram();
-        histogram.visualize(histogram.analyseImage("flickr1.jpg"));
-    }
-
-    private void visualize(Map<ColorMask, int[]> histogram) {
-
-        // create your PlotPanel (you can use it as a JPanel)
-        Plot2DPanel plot = new Plot2DPanel();
-
-        // add a line plot to the PlotPanel
-        for (Map.Entry<ColorMask, int[]> entry : histogram.entrySet()) {
-            plot.addStaircasePlot(entry.getKey().name(), entry.getKey().color, Doubles.toArray(Ints.asList(entry.getValue())));
-        }
-
-        // put the PlotPanel in a JFrame, as a JPanel
-        JFrame frame = new JFrame("a plot panel");
-        frame.setContentPane(plot);
-        frame.setSize(500, 500);
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.setVisible(true);
+        histogram.analyseImage("flickr1.jpg");
     }
 
     private int[] makeHistogram(int[] data, ColorMask mask) {

@@ -1,0 +1,10 @@
+"Benchmark","Mode","Threads","Samples","Score","Score Error (99,9%)","Unit","Param: implName"
+"de.hs_augsburg.nlp.three.BenchHistogramm.main","thrpt",1,7,"21,667266","0,580659","ops/s",Sequential
+"de.hs_augsburg.nlp.three.BenchHistogramm.main","thrpt",1,7,"39,899632","2,743567","ops/s",Threaded
+"de.hs_augsburg.nlp.three.BenchHistogramm.main","thrpt",1,7,"1,259678","0,156000","ops/s",Decomposition
+"de.hs_augsburg.nlp.three.BenchHistogramm.main","thrpt",1,7,"3,374701","0,354433","ops/s",AtomicDecomposition
+"de.hs_augsburg.nlp.three.BenchHistogramm.main","thrpt",1,7,"35,831220","4,605654","ops/s",CljPerColor
+"de.hs_augsburg.nlp.three.BenchHistogramm.main","thrpt",1,7,"38,210262","2,274124","ops/s",Reducing
+"de.hs_augsburg.nlp.three.BenchHistogramm.main","thrpt",1,7,"32,858591","5,567500","ops/s",Streamed
+"de.hs_augsburg.nlp.three.BenchHistogramm.main","thrpt",1,7,"23,862048","3,706494","ops/s",PerColorStream
+"de.hs_augsburg.nlp.three.BenchHistogramm.main","thrpt",1,7,"0,604722","0,030685","ops/s",SharedMutableStream
