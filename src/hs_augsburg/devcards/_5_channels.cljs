@@ -1,6 +1,7 @@
 (ns hs-augsburg.devcards._5_channels
   (:require
     [reagent.core :as reagent]
+    [cljs.core.async :refer [put! chan <! take!]]
     [devcards.core :as dc])
   (:require-macros
     [devcards.core :refer [defcard defcard-rg defcard-doc deftest mkdn-pprint-source]]
