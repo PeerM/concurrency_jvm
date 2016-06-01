@@ -1,4 +1,4 @@
-(ns hs-augsburg.devcards.basics
+(ns hs-augsburg.devcards._2_html
   (:require
     [reagent.core :as reagent]
     [cljs.core.async :as coreasync :refer [put! chan <! take!]]

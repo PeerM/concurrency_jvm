@@ -1,4 +1,4 @@
-(ns hs-augsburg.devcards.intro
+(ns hs-augsburg.devcards._1_intro
   (:require)
   (:require-macros
     [devcards.core :refer [defcard defcard-rg defcard-doc deftest mkdn-pprint-source]]))
