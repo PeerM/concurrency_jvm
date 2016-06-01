@@ -1,4 +1,4 @@
-(ns hs_augsburg.devcards.cards-root
+(ns hs_augsburg.devcards.stand_alone
   (:require
     [devcards.core :as dc]
     [hs-augsburg.devcards._1_intro]
@@ -9,3 +9,5 @@
     [hs-augsburg.devcards._6_git_api]
     [hs_augsburg.devcards._7_calc]))
 
+
+(devcards.core/start-devcard-ui!)

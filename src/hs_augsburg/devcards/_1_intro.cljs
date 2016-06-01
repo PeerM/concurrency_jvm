@@ -1,5 +1,6 @@
 (ns hs-augsburg.devcards._1_intro
-  (:require)
+  (:require
+    [devcards.core :as dc])
   (:require-macros
     [devcards.core :refer [defcard defcard-rg defcard-doc deftest mkdn-pprint-source]]))
 
