@@ -1,7 +1,5 @@
 (ns hs-augsburg.devcards._2_html
   (:require
-    [reagent.core :as reagent]
-    [cljs.core.async :as coreasync :refer [put! chan <! take!]]
     [devcards.core :as dc])
   (:require-macros
     [devcards.core :refer [defcard defcard-rg defcard-doc deftest mkdn-pprint-source]]))
@@ -12,7 +10,7 @@
                       [:li [:button
                              {:on-click (fn [ev] (js/alert "Der Button wurde gedrückt"))}
                              "Ein Button"]]
-                      [:li "separater Dialekt wie jsx wird vermieden"]
+                      [:li "Separater Dialekt wie jsx oder cshtml wird vermieden"]
                       [:li {:style {:text-decoration "underline"}} "Inline CSS und andere attribute"]]])
 
 (defcard-rg :dsl [first_card])

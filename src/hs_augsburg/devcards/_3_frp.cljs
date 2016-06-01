@@ -1,9 +1,7 @@
 (ns hs-augsburg.devcards._3_frp
   (:require
     [reagent.core :as reagent]
-    [cljs.core.async :as coreasync :refer [put! chan <! take!]]
-    [devcards.core :as dc]
-    [cljs-http.client :as http])
+    [devcards.core :as dc])
   (:require-macros
     [devcards.core :refer [defcard defcard-rg defcard-doc deftest mkdn-pprint-source]]
     [cljs.core.async.macros
@@ -20,7 +18,7 @@
 
 (defn basic-counter [ratom] [:button
                              {:on-click #((fn [_] (swap! ratom inc)))}
-                             (str "Wert = " @ratom)])
+                             "Wert = " @ratom])
 
 (defcard-rg :basic-counter
             ; function and state
@@ -36,6 +34,7 @@
              - Eine Funktion die das html vom Zustand ableitet"
              (mkdn-pprint-source basic-counter)
              "
-             - Bei Änderungen,im Atom, wird die Funktion neu aufgeruffen")
+             - Bei Änderungen,im Atom, wird die Funktion neu aufgeruffen
+             - Speichern und 'Rückgängig machen' sehr einfach")
 
 (defcard-doc "[Nächste Folie](#!/hs_augsburg.devcards._4_declarative)")

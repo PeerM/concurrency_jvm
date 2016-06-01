@@ -1,9 +1,7 @@
 (ns hs-augsburg.devcards._5_channels
   (:require
     [reagent.core :as reagent]
-    [cljs.core.async :as coreasync :refer [put! chan <! take!]]
-    [devcards.core :as dc]
-    [cljs-http.client :as http])
+    [devcards.core :as dc])
   (:require-macros
     [devcards.core :refer [defcard defcard-rg defcard-doc deftest mkdn-pprint-source]]
     [cljs.core.async.macros
@@ -19,7 +17,7 @@
 - Channels verwenden um Zustands änderungen zu managen
   - sequentielle abarbeitung wie bei blocken
   - übersetztung zu javascript nebenläufigkeit
-  - Channel input kann von überall kommen, auch von callbacks")
+  - Channel input kann von überall kommen, häufig von callbacks")
 
 (defonce seconds-past (reagent/atom 0))
 

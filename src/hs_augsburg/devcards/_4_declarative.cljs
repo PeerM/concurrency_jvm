@@ -1,9 +1,7 @@
 (ns hs-augsburg.devcards._4_declarative
   (:require
     [reagent.core :as reagent]
-    [cljs.core.async :as coreasync :refer [put! chan <! take!]]
-    [devcards.core :as dc]
-    [cljs-http.client :as http])
+    [devcards.core :as dc])
   (:require-macros
     [devcards.core :refer [defcard defcard-rg defcard-doc deftest mkdn-pprint-source]]
     [cljs.core.async.macros
@@ -37,8 +35,7 @@
              ## Declarativer Stile
              - Es wird nicht beschrieben was gemacht werden soll, sonder was seien soll
              - Bei verschienden Werten soll andere Farbe gewält werden
-             - Der code ändert nicht die Farbe er beschreibt das element nur abhängig vom Zustand
-             - Speichern und 'Rückgängig machen' sehr einfach")
+             - Der code ändert nicht die Farbe er beschreibt das element nur abhängig vom Zustand")
 
 (defcard-rg :color-counter-card
             ; function and state
