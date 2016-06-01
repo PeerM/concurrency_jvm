@@ -11,7 +11,7 @@
                      [:div [:button
                             {:on-click (fn [ev] (js/alert "Der Button wurde gedrückt"))}
                             "Ein Button"]]
-                     [:p "Clojurescript für zu javascript kompiliert (serperater dialekt wie jsx wird vermiden)"]
+                     [:p "Clojurescript wird javascript kompiliert (serperater dialekt wie jsx wird vermiden)"]
                      [:p {:style {:text-decoration "underline"}} "Inline CSS und andere attribute"]])
 
 (defcard-rg :dsl [first_card])
@@ -28,3 +28,5 @@
 (defcard-rg :dsl3 "" [compose-example])
 
 (defcard-doc "source code:" (mkdn-pprint-source compose-example))
+
+(defcard-doc "[Nächste Folie](#!/hs_augsburg.devcards.functional_reacitve)")
