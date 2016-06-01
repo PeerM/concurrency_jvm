@@ -74,3 +74,5 @@
 (defcard-doc (mkdn-pprint-source git-state))
 (defcard-doc (mkdn-pprint-source git-statemachine!))
 (defcard-doc (mkdn-pprint-source git-view))
+
+(defcard-doc "[Optionale letzte Folie](#!/hs_augsburg.devcards._7_calc)")
