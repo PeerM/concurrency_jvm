@@ -20,4 +20,4 @@
 
 (defcard-doc "## Ansatz wir benutzen die werkzeuge von Clojure um Web GUIs zu bauen")
 
-(defcard-doc "[Nächste Folie](#!/hs_augsburg.devcards.basics)")
+(defcard-doc "[Nächste Folie](#!/hs_augsburg.devcards._2_html)")
