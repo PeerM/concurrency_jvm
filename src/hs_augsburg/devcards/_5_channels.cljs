@@ -13,11 +13,11 @@
 ## Nebenläufigkeit
 - core.async channels:
   - Queues
-  - green Threads oder echte Threads
+  - Green Threads oder echte Threads
   - Sequentieller Asynchroner Ablauf
 - Channels verwenden um Zustands änderungen zu managen
-  - sequentielle abarbeitung wie bei blocken
-  - übersetztung zu javascript nebenläufigkeit
+  - Sequentielle abarbeitung wie bei blocken
+  - Übersetztung zu javascript nebenläufigkeit
   - Channel input kann von überall kommen, häufig von callbacks")
 
 (defonce seconds-past (reagent/atom 0))
@@ -48,7 +48,8 @@
 (defcard-rg :timer
             [timer-view seconds-past])
 
-(defcard-doc (mkdn-pprint-source timer-channel))
-(defcard-doc (mkdn-pprint-source listen-to-channel!))
+(defcard-doc
+  (mkdn-pprint-source timer-channel)
+  (mkdn-pprint-source listen-to-channel!))
 
 (defcard-doc "[Nächste Folie](#!/hs_augsburg.devcards._6_git_api)")

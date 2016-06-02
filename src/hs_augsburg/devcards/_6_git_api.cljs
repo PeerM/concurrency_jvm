@@ -57,7 +57,7 @@
 (defcard-doc "
              ## Channels für Automaten
              - Viele Quellen für Ereignisse
-             - Modelirung von Prozeduren mit Endlichen Automaten
+             - Modellierung von Prozeduren mit Endlichen Automaten
              - Beispiel durchsuchen von GitHub
                - Zustand :inital
                - 'Send' Button löst suche aus
@@ -71,8 +71,9 @@
             [git-view git-state]
             git-state {:inspect-data false :history true})
 
-(defcard-doc (mkdn-pprint-source git-state))
-(defcard-doc (mkdn-pprint-source git-statemachine!))
-(defcard-doc (mkdn-pprint-source git-view))
+(defcard-doc
+  (mkdn-pprint-source git-state)
+  (mkdn-pprint-source git-statemachine!)
+  (mkdn-pprint-source git-view))
 
 (defcard-doc "[Optionale letzte Folie](#!/hs_augsburg.devcards._7_calc)")

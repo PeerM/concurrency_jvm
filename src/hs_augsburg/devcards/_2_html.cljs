@@ -11,7 +11,7 @@
                              {:on-click (fn [ev] (js/alert "Der Button wurde gedrückt"))}
                              "Ein Button"]]
                       [:li "Separater Dialekt wie jsx oder cshtml wird vermieden"]
-                      [:li {:style {:text-decoration "underline"}} "Inline CSS und andere attribute"]]])
+                      [:li {:style {:text-decoration "underline"}} "Inline CSS und andere attribute möglich"]]])
 
 (defcard-rg :dsl [first_card])
 (defcard-doc "source code:" (mkdn-pprint-source first_card))
@@ -21,11 +21,11 @@
                                   (fn [zahl] [:li {:key zahl} zahl])
                                   (range start end))])
 
-(defcard-rg :dsl2 "Die DSL besteht aus normalen Clojure Maps, also kann man Funktionen wie map verwenden" [list-example 5 10])
+(defcard-rg :dsl2 "DSL besteht aus normalen Clojure Maps => map reduce" [list-example 5 10])
 
 (defcard-doc "source code:" (mkdn-pprint-source list-example))
 
-(defn compose-example [] [:div "Componenten lassen sich wie Funktionen kombinieren" [list-example 2 6]])
+(defn compose-example [] [:div "Componenten wie Funktionen kombinierbar" [list-example 2 6]])
 
 (defcard-rg :dsl3 "" [compose-example])
 
