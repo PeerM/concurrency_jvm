@@ -66,7 +66,7 @@
                - Request wird gemacht
                - Zustand :loading
                - Request ist fertig
-               - Zustand :finished und daten von api sind vorhanden
+               - Zustand :finished und Daten von Api sind vorhanden
                - Button kann die nächste suche auslösen")
 
 (defcard-rg :git-card
