@@ -37,21 +37,23 @@
         (recur (+ 1 i)))))
 (git-statemachine!)
 
-(defn git-view [atom] [:div [:input {
-                                     :type      "text", :placeholder "github search term", :value (:search-term @atom),
-                                     :on-change (fn [ev] (put! search-term-changes (-> ev .-target .-value)))}]
+(defn git-view [atom] [:div
+                       [:input {
+                                :type      "text", :placeholder "github search term", :value (:search-term @atom),
+                                :on-change (fn [ev] (put! search-term-changes (-> ev .-target .-value)))}]
                        [:button {:on-click #(put! send-actions :send)} "send"]
                        [:div
                         (let [state (:state @git-state)]
                           (cond
-                            (= state :inital) "no data avalible"
-                            (= state :loading) "loading"
-                            (= state :finished) [:ul
-                                                 (map
-                                                   (fn [i] [:li {:key i} i])
-                                                   (map
-                                                     #(:html_url %)
-                                                     (take 5 (:items (:body (:response @git-state))))))]))]])
+                            (= state :inital) "no data avalible"),
+                            (= state :loading) "loading",
+                            (= state :finished)
+                            [:ul
+                             (map
+                               (fn [i] [:li {:key i} i])
+                               (map
+                                 #(:html_url %)
+                                 (take 5 (:items (:body (:response @git-state))))))],)]])
 
 
 (defcard-doc "
