@@ -2,7 +2,7 @@
   (:require
     [reagent.core :as reagent]
     [cljs.core.async :refer [put! chan <! take!]]
-    [devcards.core :as dc])
+    [devcards.core])
   (:require-macros
     [devcards.core :refer [defcard defcard-rg defcard-doc deftest mkdn-pprint-source]]
     [cljs.core.async.macros
@@ -18,7 +18,8 @@
 - Channels verwenden um Zustands änderungen zu managen
   - Sequentielle abarbeitung wie bei blocken
   - Übersetztung zu javascript nebenläufigkeit
-  - Channel input kann von überall kommen, häufig von callbacks")
+  - Channel input kann von überall kommen, häufig von callbacks
+- In Functional Reactive Programming allgemein \"Signal\"")
 
 (defonce seconds-past (reagent/atom 0))
 
