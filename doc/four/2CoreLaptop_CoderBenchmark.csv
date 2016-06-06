@@ -1,0 +1,3 @@
+"Benchmark","Mode","Threads","Samples","Score","Score Error (99,9%)","Unit"
+"de.hs_augsburg.nlp.four.mnemonic.CoderBench.java","thrpt",1,7,"106814,462041","5039,560998","ops/s"
+"de.hs_augsburg.nlp.four.mnemonic.CoderBench.scala","thrpt",1,7,"219770,614781","8588,806406","ops/s"
