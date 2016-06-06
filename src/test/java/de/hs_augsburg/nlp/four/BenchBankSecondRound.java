@@ -160,7 +160,7 @@ public class BenchBankSecondRound {
                     bankImpl = new ValBankIdentity();
                     break;
                 case "STM":
-                    bankImpl = new ValBankIdentity();
+                    bankImpl = new ScalaSTMBank();
                     break;
 //                case "Ref":
 //                    bankImpl = RefBankFactory.makeRefBank();
