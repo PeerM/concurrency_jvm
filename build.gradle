@@ -12,6 +12,7 @@ apply plugin: 'java'
 apply plugin: 'maven'
 apply plugin: 'clojure'
 apply plugin: 'clojure-nrepl'
+apply plugin: "kotlin"
 
 // In this section you declare where to find the dependencies of your project
 repositories {
@@ -23,6 +24,7 @@ repositories {
 }
 
 buildscript {
+    ext.kotlin_version = '1.0.2'
     repositories {
         maven { url 'http://clojars.org/repo' }
         mavenCentral()
@@ -30,6 +32,7 @@ buildscript {
     dependencies {
         classpath 'clojuresque:clojuresque:1.7.0'
         classpath 'clojuresque:clojuresque-nrepl:1.0.2'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
@@ -51,6 +54,7 @@ dependencies {
     compile 'org.clojure:tools.nrepl:0.2.8'
     compile 'com.github.yannrichet:JMathPlot:1.0.1'
     compile group: 'commons-io', name: 'commons-io', version: '2.5'
+    compile "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version"
 
 
     // Declare the dependency for your favourite test framework you want to use in your tests.
