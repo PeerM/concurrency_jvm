@@ -1,23 +1,23 @@
 package de.hs_augsburg.nlp.five.actor
 
-import akka.actor.{ActorSystem, Props}
+import akka.actor.{ActorSystem, PoisonPill, Props}
 import akka.pattern.ask
 import akka.util.Timeout
+
 import scala.concurrent.duration._
+import scala.concurrent.{Await, Future}
 
 object Scenario extends App {
   val actorSystem = ActorSystem("myActors")
   val observable = actorSystem.actorOf(Props(classOf[ObservableActor]), "Observable")
-  val subscribers = List(
-    actorSystem.actorOf(Subscriber.props(0, observable)),
-    actorSystem.actorOf(Subscriber.props(1, observable)),
-    actorSystem.actorOf(Subscriber.props(2, observable))
-  )
+  val subscribers = Range(1,5).map(i => actorSystem.actorOf(Subscriber.props(i, observable)))
   implicit val timeout = Timeout(1.second)
-  subscribers.foreach(subscriber => subscriber ! "start")
-  // TODO proper synchronization
-  Thread.sleep(200)
+  private val futures: Seq[Future[Any]] = subscribers.map(subscriber => ask(subscriber, "start"))
+  private val results: Seq[Any] = futures.map(f => Await.result(f, 1.second))
+
   observable ! Update("hello")
-  Thread.sleep(200)
+  val pill = PoisonPill.getInstance
+//  observable ! pill
+//  subscribers.foreach(f => f ! pill)
   actorSystem.terminate()
 }

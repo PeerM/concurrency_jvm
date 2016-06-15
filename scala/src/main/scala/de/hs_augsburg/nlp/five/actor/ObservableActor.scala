@@ -8,9 +8,18 @@ class ObservableActor extends Actor {
   var subscribers = scala.collection.mutable.ArrayBuffer.empty[ActorRef]
 
   override def receive: Receive = {
-    case m: Subscribe =>
+    case m: Subscribe => {
       subscribers += sender()
-    case m: Update => subscribers.foreach(subscriber => subscriber ! m)
+      sender() ! ObservableActor.subscribeFinished
+    }
+    case m: Update => {
+      subscribers.foreach(subscriber => subscriber ! m)
+
+    }
   }
 
+}
+
+object ObservableActor {
+  val subscribeFinished = "Subscribe Finished"
 }

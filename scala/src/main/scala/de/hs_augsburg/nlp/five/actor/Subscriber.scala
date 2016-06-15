@@ -5,9 +5,14 @@ import akka.actor.{Actor, ActorRef, Props}
 
 class Subscriber(val identification: Int, val observable: ActorRef) extends Actor {
   //  val logger = LoggerFactory.getLogger(this.getClass)
+  var starter: ActorRef = null
 
   override def receive: Receive = {
-    case "start" => observable ! Subscribe()
+    case "start" => {
+      observable ! Subscribe()
+      starter = sender()
+    }
+    case ObservableActor.subscribeFinished => starter ! "finished"
     case message => println(identification + ": received message <<" + message + ">>")
   }
 }
