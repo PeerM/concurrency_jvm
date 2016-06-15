@@ -15,8 +15,9 @@ object Scenario extends App {
   private val futures: Seq[Future[Any]] = subscribers.map(subscriber => ask(subscriber, "start"))
   private val results: Seq[Any] = futures.map(f => Await.result(f, 1.second))
 
-  observable ! Update("hello")
+  observable ! Update("hello world")
   val pill = PoisonPill.getInstance
+  // TODO fix racecondition: subscriber can't process notification when system shuts down
 //  observable ! pill
 //  subscribers.foreach(f => f ! pill)
   actorSystem.terminate()
