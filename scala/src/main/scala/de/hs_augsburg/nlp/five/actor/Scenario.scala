@@ -15,7 +15,9 @@ object Scenario extends App {
   private val futures: Seq[Future[Any]] = subscribers.map(subscriber => ask(subscriber, "start"))
   private val results: Seq[Any] = futures.map(f => Await.result(f, 1.second))
 
-  val future: Future[Any] = observable ask Update("hello world")
-  Await.ready(future,1.second)
+  val future1: Future[Any] = observable ask Update("hello")
+  val future2: Future[Any] = observable ask Update("world")
+  Await.ready(future1,2.second)
+  Await.ready(future2,2.second)
   actorSystem.terminate()
 }
