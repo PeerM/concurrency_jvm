@@ -13,7 +13,10 @@ class Subscriber(val identification: Int, val observable: ActorRef) extends Acto
       starter = sender()
     }
     case ObservableActor.subscribeFinished => starter ! "finished"
-    case message => println(identification + ": received message <<" + message + ">>")
+    case message => {
+      println(identification + ": received message <<" + message + ">>")
+      sender() ! "finished"
+    }
   }
 }
 
