@@ -13,7 +13,7 @@
 ## Nebenläufigkeit
 - core.async channels:
   - Queues
-  - green Threads oder echte Threads
+  - green Threads (oder echte Threads in java)
   - Sequentieller Asynchroner Ablauf
 - Channels verwenden um Zustands änderungen zu managen
   - sequentielle abarbeitung wie bei blocken

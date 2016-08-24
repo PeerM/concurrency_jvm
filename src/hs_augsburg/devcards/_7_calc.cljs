@@ -32,3 +32,5 @@
 (defcard-rg :robust-calculator-card
             [robust-calculator robust-calculator-state]
             robust-calculator-state {:inspect-data true :history true})
+
+(defcard-doc "[Nächste Folie](#!/hs_augsburg.devcards._8_further_reading)")

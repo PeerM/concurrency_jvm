@@ -9,6 +9,11 @@
 - GUIs haben nebenläufigkeit
 - Javascript hat 'nur' Callbacks und bald Futures
 - DOM ist shared mutable State
+## Clojure
+- ist ein Lisp
+- läuft auf der JVM, aber auch JavaScript
+- simple made easy
+- functional wenn mans will
 ## Grundbausteine aus Clojure
 - Atoms mit Watchers
 - core.async channels
