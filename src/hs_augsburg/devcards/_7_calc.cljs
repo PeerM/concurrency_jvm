@@ -33,4 +33,14 @@
             [robust-calculator robust-calculator-state]
             robust-calculator-state {:inspect-data true :history true})
 
+(defcard-doc
+  (mkdn-pprint-source robust-calculator-state)
+  (mkdn-pprint-source robust-calculator))
+
+(defcard "
+```
+(go (while true\n      (let [new_input (<! calc-chan) res (try [true (js/eval (str new_input \";\"))] (catch js/Error e [false (str e)]))]\n        (if (res 0)\n          (reset! robust-calculator-state {:text new_input :result (res 1) :error \"\"})\n          (swap! robust-calculator-state (fn [old] (assoc old :error (res 1) :text new_input)))))))
+```
+")
+
 (defcard-doc "[Nächste Folie](#!/hs_augsburg.devcards._8_further_reading)")
