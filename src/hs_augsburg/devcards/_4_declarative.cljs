@@ -18,10 +18,10 @@
    {:style {:color
             ; Die richtige Farbe auswählen
             (cond
+              (< number 0) "black"
               (< number 3) "green"
               (< number 6) "#D8D100"
-              (< number 200) "red"
-              :else "Grey")}}
+              :else "red")}}
    "Current count: " number])
 
 (defn color-counter [ratom]
@@ -35,7 +35,8 @@
              ## Declarativer Stile
              - Es wird nicht beschrieben was gemacht werden soll, sonder was seien soll
              - Bei verschienden Werten soll andere Farbe gewält werden
-             - Der code ändert nicht die Farbe er beschreibt das element nur abhängig vom Zustand")
+             - Der code ändert nicht die Farbe, er beschreibt das Element wie es seien soll
+             - Html nur abhänging vom zustands Atom, nicht vom vorherigen Html")
 
 (defcard-rg :color-counter-card
             ; function and state

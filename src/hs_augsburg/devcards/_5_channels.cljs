@@ -2,7 +2,7 @@
   (:require
     [reagent.core :as reagent]
     [cljs.core.async :refer [put! chan <! take!]]
-    [devcards.core :as dc])
+    [devcards.core])
   (:require-macros
     [devcards.core :refer [defcard defcard-rg defcard-doc deftest mkdn-pprint-source]]
     [cljs.core.async.macros
@@ -13,12 +13,13 @@
 ## Nebenläufigkeit
 - core.async channels:
   - Queues
-  - green Threads (oder echte Threads in java)
+  - Green Threads (oder echte Threads in Java)
   - Sequentieller Asynchroner Ablauf
 - Channels verwenden um Zustands änderungen zu managen
-  - sequentielle abarbeitung wie bei blocken
-  - übersetztung zu javascript nebenläufigkeit
-  - Channel input kann von überall kommen, häufig von callbacks")
+  - Sequentielle abarbeitung wie bei blocken
+  - Übersetztung zu javascript nebenläufigkeit
+  - Channel input kann von überall kommen, häufig von callbacks
+- In Functional Reactive Programming allgemein \"Signal\"")
 
 (defonce seconds-past (reagent/atom 0))
 
@@ -48,7 +49,8 @@
 (defcard-rg :timer
             [timer-view seconds-past])
 
-(defcard-doc (mkdn-pprint-source timer-channel))
-(defcard-doc (mkdn-pprint-source listen-to-channel!))
+(defcard-doc
+  (mkdn-pprint-source timer-channel)
+  (mkdn-pprint-source listen-to-channel!))
 
 (defcard-doc "[Nächste Folie](#!/hs_augsburg.devcards._6_git_api)")

@@ -5,6 +5,7 @@
     [devcards.core :refer [defcard defcard-rg defcard-doc deftest mkdn-pprint-source]]))
 
 (defcard-doc "
+# \"Functional Reactive Programming\" mit Clojure
 ## Motivation
 - GUIs haben nebenläufigkeit
 - Javascript hat 'nur' Callbacks und bald Futures
@@ -20,8 +21,7 @@
 - Funktionen mit und ohne Nebenwirkungen
 - Immutable Datenstrukturen")
 
-(defcard-doc "## Ansatz: Wir benutzen die Werkzeuge von Clojure um Web GUIs zu bauen
-=> Clojure wird zu Javascript compiliert")
+(defcard-doc "## Clojure zu Javascript")
 
 (defcard-doc "
 Die Präsentation ist auch auf [www.hs-augsburg.de/~mathiaf/nlp-frp/](http://www.hs-augsburg.de/~mathiaf/nlp-frp/)

@@ -27,14 +27,15 @@
 
 (defcard-doc "
              - Reagent Bibliothek basiert auf React.js
-             - Reagent Atom mit Selbem Interface wie das normale Atom"
+             - Reagent Atom mit selbem Interface wie das normale Atom"
              (mkdn-pprint-source basic-counter-state)
              "
-             - Der Zustand der Anwendung steckt in einem Atom
+             - Der Zustand der Anwendung verwaltet von einem Atom
              - Eine Funktion die das html vom Zustand ableitet"
              (mkdn-pprint-source basic-counter)
              "
-             - Bei Änderungen,im Atom, wird die Funktion neu aufgeruffen
-             - Speichern und 'Rückgängig machen' sehr einfach")
+             - Bei Änderungen, im Atom, wird die Funktion neu aufgerufen
+             - Speichern und \"Rückgängig machen\" sehr einfach
+             - Hot Code reloading auch \"einfach\"")
 
 (defcard-doc "[Nächste Folie](#!/hs_augsburg.devcards._4_declarative)")
